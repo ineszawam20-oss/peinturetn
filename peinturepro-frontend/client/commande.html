@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PeinturePro TN — Commande</title>
+  <link rel="stylesheet" href="../css/main.css"/>
+  <style>
+    body { background: var(--surface); min-height: 100vh; }
+
+    .navbar {
+      background: var(--white);
+      border-bottom: 1.5px solid var(--border);
+      padding: 0 2rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+    .nav-brand { font-family: var(--font-display); font-size: 1.2rem; color: var(--dark); }
+    .nav-brand span { color: var(--primary); }
+    .nav-links { display: flex; gap: 1rem; align-items: center; }
+    .nav-link {
+      font-size: .88rem; color: var(--text-muted);
+      text-decoration: none; padding: .4rem .75rem;
+      border-radius: var(--radius-sm); transition: all .2s;
+    }
+    .nav-link:hover { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+    .btn-logout {
+      background: none; border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm); padding: .45rem .9rem;
+      font-size: .82rem; color: var(--text-muted); cursor: pointer;
+    }
+    .btn-logout:hover { border-color: var(--primary); color: var(--primary); }
+
+    .page {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem;
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1.25rem;
+    }
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      color: var(--dark);
+      margin-bottom: 1.25rem;
+      padding-bottom: .75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .cart-empty {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-muted);
+    }
+    .cart-empty svg { opacity: .25; margin-bottom: 1rem; }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .cart-item:last-child { border-bottom: none; }
+    .item-swatch {
+      width: 48px; height: 48px;
+      border-radius: var(--radius-sm);
+      flex-shrink: 0;
+      border: 1px solid rgba(0,0,0,.1);
+    }
+    .item-info { flex: 1; }
+    .item-name { font-weight: 600; font-size: .92rem; color: var(--dark); margin-bottom: .2rem; }
+    .item-meta { font-size: .78rem; color: var(--text-muted); }
+    .item-price { font-family: var(--font-display); font-size: 1.05rem; color: var(--primary); white-space: nowrap; }
+    .item-remove {
+      background: none; border: none; color: var(--text-muted);
+      cursor: pointer; font-size: 1rem; padding: .25rem;
+      border-radius: 4px; transition: color .2s;
+    }
+    .item-remove:hover { color: #E53E3E; }
+
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+
+    /* Input avec icône */
+    .input-icon { position: relative; }
+    .input-icon .icon {
+      position: absolute; left: .95rem; top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted); pointer-events: none;
+    }
+    .input-icon .form-control { padding-left: 2.6rem; }
+
+    /* Info date automatique */
+    .date-auto-info {
+      background: var(--primary-light);
+      border: 1.5px solid rgba(200,68,26,.2);
+      border-radius: var(--radius-sm);
+      padding: .85rem 1rem;
+      font-size: .88rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .date-auto-info strong { color: var(--primary); }
+
+    .summary-panel { position: sticky; top: 80px; }
+    .summary-rows { display: flex; flex-direction: column; gap: .6rem; margin-bottom: 1.25rem; }
+    .summary-row { display: flex; justify-content: space-between; font-size: .88rem; }
+    .summary-row .label { color: var(--text-muted); }
+    .summary-row .value { font-weight: 600; color: var(--dark); }
+    .summary-divider { height: 1px; background: var(--border); margin: .5rem 0; }
+    .summary-total { display: flex; justify-content: space-between; align-items: center; }
+    .summary-total .label { font-weight: 600; font-size: .95rem; color: var(--dark); }
+    .summary-total .value { font-family: var(--font-display); font-size: 1.5rem; color: var(--primary); }
+
+    .btn-order { width: 100%; padding: .95rem; font-size: 1rem; margin-top: 1rem; }
+    .btn-continue { width: 100%; padding: .75rem; margin-top: .5rem; }
+
+    .success-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.5);
+      display: none; align-items: center;
+      justify-content: center; z-index: 200;
+    }
+    .success-overlay.open { display: flex; }
+    .success-modal {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      max-width: 440px;
+      width: 90%;
+      text-align: center;
+      animation: slideUp .4s cubic-bezier(.16,1,.3,1);
+    }
+    .success-icon {
+      width: 72px; height: 72px;
+      background: #E6F6EE;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.25rem;
+      font-size: 2rem;
+    }
+    .success-title {
+      font-family: var(--font-display);
+      font-size: 1.6rem; color: var(--dark); margin-bottom: .5rem;
+    }
+    .success-msg { color: var(--text-muted); font-size: .9rem; line-height: 1.8; margin-bottom: 1.5rem; }
+    .success-num { font-family: var(--font-display); font-size: 1.1rem; color: var(--primary); }
+    .success-date { font-family: var(--font-display); font-size: 1rem; color: var(--primary); }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .page { grid-template-columns: 1fr; }
+      .summary-panel { position: static; }
+      .row-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-brand">PeinturePro <span>TN</span></div>
+    <div class="nav-links">
+      <a href="catalogue.html" class="nav-link">Catalogue</a>
+      <a href="simulateur.html" class="nav-link">Simulateur</a>
+      <a href="mes-commandes.html" class="nav-link">Mes commandes</a>
+      <button class="btn-logout" onclick="logout()">Déconnexion</button>
+    </div>
+  </nav>
+
+  <div class="page">
+
+    <!-- Gauche -->
+    <div>
+      <!-- Panier -->
+      <div class="card">
+        <div class="card-title">🛒 Mon panier</div>
+        <div id="cartContent"></div>
+      </div>
+
+      <!-- Infos livraison -->
+      <div class="card">
+        <div class="card-title">📍 Informations de livraison</div>
+
+        <div class="row-2">
+          <div class="form-group">
+            <label>Adresse chantier</label>
+            <input type="text" class="form-control" id="adresse" placeholder="Rue, N°"/>
+          </div>
+          <div class="form-group">
+            <label>Ville</label>
+            <input type="text" class="form-control" id="ville" placeholder="Tunis"/>
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="form-group">
+            <label>Gouvernorat</label>
+            <select class="form-control" id="gouvernorat">
+              <option value="">Sélectionner...</option>
+              <option>Tunis</option><option>Ariana</option><option>Ben Arous</option>
+              <option>Manouba</option><option>Nabeul</option><option>Zaghouan</option>
+              <option>Bizerte</option><option>Béja</option><option>Jendouba</option>
+              <option>Kef</option><option>Siliana</option><option>Sousse</option>
+              <option>Monastir</option><option>Mahdia</option><option>Sfax</option>
+              <option>Kairouan</option><option>Kasserine</option><option>Sidi Bouzid</option>
+              <option>Gabès</option><option>Médenine</option><option>Tataouine</option>
+              <option>Gafsa</option><option>Tozeur</option><option>Kébili</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Numéro de téléphone</label>
+            <div class="input-icon">
+              <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+              <input type="tel" class="form-control" id="telephone" placeholder="+216 XX XXX XXX"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Notes pour le livreur (optionnel)</label>
+          <input type="text" class="form-control" id="notes"
+                 placeholder="Ex: Sonner au gardien, 2ème étage..."/>
+        </div>
+
+        <!-- Date automatique -->
+        <div class="date-auto-info">
+          📅 Date de livraison estimée après confirmation :
+          <strong>sous 3 à 5 jours ouvrables</strong>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Droite : Récapitulatif -->
+    <div class="summary-panel">
+      <div class="card">
+        <div class="card-title">📋 Récapitulatif</div>
+        <div class="summary-rows" id="summaryRows"></div>
+        <div class="summary-divider"></div>
+        <div class="summary-total">
+          <span class="label">Total TTC</span>
+          <span class="value" id="summaryTotal">0.000 DT</span>
+        </div>
+        <div class="alert alert-error mt-2" id="alertError">
+          ⚠️ <span id="alertMsg"></span>
+        </div>
+        <button class="btn-primary btn-order" id="orderBtn" onclick="passerCommande()">
+          ✅ Confirmer la commande
+        </button>
+        <button class="btn-outline btn-continue" onclick="window.location.href='catalogue.html'">
+          + Ajouter des produits
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Succès -->
+  <div class="success-overlay" id="successOverlay">
+    <div class="success-modal">
+      <div class="success-icon">✅</div>
+      <div class="success-title">Commande confirmée !</div>
+      <p class="success-msg">
+        Votre commande a été enregistrée avec succès.<br/>
+        Numéro de commande : <span class="success-num" id="cmdNumero"></span><br/><br/>
+        📅 Date de livraison estimée :<br/>
+        <span class="success-date" id="dateLivraisonEstimee"></span>
+      </p>
+      <button class="btn-primary w-100" onclick="window.location.href='mes-commandes.html'">
+        Suivre ma commande →
+      </button>
+    </div>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    requireAuth(['client']);
+
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+    function renderCart() {
+      const container = document.getElementById('cartContent');
+      if (!cart.length) {
+        container.innerHTML = `
+          <div class="cart-empty">
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+            </svg>
+            <p>Votre panier est vide.</p>
+            <a href="catalogue.html" style="color:var(--primary); font-weight:600;">
+              Voir le catalogue →
+            </a>
+          </div>`;
+        updateSummary();
+        return;
+      }
+      container.innerHTML = cart.map((item, i) => `
+        <div class="cart-item">
+          <div class="item-swatch" style="background:${item.couleur_code || '#CCC'}"></div>
+          <div class="item-info">
+            <div class="item-name">${item.nom}</div>
+            <div class="item-meta">
+              ${item.litres_calcules} L · ${item.surface_m2} m² · ${item.couches} couche${item.couches > 1 ? 's' : ''}
+            </div>
+          </div>
+          <div class="item-price">${item.montant.toFixed(3)} DT</div>
+          <button class="item-remove" onclick="removeItem(${i})" title="Supprimer">✕</button>
+        </div>
+      `).join('');
+      updateSummary();
+    }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      renderCart();
+    }
+
+    function updateSummary() {
+      const rows   = document.getElementById('summaryRows');
+      const total  = cart.reduce((sum, item) => sum + item.montant, 0);
+      const litres = cart.reduce((sum, item) => sum + item.litres_calcules, 0);
+      rows.innerHTML = cart.map(item => `
+        <div class="summary-row">
+          <span class="label">${item.nom} (${item.litres_calcules}L)</span>
+          <span class="value">${item.montant.toFixed(3)} DT</span>
+        </div>
+      `).join('') + `
+        <div class="summary-row">
+          <span class="label">Total litres</span>
+          <span class="value">${litres.toFixed(2)} L</span>
+        </div>`;
+      document.getElementById('summaryTotal').textContent = `${total.toFixed(3)} DT`;
+    }
+
+    async function passerCommande() {
+      if (!cart.length) { showError('Votre panier est vide.'); return; }
+
+      const adresse     = document.getElementById('adresse').value.trim();
+      const ville       = document.getElementById('ville').value.trim();
+      const gouvernorat = document.getElementById('gouvernorat').value;
+      const telephone   = document.getElementById('telephone').value.trim();
+      const notes       = document.getElementById('notes').value.trim();
+
+      if (!adresse || !ville || !gouvernorat) {
+        showError('Veuillez remplir adresse, ville et gouvernorat.');
+        return;
+      }
+      if (!telephone) {
+        showError('Veuillez saisir votre numéro de téléphone.');
+        return;
+      }
+
+      const btn = document.getElementById('orderBtn');
+      btn.innerHTML = '<span class="spinner"></span>Traitement...';
+      btn.disabled  = true;
+
+      try {
+        // Créer le chantier
+        const chantierRes = await api.post('/chantiers', { adresse, ville, gouvernorat });
+        let chantier_id   = null;
+        if (chantierRes && chantierRes.ok) {
+          const chantierData = await chantierRes.json();
+          chantier_id = chantierData.id;
+        }
+
+        // Calculer date estimée (3-5 jours ouvrables)
+        const dateEstimee = new Date();
+        dateEstimee.setDate(dateEstimee.getDate() + 4);
+        // Sauter weekend
+        if (dateEstimee.getDay() === 6) dateEstimee.setDate(dateEstimee.getDate() + 2);
+        if (dateEstimee.getDay() === 0) dateEstimee.setDate(dateEstimee.getDate() + 1);
+
+        // Créer commandes
+        const results = [];
+        for (const item of cart) {
+          const res = await api.post('/commandes', {
+            produit_id:               item.produit_id,
+            surface_m2:               item.surface_m2,
+            litres_calcules:          item.litres_calcules,
+            date_livraison_souhaitee: dateEstimee.toISOString().split('T')[0],
+            chantier_id
+          });
+          if (res && res.ok) {
+            const data = await res.json();
+            results.push(data);
+          }
+        }
+
+        if (results.length) {
+          localStorage.removeItem('cart');
+          cart = [];
+
+          // Afficher date estimée dans modal
+          const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+          document.getElementById('cmdNumero').textContent         = `#${results[0].id}`;
+          document.getElementById('dateLivraisonEstimee').textContent =
+            dateEstimee.toLocaleDateString('fr-TN', options);
+          document.getElementById('successOverlay').classList.add('open');
+        } else {
+          showError('Erreur lors de la création de la commande.');
+        }
+
+      } catch (err) {
+        showError('Erreur serveur. Réessayez.');
+      } finally {
+        btn.innerHTML = '✅ Confirmer la commande';
+        btn.disabled  = false;
+      }
+    }
+
+    function showError(msg) {
+      document.getElementById('alertMsg').textContent = msg;
+      document.getElementById('alertError').classList.add('show');
+    }
+
+    renderCart();
+  </script>
+</body>
+</html>

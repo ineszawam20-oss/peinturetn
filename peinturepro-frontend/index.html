@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PeinturePro TN</title>
+  <link rel="stylesheet" href="/css/main.css"/>
+  <style>
+    body { min-height: 100vh; background: var(--dark); overflow-x: hidden; }
+
+    /* ===== Navbar ===== */
+    .navbar {
+      background: transparent;
+      padding: 1.5rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      z-index: 10;
+    }
+    .nav-brand {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      color: white;
+    }
+    .nav-brand span { color: var(--accent); }
+    .nav-actions { display: flex; gap: 1rem; }
+    .btn-nav-outline {
+      border: 1.5px solid rgba(255,255,255,.3);
+      background: transparent;
+      color: white;
+      border-radius: var(--radius-sm);
+      padding: .5rem 1.25rem;
+      font-size: .88rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all .2s;
+      font-family: var(--font-body);
+    }
+    .btn-nav-outline:hover {
+      border-color: white;
+      background: rgba(255,255,255,.1);
+    }
+    .btn-nav-primary {
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: .5rem 1.25rem;
+      font-size: .88rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background .2s;
+      font-family: var(--font-body);
+    }
+    .btn-nav-primary:hover { background: var(--primary-dark); }
+
+    /* ===== Hero ===== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+      padding: 8rem 2rem 4rem;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 50% 40%, rgba(200,68,26,.4) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 40% at 80% 70%, rgba(232,160,32,.2) 0%, transparent 60%);
+    }
+
+    /* Cercles décoratifs */
+    .deco-circles {
+      position: absolute; inset: 0;
+      pointer-events: none; overflow: hidden;
+    }
+
+    .hero-content {
+      position: relative; z-index: 2;
+      max-width: 700px;
+      animation: slideUp .8s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: rgba(200,68,26,.2);
+      border: 1px solid rgba(200,68,26,.4);
+      color: #F7C5B0;
+      font-size: .78rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: .4rem 1rem;
+      border-radius: 30px;
+      margin-bottom: 1.75rem;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      color: white;
+      line-height: 1.1;
+      margin-bottom: 1.25rem;
+    }
+    .hero-title span { color: var(--accent); }
+
+    .hero-sub {
+      color: rgba(255,255,255,.6);
+      font-size: 1.05rem;
+      line-height: 1.8;
+      margin-bottom: 2.5rem;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn-hero-primary {
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: .9rem 2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background .2s, transform .15s;
+      font-family: var(--font-body);
+    }
+    .btn-hero-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+    .btn-hero-outline {
+      background: transparent;
+      color: white;
+      border: 1.5px solid rgba(255,255,255,.35);
+      border-radius: var(--radius-sm);
+      padding: .9rem 2rem;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all .2s;
+      font-family: var(--font-body);
+    }
+    .btn-hero-outline:hover {
+      border-color: white;
+      background: rgba(255,255,255,.08);
+    }
+
+    /* Stats */
+    .hero-stats {
+      display: flex;
+      gap: 3rem;
+      justify-content: center;
+      margin-top: 3.5rem;
+      padding-top: 2.5rem;
+      border-top: 1px solid rgba(255,255,255,.1);
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      color: white;
+      display: block;
+    }
+    .stat-txt { font-size: .8rem; color: rgba(255,255,255,.45); text-transform: uppercase; letter-spacing: .08em; }
+
+    /* ===== Features ===== */
+    .features {
+      background: var(--surface);
+      padding: 5rem 2rem;
+    }
+    .features-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .section-label {
+      text-align: center;
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: .75rem;
+    }
+    .section-title {
+      text-align: center;
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      color: var(--dark);
+      margin-bottom: .75rem;
+    }
+    .section-sub {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: .95rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+    .feature-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: 1.75rem;
+      box-shadow: var(--shadow-sm);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+    .feature-icon {
+      width: 48px; height: 48px;
+      background: var(--primary-light);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+    }
+    .feature-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: var(--dark);
+      margin-bottom: .5rem;
+    }
+    .feature-desc { font-size: .88rem; color: var(--text-muted); line-height: 1.7; }
+
+    /* ===== Rôles ===== */
+    .roles-section {
+      background: var(--dark);
+      padding: 5rem 2rem;
+    }
+    .roles-inner { max-width: 1100px; margin: 0 auto; }
+    .roles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-top: 3rem;
+    }
+    .role-card {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: var(--radius-md);
+      padding: 1.75rem;
+      transition: background .2s, border-color .2s;
+    }
+    .role-card:hover {
+      background: rgba(255,255,255,.08);
+      border-color: rgba(200,68,26,.5);
+    }
+    .role-card-icon { font-size: 2rem; margin-bottom: .75rem; }
+    .role-card-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: white;
+      margin-bottom: .5rem;
+    }
+    .role-card-desc { font-size: .83rem; color: rgba(255,255,255,.5); line-height: 1.7; }
+
+    /* ===== CTA ===== */
+    .cta-section {
+      background: var(--primary);
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+    .cta-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      color: white;
+      margin-bottom: .75rem;
+    }
+    .cta-sub { color: rgba(255,255,255,.75); font-size: .95rem; margin-bottom: 2rem; }
+    .btn-cta {
+      background: white;
+      color: var(--primary);
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: .9rem 2.5rem;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform .15s;
+      font-family: var(--font-body);
+      display: inline-block;
+    }
+    .btn-cta:hover { transform: translateY(-2px); }
+
+    /* ===== Footer ===== */
+    .footer {
+      background: var(--dark);
+      border-top: 1px solid rgba(255,255,255,.08);
+      padding: 2rem;
+      text-align: center;
+      color: rgba(255,255,255,.3);
+      font-size: .82rem;
+    }
+    .footer span { color: var(--primary); }
+
+    @media (max-width: 600px) {
+      .navbar { padding: 1rem 1.5rem; }
+      .hero-stats { gap: 1.5rem; }
+      .stat-num { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-brand">PeinturePro <span>TN</span></div>
+    <div class="nav-actions">
+      <a href="/login-admin.html" class="btn-nav-outline">Équipe</a>
+      <a href="/login-client.html" class="btn-nav-primary">Espace Client</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="deco-circles">
+      <svg width="100%" height="100%" viewBox="0 0 1200 800"
+           xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <circle cx="200" cy="200" r="400" fill="none"
+                stroke="rgba(255,255,255,.03)" stroke-width="1"/>
+        <circle cx="1000" cy="600" r="350" fill="none"
+                stroke="rgba(255,255,255,.03)" stroke-width="1"/>
+        <circle cx="600" cy="400" r="550" fill="none"
+                stroke="rgba(255,255,255,.02)" stroke-width="1"/>
+        <ellipse cx="150" cy="650" rx="200" ry="80"
+                 fill="rgba(200,68,26,.05)" transform="rotate(-15,150,650)"/>
+        <ellipse cx="1050" cy="150" rx="180" ry="70"
+                 fill="rgba(232,160,32,.05)" transform="rotate(20,1050,150)"/>
+      </svg>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-badge">
+        🇹🇳 Plateforme tunisienne de gestion de peinture
+      </div>
+      <h1 class="hero-title">
+        La peinture tunisienne<br/>gérée avec <span>précision</span>
+      </h1>
+      <p class="hero-sub">
+        PeinturePro TN centralise la production, les commandes
+        et les livraisons chantiers pour votre entreprise de peinture.
+      </p>
+      <div class="hero-actions">
+        <a href="/login-client.html" class="btn-hero-primary">
+          Commander maintenant →
+        </a>
+        <a href="/login-admin.html" class="btn-hero-outline">
+          Accès équipe
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-num">4</span>
+          <span class="stat-txt">Rôles</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">13</span>
+          <span class="stat-txt">Tables SQL</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">100%</span>
+          <span class="stat-txt">Tunisien</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">JWT</span>
+          <span class="stat-txt">Sécurisé</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features">
+    <div class="features-inner">
+      <div class="section-label">Fonctionnalités</div>
+      <h2 class="section-title">Tout ce dont vous avez besoin</h2>
+      <p class="section-sub">Une plateforme complète pour gérer votre activité de A à Z</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🎨</div>
+          <div class="feature-title">Catalogue Nuancier</div>
+          <div class="feature-desc">Parcourez nos peintures avec prévisualisation des couleurs HEX en temps réel.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🧮</div>
+          <div class="feature-title">Simulateur m² → L</div>
+          <div class="feature-desc">Calculez automatiquement la quantité exacte selon la surface et le rendement.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🚚</div>
+          <div class="feature-title">Livraison Chantier</div>
+          <div class="feature-desc">Suivi GPS des livraisons avec carte Leaflet intégrée pour les livreurs.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <div class="feature-title">Dashboards KPIs</div>
+          <div class="feature-desc">Tableaux de bord adaptés par rôle avec graphiques Chart.js en temps réel.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📄</div>
+          <div class="feature-title">Export PDF</div>
+          <div class="feature-desc">Générez devis, bons de livraison et étiquettes de lots en un clic.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <div class="feature-title">Sécurité JWT</div>
+          <div class="feature-desc">Authentification avec Access + Refresh tokens et RBAC par rôle.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rôles -->
+  <section class="roles-section">
+    <div class="roles-inner">
+      <div class="section-label" style="color:var(--accent)">Accès multi-rôles</div>
+      <h2 class="section-title" style="color:white">4 profils, 4 expériences</h2>
+      <div class="roles-grid">
+        <div class="role-card">
+          <div class="role-card-icon">🛡️</div>
+          <div class="role-card-title">Administrateur</div>
+          <div class="role-card-desc">Gestion complète : produits, utilisateurs, lots de production, analytics.</div>
+        </div>
+        <div class="role-card">
+          <div class="role-card-icon">💼</div>
+          <div class="role-card-title">Commercial</div>
+          <div class="role-card-desc">Devis clients, suivi des commandes et export CSV des ventes.</div>
+        </div>
+        <div class="role-card">
+          <div class="role-card-icon">🚚</div>
+          <div class="role-card-title">Livreur</div>
+          <div class="role-card-desc">Livraisons chantier avec carte GPS et mise à jour des statuts.</div>
+        </div>
+        <div class="role-card">
+          <div class="role-card-icon">👤</div>
+          <div class="role-card-title">Client</div>
+          <div class="role-card-desc">Catalogue, simulateur, commandes et suivi en temps réel.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <h2 class="cta-title">Prêt à commencer ?</h2>
+    <p class="cta-sub">Créez votre compte client et passez votre première commande en quelques minutes.</p>
+    <a href="/login-client.html" class="btn-cta">Créer un compte gratuit →</a>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    © 2025 <span>PeinturePro TN</span> — Tous droits réservés — Document Confidentiel
+  </footer>
+
+</body>
+</html>

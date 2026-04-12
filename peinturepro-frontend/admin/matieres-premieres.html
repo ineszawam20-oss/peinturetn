@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PeinturePro TN — Matières Premières</title>
+  <link rel="stylesheet" href="/css/main.css"/>
+  <style>
+    body { background: #F4F1EE; min-height: 100vh; display: flex; }
+
+    .sidebar {
+      width: 240px; min-height: 100vh;
+      background: var(--dark);
+      display: flex; flex-direction: column;
+      padding: 1.5rem 0;
+      position: fixed; top: 0; left: 0;
+      z-index: 100;
+      box-shadow: 4px 0 20px rgba(0,0,0,.15);
+    }
+    .sidebar-brand {
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      margin-bottom: 1rem;
+    }
+    .logo { display: flex; align-items: center; gap: .65rem; }
+    .logo-box {
+      width: 36px; height: 36px;
+      background: var(--primary); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .logo-box svg { width: 20px; height: 20px; fill: white; }
+    .logo-text { font-family: var(--font-display); font-size: 1rem; color: white; }
+    .logo-text span { color: var(--accent); }
+    .sidebar-menu { flex: 1; padding: 0 .75rem; }
+    .menu-label {
+      font-size: .65rem; font-weight: 600;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: rgba(255,255,255,.3);
+      padding: .75rem .75rem .35rem;
+    }
+    .menu-item {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .65rem .75rem; border-radius: 8px;
+      text-decoration: none; color: rgba(255,255,255,.55);
+      font-size: .88rem; font-weight: 500;
+      transition: all .2s; margin-bottom: .15rem;
+      cursor: pointer; border: none;
+      background: none; width: 100%; text-align: left;
+    }
+    .menu-item:hover { background: rgba(255,255,255,.07); color: rgba(255,255,255,.85); }
+    .menu-item.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(200,68,26,.3); }
+    .menu-item .icon { font-size: 1.1rem; width: 20px; text-align: center; }
+    .sidebar-footer {
+      padding: 1rem .75rem 0;
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+    .user-info { display: flex; align-items: center; gap: .65rem; padding: .65rem .75rem; margin-bottom: .5rem; }
+    .user-avatar {
+      width: 34px; height: 34px;
+      background: var(--primary); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem; color: white; font-weight: 600;
+    }
+    .user-name { font-size: .83rem; color: white; font-weight: 500; }
+    .user-role { font-size: .7rem; color: rgba(255,255,255,.4); }
+
+    .main { margin-left: 240px; flex: 1; min-height: 100vh; }
+    .topbar {
+      background: white; padding: 1rem 2rem;
+      display: flex; align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 4px rgba(0,0,0,.04);
+    }
+    .topbar-title { font-family: var(--font-display); font-size: 1.3rem; color: var(--dark); }
+
+    .content { padding: 2rem; }
+
+    /* Alertes */
+    .alerts-bar {
+      background: #FEF3C7;
+      border: 1px solid #F59E0B;
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      display: none;
+    }
+    .alerts-bar.show { display: block; }
+    .alerts-bar-title {
+      font-weight: 600; color: #92400E;
+      margin-bottom: .5rem; font-size: .9rem;
+    }
+    .alert-pills { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .alert-pill {
+      background: #FEF9E7; border: 1px solid #F59E0B;
+      border-radius: 30px; padding: .25rem .85rem;
+      font-size: .78rem; color: #92400E; font-weight: 500;
+    }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap;
+    }
+    .search-box {
+      display: flex; align-items: center; gap: .5rem;
+      background: white; border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm); padding: .5rem 1rem;
+    }
+    .search-box input {
+      border: none; outline: none;
+      font-family: var(--font-body); font-size: .88rem;
+      color: var(--text); width: 200px; background: transparent;
+    }
+    .btn-add {
+      background: var(--primary); color: white;
+      border: none; border-radius: var(--radius-sm);
+      padding: .6rem 1.25rem; font-size: .88rem;
+      font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; gap: .4rem;
+      transition: all .2s; font-family: var(--font-body);
+    }
+    .btn-add:hover { background: var(--primary-dark); }
+
+    /* Grid */
+    .mp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+    .mp-card {
+      background: white; border-radius: var(--radius-md);
+      padding: 1.4rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+      transition: transform .2s, box-shadow .2s;
+      position: relative; overflow: hidden;
+    }
+    .mp-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.08); }
+    .mp-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 3px; background: var(--primary);
+    }
+    .mp-card.alert-card::before { background: #F59E0B; }
+
+    .mp-header {
+      display: flex; align-items: center;
+      justify-content: space-between; margin-bottom: 1rem;
+    }
+    .mp-icon {
+      width: 44px; height: 44px;
+      background: var(--primary-light);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+    }
+    .mp-alert-badge {
+      background: #FEF3C7; color: #92400E;
+      font-size: .7rem; font-weight: 600;
+      padding: .2rem .6rem; border-radius: 30px;
+      border: 1px solid #F59E0B;
+    }
+
+    .mp-name {
+      font-family: var(--font-display);
+      font-size: 1.05rem; color: var(--dark); margin-bottom: .3rem;
+    }
+    .mp-unite { font-size: .78rem; color: var(--text-muted); margin-bottom: 1rem; }
+
+    /* Barre de stock */
+    .stock-bar-wrap { margin-bottom: 1rem; }
+    .stock-bar-header {
+      display: flex; justify-content: space-between;
+      font-size: .78rem; margin-bottom: .35rem;
+    }
+    .stock-bar-label { color: var(--text-muted); }
+    .stock-bar-value { font-weight: 600; color: var(--dark); }
+    .stock-bar-bg {
+      height: 8px; background: #F0EBE6;
+      border-radius: 4px; overflow: hidden;
+    }
+    .stock-bar-fill {
+      height: 100%; border-radius: 4px;
+      transition: width .5s ease;
+    }
+    .stock-bar-fill.ok  { background: #10B981; }
+    .stock-bar-fill.low { background: #F59E0B; }
+    .stock-bar-fill.empty { background: #EF4444; }
+
+    .mp-footer {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding-top: .85rem; border-top: 1px solid var(--border);
+    }
+    .mp-min { font-size: .75rem; color: var(--text-muted); }
+    .mp-min strong { color: var(--dark); }
+    .mp-actions { display: flex; gap: .4rem; }
+    .btn-icon {
+      width: 32px; height: 32px;
+      border: 1.5px solid var(--border);
+      border-radius: 6px; background: white;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: .85rem; transition: all .2s;
+    }
+    .btn-icon:hover { border-color: var(--primary); background: var(--primary-light); }
+    .btn-icon.danger:hover { border-color: #EF4444; background: #FEE2E2; }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.5);
+      display: none; align-items: center;
+      justify-content: center; z-index: 200;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: white; border-radius: var(--radius-lg);
+      padding: 2rem; width: 100%; max-width: 460px;
+      box-shadow: var(--shadow-lg);
+      animation: slideUp .3s cubic-bezier(.16,1,.3,1);
+    }
+    @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    .modal-header {
+      display: flex; align-items: center;
+      justify-content: space-between; margin-bottom: 1.5rem;
+    }
+    .modal-title { font-family: var(--font-display); font-size: 1.3rem; color: var(--dark); }
+    .modal-close { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted); }
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .modal-footer {
+      display: flex; gap: .75rem;
+      justify-content: flex-end; margin-top: 1.5rem;
+    }
+    .btn-cancel {
+      background: var(--surface); border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm); padding: .65rem 1.25rem;
+      font-size: .88rem; cursor: pointer; font-family: var(--font-body);
+    }
+    .btn-save {
+      background: var(--primary); color: white;
+      border: none; border-radius: var(--radius-sm);
+      padding: .65rem 1.5rem; font-size: .88rem;
+      font-weight: 600; cursor: pointer; font-family: var(--font-body);
+    }
+
+    .empty-state { text-align: center; padding: 4rem; color: var(--text-muted); grid-column: 1/-1; }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo">
+        <div class="logo-box">
+          <svg viewBox="0 0 24 24"><path d="M7 14c0 1.1.9 2 2 2h2v-4H9c-1.1 0-2 .9-2 2zm10-9h-1V3h-2v2H10V3H8v2H7C5.9 5 5 5.9 5 7v12c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 14H7V9h10v10z"/></svg>
+        </div>
+        <span class="logo-text">PeinturePro <span>TN</span></span>
+      </div>
+    </div>
+    <nav class="sidebar-menu">
+      <div class="menu-label">Principal</div>
+      <a class="menu-item" href="/admin/dashboard.html"><span class="icon">📊</span> Dashboard</a>
+      <a class="menu-item" href="/admin/produits.html"><span class="icon">🎨</span> Produits</a>
+      <a class="menu-item" href="/admin/utilisateurs.html"><span class="icon">👥</span> Utilisateurs</a>
+      <div class="menu-label">Production</div>
+      <a class="menu-item active" href="/admin/matieres-premieres.html"><span class="icon">🧪</span> Matières premières</a>
+      <a class="menu-item" href="/admin/lots-production.html"><span class="icon">🏭</span> Lots production</a>
+      <div class="menu-label">Analytique</div>
+      <a class="menu-item" href="/admin/analytics.html"><span class="icon">📈</span> Analytics</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar" id="userAvatar">A</div>
+        <div>
+          <div class="user-name" id="userName">Admin</div>
+          <div class="user-role">Administrateur</div>
+        </div>
+      </div>
+      <button class="menu-item" onclick="logout()"><span class="icon">🚪</span> Déconnexion</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title">🧪 Matières premières</div>
+      <span id="mpCount" style="font-size:.85rem; color:var(--text-muted);"></span>
+    </div>
+
+    <div class="content">
+
+      <!-- Alertes -->
+      <div class="alerts-bar" id="alertsBar">
+        <div class="alerts-bar-title">⚠️ Stock bas détecté</div>
+        <div class="alert-pills" id="alertPills"></div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="search-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input type="text" id="searchInput" placeholder="Rechercher..." oninput="filterMP()"/>
+        </div>
+        <button class="btn-add" onclick="openModal()">+ Ajouter une matière</button>
+      </div>
+
+      <!-- Grid -->
+      <div class="mp-grid" id="mpGrid">
+        <div class="empty-state">Chargement...</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title" id="modalTitle">Nouvelle matière</span>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+
+      <div class="alert alert-error" id="modalAlert">⚠️ <span id="modalAlertMsg"></span></div>
+
+      <div class="form-group">
+        <label>Nom de la matière *</label>
+        <input type="text" class="form-control" id="fNom" placeholder="Ex: Pigment blanc titane"/>
+      </div>
+
+      <div class="row-2">
+        <div class="form-group">
+          <label>Unité *</label>
+          <select class="form-control" id="fUnite">
+            <option value="kg">kg</option>
+            <option value="L">Litre (L)</option>
+            <option value="g">g</option>
+            <option value="ml">ml</option>
+            <option value="unité">unité</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Stock actuel *</label>
+          <input type="number" class="form-control" id="fStock" placeholder="0" min="0" step="0.01"/>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Stock minimum (alerte)</label>
+        <input type="number" class="form-control" id="fStockMin" placeholder="10" min="0" step="0.01"/>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+        <button class="btn-save" id="saveBtn" onclick="saveMP()">💾 Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    requireAuth(['admin']);
+
+    const user = Auth.getUser();
+    if (user) {
+      document.getElementById('userName').textContent   = user.nom;
+      document.getElementById('userAvatar').textContent = user.nom.charAt(0).toUpperCase();
+    }
+
+    let allMP    = [];
+    let editingId = null;
+
+    // Icônes selon nom
+    function getIcon(nom) {
+      const n = nom.toLowerCase();
+      if (n.includes('pigment'))  return '🎨';
+      if (n.includes('résine') || n.includes('resine')) return '🧴';
+      if (n.includes('solvant'))  return '💧';
+      if (n.includes('eau'))      return '💧';
+      if (n.includes('sel') || n.includes('poudre'))   return '🧂';
+      return '🧪';
+    }
+
+    async function loadMP() {
+      try {
+        const res = await api.get('/matieres-premieres') ||
+                    await fetch('http://localhost:3000/api/matieres-premieres', {
+                      headers: { Authorization: `Bearer ${Auth.getToken()}` }
+                    });
+        allMP = await res.json();
+        document.getElementById('mpCount').textContent = `${allMP.length} matière(s)`;
+        renderMP(allMP);
+        checkAlerts(allMP);
+      } catch { document.getElementById('mpGrid').innerHTML = '<div class="empty-state">❌ Erreur de chargement</div>'; }
+    }
+
+    function renderMP(items) {
+      const grid = document.getElementById('mpGrid');
+      if (!items.length) { grid.innerHTML = '<div class="empty-state">Aucune matière trouvée.</div>'; return; }
+
+      grid.innerHTML = items.map(m => {
+        const stock   = parseFloat(m.stock_actuel);
+        const min     = parseFloat(m.stock_minimum);
+        const pct     = min > 0 ? Math.min((stock / (min * 2)) * 100, 100) : 100;
+        const cls     = stock <= 0 ? 'empty' : stock <= min ? 'low' : 'ok';
+        const isAlert = stock <= min;
+
+        return `
+          <div class="mp-card ${isAlert ? 'alert-card' : ''}">
+            <div class="mp-header">
+              <div class="mp-icon">${getIcon(m.nom)}</div>
+              ${isAlert ? '<span class="mp-alert-badge">⚠️ Stock bas</span>' : ''}
+            </div>
+            <div class="mp-name">${m.nom}</div>
+            <div class="mp-unite">Unité : ${m.unite}</div>
+            <div class="stock-bar-wrap">
+              <div class="stock-bar-header">
+                <span class="stock-bar-label">Stock actuel</span>
+                <span class="stock-bar-value">${stock} ${m.unite}</span>
+              </div>
+              <div class="stock-bar-bg">
+                <div class="stock-bar-fill ${cls}" style="width:${pct}%"></div>
+              </div>
+            </div>
+            <div class="mp-footer">
+              <div class="mp-min">Min : <strong>${min} ${m.unite}</strong></div>
+              <div class="mp-actions">
+                <button class="btn-icon" onclick="editMP(${m.id})" title="Modifier">✏️</button>
+                <button class="btn-icon danger" onclick="deleteMP(${m.id})" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function checkAlerts(items) {
+      const low = items.filter(m => parseFloat(m.stock_actuel) <= parseFloat(m.stock_minimum));
+      if (low.length) {
+        document.getElementById('alertsBar').classList.add('show');
+        document.getElementById('alertPills').innerHTML =
+          low.map(m => `<span class="alert-pill">⚠️ ${m.nom} (${m.stock_actuel} ${m.unite})</span>`).join('');
+      }
+    }
+
+    function filterMP() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      renderMP(search ? allMP.filter(m => m.nom.toLowerCase().includes(search)) : allMP);
+    }
+
+    function openModal(id = null) {
+      editingId = id;
+      document.getElementById('modalAlert').classList.remove('show');
+      if (!id) {
+        document.getElementById('modalTitle').textContent = 'Nouvelle matière';
+        document.getElementById('fNom').value      = '';
+        document.getElementById('fUnite').value    = 'kg';
+        document.getElementById('fStock').value    = '';
+        document.getElementById('fStockMin').value = '10';
+      }
+      document.getElementById('modalOverlay').classList.add('open');
+    }
+
+    function editMP(id) {
+      const m = allMP.find(x => x.id === id);
+      if (!m) return;
+      editingId = id;
+      document.getElementById('modalTitle').textContent = 'Modifier la matière';
+      document.getElementById('fNom').value      = m.nom;
+      document.getElementById('fUnite').value    = m.unite;
+      document.getElementById('fStock').value    = m.stock_actuel;
+      document.getElementById('fStockMin').value = m.stock_minimum;
+      document.getElementById('modalOverlay').classList.add('open');
+    }
+
+    async function saveMP() {
+      const nom      = document.getElementById('fNom').value.trim();
+      const unite    = document.getElementById('fUnite').value;
+      const stock    = parseFloat(document.getElementById('fStock').value) || 0;
+      const stockMin = parseFloat(document.getElementById('fStockMin').value) || 10;
+      const btn      = document.getElementById('saveBtn');
+
+      if (!nom) { showAlert('Le nom est obligatoire.'); return; }
+
+      btn.innerHTML = '<span class="spinner"></span>...';
+      btn.disabled  = true;
+
+      try {
+        const endpoint = editingId ? `/matieres-premieres/${editingId}` : '/matieres-premieres';
+        const method   = editingId ? 'PUT' : 'POST';
+        const res = await fetch(`http://localhost:3000/api${endpoint}`, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${Auth.getToken()}`
+          },
+          body: JSON.stringify({ nom, unite, stock_actuel: stock, stock_minimum: stockMin })
+        });
+        if (res.ok) { closeModal(); await loadMP(); }
+        else { const d = await res.json(); showAlert(d.message || 'Erreur.'); }
+      } catch { showAlert('Erreur serveur.'); }
+      finally  { btn.innerHTML = '💾 Enregistrer'; btn.disabled = false; }
+    }
+
+    async function deleteMP(id) {
+      if (!confirm('Supprimer cette matière ?')) return;
+      try {
+        await fetch(`http://localhost:3000/api/matieres-premieres/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${Auth.getToken()}` }
+        });
+        await loadMP();
+      } catch { alert('Erreur.'); }
+    }
+
+    function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); editingId = null; }
+    function closeModalOutside(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
+    function showAlert(msg) {
+      document.getElementById('modalAlertMsg').textContent = msg;
+      document.getElementById('modalAlert').classList.add('show');
+    }
+
+    loadMP();
+  </script>
+</body>
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PeinturePro TN — Connexion Équipe</title>
+  <link rel="stylesheet" href="/css/main.css"/>
+  <style>
+    body { min-height: 100vh; display: flex; overflow: hidden; }
+
+    /* Panneau visuel gauche */
+    .panel-visual {
+      flex: 1;
+      position: relative;
+      background: var(--dark);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 3rem;
+      overflow: hidden;
+    }
+    .panel-visual::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 30% 40%, rgba(200,68,26,.45) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 50% at 75% 70%, rgba(232,160,32,.25) 0%, transparent 60%);
+    }
+    .brand-badge {
+      position: absolute;
+      top: 2.5rem; left: 3rem;
+      display: flex; align-items: center; gap: .75rem;
+      z-index: 2;
+    }
+    .brand-icon {
+      width: 44px; height: 44px;
+      background: var(--primary);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .brand-icon svg { width: 24px; height: 24px; fill: white; }
+    .brand-name { font-family: var(--font-display); font-size: 1.15rem; color: white; }
+    .brand-name span { color: var(--accent); }
+
+    .visual-content { position: relative; z-index: 2; }
+    .visual-tag {
+      display: inline-block;
+      background: rgba(200,68,26,.25);
+      border: 1px solid rgba(200,68,26,.5);
+      color: #F7C5B0;
+      font-size: .75rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: .3rem .85rem;
+      border-radius: 30px;
+      margin-bottom: 1.25rem;
+    }
+    .visual-headline {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.5vw, 2.8rem);
+      color: white;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+    .visual-headline em { font-style: normal; color: var(--accent); }
+    .visual-sub { color: rgba(255,255,255,.55); font-size: .9rem; max-width: 340px; line-height: 1.7; }
+
+    .roles-row { display: flex; gap: .6rem; margin-top: 2rem; flex-wrap: wrap; }
+    .role-pill {
+      display: flex; align-items: center; gap: .45rem;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 30px;
+      padding: .35rem .9rem;
+      font-size: .78rem;
+      color: rgba(255,255,255,.75);
+    }
+    .role-pill .dot { width: 7px; height: 7px; border-radius: 50%; }
+    .dot-admin   { background: var(--accent); }
+    .dot-comm    { background: #5BC8F5; }
+    .dot-livreur { background: #7FE09A; }
+
+    /* Panneau formulaire droit */
+    .panel-form {
+      width: 440px;
+      min-height: 100vh;
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 3rem 2.75rem;
+      box-shadow: -20px 0 60px rgba(26,1,8,.08);
+    }
+
+    .form-header { margin-bottom: 2.25rem; }
+    .form-header h1 {
+      font-family: var(--font-display);
+      font-size: 1.9rem;
+      color: var(--dark);
+      margin-bottom: .4rem;
+    }
+    .form-header p { color: var(--text-muted); font-size: .9rem; }
+
+    /* Sélecteur rôle */
+    .role-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .5rem;
+      margin-bottom: 1.75rem;
+    }
+    .role-btn {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: .65rem .4rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+      background: var(--surface);
+    }
+    .role-btn .role-icon { font-size: 1.4rem; display: block; margin-bottom: .25rem; }
+    .role-btn .role-label {
+      font-size: .72rem; font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .role-btn:hover, .role-btn.active {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+    .role-btn.active .role-label { color: var(--primary); }
+
+    /* Input icône */
+    .input-icon { position: relative; }
+    .input-icon .icon {
+      position: absolute; left: .95rem; top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted); pointer-events: none;
+    }
+    .input-icon .form-control { padding-left: 2.6rem; }
+    .toggle-pass {
+      position: absolute; right: .95rem; top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer; color: var(--text-muted);
+      background: none; border: none; padding: 0; line-height: 1;
+    }
+
+    .forgot-link { text-align: right; margin-top: -.7rem; margin-bottom: 1.25rem; }
+    .forgot-link a { font-size: .82rem; color: var(--primary); text-decoration: none; }
+
+    .btn-submit { width: 100%; padding: .9rem; font-size: 1rem; }
+
+    .switch-link {
+      text-align: center; margin-top: 1.75rem;
+      font-size: .87rem; color: var(--text-muted);
+    }
+    .switch-link a { color: var(--primary); font-weight: 600; text-decoration: none; }
+
+    @media (max-width: 768px) {
+      .panel-visual { display: none; }
+      .panel-form { width: 100%; padding: 2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<a href="/index.html" style="
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  font-size: .83rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: .4rem .9rem;
+  box-shadow: var(--shadow-sm);
+  transition: all .2s;
+  z-index: 99;
+" onmouseover="this.style.color='var(--primary)';this.style.borderColor='var(--primary)'"
+   onmouseout="this.style.color='var(--text-muted)';this.style.borderColor='var(--border)'">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+    <polyline points="15 18 9 12 15 6"/>
+  </svg>
+  Retour
+</a>
+  <!-- Panneau visuel -->
+  <aside class="panel-visual">
+    <div class="brand-badge">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24"><path d="M7 14c0 1.1.9 2 2 2h2v-4H9c-1.1 0-2 .9-2 2zm10-9h-1V3h-2v2H10V3H8v2H7C5.9 5 5 5.9 5 7v12c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 14H7V9h10v10z"/></svg>
+      </div>
+      <span class="brand-name">PeinturePro <span>TN</span></span>
+    </div>
+    <div class="visual-content">
+      <span class="visual-tag">Espace professionnel</span>
+      <h2 class="visual-headline">
+        Gérez votre<br/>production avec<br/><em>précision</em>
+      </h2>
+      <p class="visual-sub">
+        Plateforme centralisée pour la gestion des stocks,
+        commandes et livraisons chantiers en Tunisie.
+      </p>
+      <div class="roles-row">
+        <span class="role-pill"><span class="dot dot-admin"></span>Administrateur</span>
+        <span class="role-pill"><span class="dot dot-comm"></span>Commercial</span>
+        <span class="role-pill"><span class="dot dot-livreur"></span>Livreur</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Formulaire -->
+  <main class="panel-form">
+    <div class="form-header">
+      <h1>Connexion</h1>
+      <p>Accès réservé à l'équipe PeinturePro TN</p>
+    </div>
+
+    <div class="role-selector" id="roleSelector">
+      <div class="role-btn active" data-role="admin" onclick="selectRole(this)">
+        <span class="role-icon">🛡️</span>
+        <span class="role-label">Admin</span>
+      </div>
+      <div class="role-btn" data-role="commercial" onclick="selectRole(this)">
+        <span class="role-icon">💼</span>
+        <span class="role-label">Commercial</span>
+      </div>
+      <div class="role-btn" data-role="livreur" onclick="selectRole(this)">
+        <span class="role-icon">🚚</span>
+        <span class="role-label">Livreur</span>
+      </div>
+    </div>
+
+    <div class="alert alert-error" id="alertError">
+      ⚠️ <span id="alertMsg"></span>
+    </div>
+
+    <div class="form-group">
+      <label>Adresse e-mail</label>
+      <div class="input-icon">
+        <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+          <polyline points="22,6 12,13 2,6"/>
+        </svg>
+        <input type="email" class="form-control" id="email"
+               placeholder="exemple@peinturepro.tn" autocomplete="email"/>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Mot de passe</label>
+      <div class="input-icon">
+        <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <input type="password" class="form-control" id="password"
+               placeholder="••••••••" autocomplete="current-password"/>
+        <button class="toggle-pass" onclick="togglePassword()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="forgot-link">
+      <a href="/forgot-password.html">Mot de passe oublié ?</a>
+    </div>
+
+    <button class="btn-primary btn-submit" id="submitBtn" onclick="handleLogin()">
+      Se connecter
+    </button>
+
+    <div class="switch-link">
+      Vous êtes client ? <a href="/login-client.html">Accès espace client →</a>
+    </div>
+  </main>
+
+  <script>
+    const API_URL = 'http://localhost:3000/api';
+    let selectedRole = 'admin';
+
+    function selectRole(el) {
+      document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+      selectedRole = el.dataset.role;
+    }
+
+    function togglePassword() {
+      const input = document.getElementById('password');
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    async function handleLogin() {
+      const email    = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const btn      = document.getElementById('submitBtn');
+      const alert    = document.getElementById('alertError');
+      alert.classList.remove('show');
+
+      if (!email || !password) { showError('Veuillez remplir tous les champs.'); return; }
+
+      btn.innerHTML = '<span class="spinner"></span>Connexion…';
+      btn.disabled  = true;
+
+      try {
+        const res  = await fetch(`${API_URL}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, role: selectedRole })
+        });
+        const data = await res.json();
+        if (!res.ok) { showError(data.message || 'Identifiants incorrects.'); return; }
+
+        localStorage.setItem('token',        data.token);
+        localStorage.setItem('refreshToken', data.refreshToken);
+        localStorage.setItem('user',         JSON.stringify(data.user));
+        localStorage.setItem('role',         data.user.role);
+
+        const routes = {
+          admin:      '/admin/dashboard.html',
+          commercial: '/commercial/dashboard.html',
+          livreur:    '/livreur/dashboard.html'
+        };
+        window.location.href = routes[data.user.role] || '/';
+
+      } catch { showError('Erreur de connexion au serveur.'); }
+      finally  { btn.innerHTML = 'Se connecter'; btn.disabled = false; }
+    }
+
+    function showError(msg) {
+      document.getElementById('alertMsg').textContent = msg;
+      document.getElementById('alertError').classList.add('show');
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter') handleLogin();
+    });
+  </script>
+</body>
+</html>

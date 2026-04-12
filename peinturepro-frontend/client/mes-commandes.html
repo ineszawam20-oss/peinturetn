@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PeinturePro TN — Mes Commandes</title>
+  <link rel="stylesheet" href="../css/main.css"/>
+  <style>
+    body { background: var(--surface); min-height: 100vh; }
+
+    .navbar {
+      background: var(--white);
+      border-bottom: 1.5px solid var(--border);
+      padding: 0 2rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+    .nav-brand { font-family: var(--font-display); font-size: 1.2rem; color: var(--dark); }
+    .nav-brand span { color: var(--primary); }
+    .nav-links { display: flex; gap: 1rem; align-items: center; }
+    .nav-link {
+      font-size: .88rem; color: var(--text-muted);
+      text-decoration: none; padding: .4rem .75rem;
+      border-radius: var(--radius-sm); transition: all .2s;
+    }
+    .nav-link:hover, .nav-link.active {
+      background: var(--primary-light); color: var(--primary); font-weight: 600;
+    }
+    .btn-logout {
+      background: none; border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm); padding: .45rem .9rem;
+      font-size: .82rem; color: var(--text-muted); cursor: pointer;
+    }
+    .btn-logout:hover { border-color: var(--primary); color: var(--primary); }
+
+    /* ===== Page ===== */
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem;
+    }
+
+    /* ===== Header ===== */
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+    }
+    .page-title {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      color: var(--dark);
+    }
+    .page-title span { color: var(--text-muted); font-size: 1rem; font-family: var(--font-body); margin-left: .5rem; }
+
+    /* ===== Stats ===== */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      box-shadow: var(--shadow-sm);
+      text-align: center;
+    }
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      color: var(--primary);
+      margin-bottom: .2rem;
+    }
+    .stat-label { font-size: .78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; }
+
+    /* ===== Filtres statut ===== */
+    .status-filters {
+      display: flex;
+      gap: .5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .status-btn {
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      border-radius: 30px;
+      padding: .35rem .9rem;
+      font-size: .82rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      gap: .35rem;
+    }
+    .status-btn:hover, .status-btn.active {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* ===== Loading ===== */
+    .loading {
+      text-align: center;
+      padding: 4rem;
+      color: var(--text-muted);
+    }
+    .loading .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ===== Empty ===== */
+    .empty-state {
+      text-align: center;
+      padding: 4rem;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+    }
+    .empty-state svg { opacity: .25; margin-bottom: 1rem; }
+    .empty-state p { color: var(--text-muted); margin-bottom: 1.25rem; }
+
+    /* ===== Commande card ===== */
+    .commande-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1rem;
+      overflow: hidden;
+      transition: box-shadow .2s;
+    }
+    .commande-card:hover { box-shadow: var(--shadow-md); }
+
+    .commande-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem 1.5rem;
+      cursor: pointer;
+      border-bottom: 1px solid transparent;
+      transition: border-color .2s;
+    }
+    .commande-card.open .commande-header {
+      border-bottom-color: var(--border);
+    }
+
+    .cmd-left { display: flex; align-items: center; gap: 1rem; }
+    .cmd-num {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      color: var(--dark);
+    }
+    .cmd-date { font-size: .8rem; color: var(--text-muted); }
+
+    /* Badge statut */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      padding: .3rem .8rem;
+      border-radius: 30px;
+      font-size: .75rem;
+      font-weight: 600;
+    }
+    .status-en_attente   { background: #FEF9E7; color: #7D6608; border: 1px solid #F0D060; }
+    .status-confirmee    { background: #EBF5FB; color: #1A5276; border: 1px solid #5DADE2; }
+    .status-en_cours     { background: #EAF4F4; color: #0E6655; border: 1px solid #48C9B0; }
+    .status-livree       { background: #E6F6EE; color: #1D6A42; border: 1px solid #58D68D; }
+    .status-annulee      { background: #FDEDEC; color: #922B21; border: 1px solid #F1948A; }
+
+    .cmd-montant {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: var(--primary);
+    }
+    .cmd-chevron {
+      color: var(--text-muted);
+      transition: transform .3s;
+      font-size: .85rem;
+    }
+    .commande-card.open .cmd-chevron { transform: rotate(180deg); }
+
+    /* Détails expandés */
+    .commande-details {
+      display: none;
+      padding: 1.25rem 1.5rem;
+    }
+    .commande-card.open .commande-details { display: block; }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .detail-item .detail-label {
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--text-muted);
+      margin-bottom: .2rem;
+    }
+    .detail-item .detail-value {
+      font-size: .9rem;
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    /* Timeline statut */
+    .timeline {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-top: 1rem;
+    }
+    .tl-step {
+      flex: 1;
+      text-align: center;
+      position: relative;
+    }
+    .tl-step::before {
+      content: '';
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      right: -50%;
+      height: 2px;
+      background: var(--border);
+      z-index: 0;
+    }
+    .tl-step:last-child::before { display: none; }
+    .tl-dot {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto .4rem;
+      font-size: .75rem;
+      position: relative;
+      z-index: 1;
+      transition: all .3s;
+    }
+    .tl-step.done .tl-dot {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+    .tl-step.active .tl-dot {
+      border-color: var(--primary);
+      color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(200,68,26,.15);
+    }
+    .tl-step.done::before { background: var(--primary); }
+    .tl-label { font-size: .68rem; color: var(--text-muted); }
+    .tl-step.done .tl-label, .tl-step.active .tl-label { color: var(--primary); font-weight: 600; }
+
+    @media (max-width: 600px) {
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .details-grid { grid-template-columns: 1fr 1fr; }
+      .page { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-brand">PeinturePro <span>TN</span></div>
+    <div class="nav-links">
+      <a href="catalogue.html" class="nav-link">Catalogue</a>
+      <a href="simulateur.html" class="nav-link">Simulateur</a>
+      <a href="mes-commandes.html" class="nav-link active">Mes commandes</a>
+      <button class="btn-logout" onclick="logout()">Déconnexion</button>
+    </div>
+  </nav>
+
+  <div class="page">
+
+    <!-- Header -->
+    <div class="page-header">
+      <h1 class="page-title">
+        Mes commandes
+        <span id="totalCount"></span>
+      </h1>
+      <a href="catalogue.html" class="btn-primary" style="text-decoration:none; padding:.6rem 1.25rem; font-size:.88rem;">
+        + Nouvelle commande
+      </a>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value" id="statTotal">0</div>
+        <div class="stat-label">Total commandes</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statEnCours">0</div>
+        <div class="stat-label">En cours</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statLivrees">0</div>
+        <div class="stat-label">Livrées</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statMontant">0</div>
+        <div class="stat-label">Total DT</div>
+      </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="status-filters">
+      <button class="status-btn active" onclick="filterStatus('tous', this)">📋 Toutes</button>
+      <button class="status-btn" onclick="filterStatus('en_attente', this)">⏳ En attente</button>
+      <button class="status-btn" onclick="filterStatus('confirmee', this)">✅ Confirmées</button>
+      <button class="status-btn" onclick="filterStatus('en_cours', this)">🚚 En cours</button>
+      <button class="status-btn" onclick="filterStatus('livree', this)">📦 Livrées</button>
+      <button class="status-btn" onclick="filterStatus('annulee', this)">❌ Annulées</button>
+    </div>
+
+    <!-- Liste commandes -->
+    <div id="loadingState" class="loading">
+      <div class="spinner"></div>
+      Chargement de vos commandes...
+    </div>
+
+    <div id="commandesList"></div>
+
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    requireAuth(['client']);
+    displayUserInfo();
+
+    let allCommandes  = [];
+    let currentFilter = 'tous';
+
+    const statusLabels = {
+      en_attente: { label: 'En attente',  icon: '⏳' },
+      confirmee:  { label: 'Confirmée',   icon: '✅' },
+      en_cours:   { label: 'En cours',    icon: '🚚' },
+      livree:     { label: 'Livrée',      icon: '📦' },
+      annulee:    { label: 'Annulée',     icon: '❌' }
+    };
+
+    const timelineSteps = [
+      { key: 'en_attente', label: 'Reçue',      icon: '📝' },
+      { key: 'confirmee',  label: 'Confirmée',  icon: '✅' },
+      { key: 'en_cours',   label: 'En livraison', icon: '🚚' },
+      { key: 'livree',     label: 'Livrée',     icon: '📦' }
+    ];
+
+    const statusOrder = ['en_attente', 'confirmee', 'en_cours', 'livree'];
+
+    // ===== Charger les commandes =====
+    async function loadCommandes() {
+      try {
+        const res  = await api.get('/commandes');
+        const data = await res.json();
+        allCommandes = data;
+
+        document.getElementById('loadingState').style.display = 'none';
+        updateStats(data);
+        renderCommandes(data);
+      } catch {
+        document.getElementById('loadingState').innerHTML = '❌ Erreur de chargement.';
+      }
+    }
+
+    // ===== Stats =====
+    function updateStats(commandes) {
+      const enCours  = commandes.filter(c => ['en_attente','confirmee','en_cours'].includes(c.statut)).length;
+      const livrees  = commandes.filter(c => c.statut === 'livree').length;
+      const montant  = commandes.reduce((s, c) => s + parseFloat(c.montant_total || 0), 0);
+
+      document.getElementById('statTotal').textContent   = commandes.length;
+      document.getElementById('statEnCours').textContent = enCours;
+      document.getElementById('statLivrees').textContent = livrees;
+      document.getElementById('statMontant').textContent = montant.toFixed(0);
+      document.getElementById('totalCount').textContent  = `(${commandes.length})`;
+    }
+
+    // ===== Filtrer =====
+    function filterStatus(status, btn) {
+      currentFilter = status;
+      document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const filtered = status === 'tous'
+        ? allCommandes
+        : allCommandes.filter(c => c.statut === status);
+
+      renderCommandes(filtered);
+    }
+
+    // ===== Rendu commandes =====
+    function renderCommandes(commandes) {
+      const list = document.getElementById('commandesList');
+
+      if (!commandes.length) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+            <p>Aucune commande trouvée.</p>
+            <a href="catalogue.html" class="btn-primary" style="text-decoration:none; display:inline-block;">
+              Passer une commande
+            </a>
+          </div>`;
+        return;
+      }
+
+      list.innerHTML = commandes.map(cmd => {
+        const s        = statusLabels[cmd.statut] || { label: cmd.statut, icon: '•' };
+        const date     = new Date(cmd.created_at).toLocaleDateString('fr-TN', {
+          day: '2-digit', month: 'long', year: 'numeric'
+        });
+        const dateLiv  = cmd.date_livraison_souhaitee
+          ? new Date(cmd.date_livraison_souhaitee).toLocaleDateString('fr-TN', { day: '2-digit', month: 'short' })
+          : 'Non précisée';
+
+        // Timeline
+        const currentIdx = statusOrder.indexOf(cmd.statut);
+        const timeline = timelineSteps.map((step, i) => {
+          const isDone   = i < currentIdx;
+          const isActive = i === currentIdx;
+          return `
+            <div class="tl-step ${isDone ? 'done' : ''} ${isActive ? 'active' : ''}">
+              <div class="tl-dot">${step.icon}</div>
+              <div class="tl-label">${step.label}</div>
+            </div>`;
+        }).join('');
+
+        return `
+          <div class="commande-card" id="cmd-${cmd.id}">
+            <div class="commande-header" onclick="toggleCard(${cmd.id})">
+              <div class="cmd-left">
+                <div>
+                  <div class="cmd-num">Commande #${cmd.id}</div>
+                  <div class="cmd-date">${date}</div>
+                </div>
+                <span class="status-badge status-${cmd.statut}">
+                  ${s.icon} ${s.label}
+                </span>
+              </div>
+              <div style="display:flex; align-items:center; gap:1rem;">
+                <div class="cmd-montant">${parseFloat(cmd.montant_total).toFixed(3)} DT</div>
+                <span class="cmd-chevron">▼</span>
+              </div>
+            </div>
+
+            <div class="commande-details">
+              <div class="details-grid">
+                <div class="detail-item">
+                  <div class="detail-label">Quantité</div>
+                  <div class="detail-value">${parseFloat(cmd.litres_calcules).toFixed(2)} L</div>
+                </div>
+                <div class="detail-item">
+                  <div class="detail-label">Surface</div>
+                  <div class="detail-value">${cmd.surface_m2 ? parseFloat(cmd.surface_m2).toFixed(0) + ' m²' : '—'}</div>
+                </div>
+                <div class="detail-item">
+                  <div class="detail-label">Livraison souhaitée</div>
+                  <div class="detail-value">${dateLiv}</div>
+                </div>
+              </div>
+
+              <div style="font-size:.8rem; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:.75rem;">
+                Suivi de commande
+              </div>
+              <div class="timeline">${timeline}</div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function toggleCard(id) {
+      const card = document.getElementById(`cmd-${id}`);
+      card.classList.toggle('open');
+    }
+
+    loadCommandes();
+  </script>
+</body>
+</html>
