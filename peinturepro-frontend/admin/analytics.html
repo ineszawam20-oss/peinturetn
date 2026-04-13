@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PeinturePro TN — Analytics</title>
+  <link rel="stylesheet" href="/css/main.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { background: #F4F1EE; min-height: 100vh; display: flex; }
+
+    .sidebar {
+      width: 240px; min-height: 100vh;
+      background: var(--dark); display: flex;
+      flex-direction: column; padding: 1.5rem 0;
+      position: fixed; top: 0; left: 0; z-index: 100;
+      box-shadow: 4px 0 20px rgba(0,0,0,.15);
+    }
+    .sidebar-brand {
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      margin-bottom: 1rem;
+    }
+    .logo { display: flex; align-items: center; gap: .65rem; }
+    .logo-box {
+      width: 36px; height: 36px; background: var(--primary);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    }
+    .logo-box svg { width: 20px; height: 20px; fill: white; }
+    .logo-text { font-family: var(--font-display); font-size: 1rem; color: white; }
+    .logo-text span { color: var(--accent); }
+    .sidebar-menu { flex: 1; padding: 0 .75rem; }
+    .menu-label {
+      font-size: .65rem; font-weight: 600; letter-spacing: .12em;
+      text-transform: uppercase; color: rgba(255,255,255,.3);
+      padding: .75rem .75rem .35rem;
+    }
+    .menu-item {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .65rem .75rem; border-radius: 8px;
+      text-decoration: none; color: rgba(255,255,255,.55);
+      font-size: .88rem; font-weight: 500; transition: all .2s;
+      margin-bottom: .15rem; cursor: pointer; border: none;
+      background: none; width: 100%; text-align: left;
+    }
+    .menu-item:hover { background: rgba(255,255,255,.07); color: rgba(255,255,255,.85); }
+    .menu-item.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(200,68,26,.3); }
+    .menu-item .icon { font-size: 1.1rem; width: 20px; text-align: center; }
+    .sidebar-footer { padding: 1rem .75rem 0; border-top: 1px solid rgba(255,255,255,.08); }
+    .user-info { display: flex; align-items: center; gap: .65rem; padding: .65rem .75rem; margin-bottom: .5rem; }
+    .user-avatar {
+      width: 34px; height: 34px; background: var(--primary); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem; color: white; font-weight: 600;
+    }
+    .user-name { font-size: .83rem; color: white; font-weight: 500; }
+    .user-role { font-size: .7rem; color: rgba(255,255,255,.4); }
+
+    .main { margin-left: 240px; flex: 1; min-height: 100vh; }
+    .topbar {
+      background: white; padding: 1rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 4px rgba(0,0,0,.04);
+    }
+    .topbar-title { font-family: var(--font-display); font-size: 1.3rem; color: var(--dark); }
+    .topbar-right { display: flex; gap: .75rem; align-items: center; }
+    .btn-export {
+      background: var(--primary-light); color: var(--primary);
+      border: 1.5px solid rgba(200,68,26,.2);
+      border-radius: var(--radius-sm); padding: .45rem .9rem;
+      font-size: .82rem; font-weight: 600; cursor: pointer;
+      font-family: var(--font-body); transition: all .2s;
+    }
+    .btn-export:hover { background: var(--primary); color: white; }
+
+    .content { padding: 2rem; }
+
+    /* KPI row */
+    .kpi-row {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem; margin-bottom: 2rem;
+    }
+    .kpi-card {
+      background: white; border-radius: var(--radius-md);
+      padding: 1.4rem; box-shadow: 0 2px 8px rgba(0,0,0,.05);
+      position: relative; overflow: hidden;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.08); }
+    .kpi-card::after {
+      content: attr(data-icon);
+      position: absolute; right: 1rem; bottom: .75rem;
+      font-size: 2.5rem; opacity: .08;
+    }
+    .kpi-label { font-size: .75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: .5rem; }
+    .kpi-value { font-family: var(--font-display); font-size: 1.9rem; color: var(--dark); margin-bottom: .25rem; }
+    .kpi-sub { font-size: .75rem; color: var(--text-muted); }
+    .kpi-trend {
+      display: inline-flex; align-items: center; gap: .2rem;
+      font-size: .72rem; font-weight: 600;
+      padding: .15rem .5rem; border-radius: 30px; margin-top: .35rem;
+    }
+    .trend-up   { background: #D1FAE5; color: #065F46; }
+    .trend-down { background: #FEE2E2; color: #991B1B; }
+
+    /* Charts grid */
+    .charts-row-1 {
+      display: grid; grid-template-columns: 2fr 1fr;
+      gap: 1.25rem; margin-bottom: 1.25rem;
+    }
+    .charts-row-2 {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1.25rem; margin-bottom: 1.25rem;
+    }
+    .chart-card {
+      background: white; border-radius: var(--radius-md);
+      padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    }
+    .chart-header {
+      display: flex; align-items: center;
+      justify-content: space-between; margin-bottom: 1.25rem;
+    }
+    .chart-title { font-family: var(--font-display); font-size: 1rem; color: var(--dark); }
+    .chart-sub { font-size: .75rem; color: var(--text-muted); margin-top: .1rem; }
+    .chart-badge {
+      font-size: .72rem; background: var(--primary-light);
+      color: var(--primary); padding: .2rem .6rem;
+      border-radius: 30px; font-weight: 600;
+    }
+
+    /* Top produits */
+    .top-produit-item {
+      display: flex; align-items: center; gap: .85rem;
+      padding: .65rem 0; border-bottom: 1px solid #FAF7F4;
+    }
+    .top-produit-item:last-child { border-bottom: none; }
+    .top-rank {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: var(--primary-light); color: var(--primary);
+      font-size: .72rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .top-rank.gold   { background: #FEF3C7; color: #92400E; }
+    .top-rank.silver { background: #F1F5F9; color: #475569; }
+    .top-rank.bronze { background: #FEF9E7; color: #7C6528; }
+    .top-color {
+      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    }
+    .top-name { flex: 1; font-size: .87rem; font-weight: 600; color: var(--dark); }
+    .top-bar-wrap { flex: 2; }
+    .top-bar-bg { height: 6px; background: #F0EBE6; border-radius: 3px; overflow: hidden; }
+    .top-bar-fill { height: 100%; background: var(--primary); border-radius: 3px; transition: width .8s ease; }
+    .top-val { font-size: .8rem; font-weight: 600; color: var(--primary); white-space: nowrap; }
+
+    /* Livraisons stats */
+    .liv-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: .75rem; margin-bottom: 1.25rem;
+    }
+    .liv-stat {
+      background: white; border-radius: var(--radius-sm);
+      padding: 1rem; text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,.04);
+    }
+    .liv-stat-num { font-family: var(--font-display); font-size: 1.6rem; color: var(--dark); }
+    .liv-stat-lbl { font-size: .72rem; color: var(--text-muted); }
+
+    @media (max-width: 1200px) {
+      .kpi-row { grid-template-columns: repeat(2, 1fr); }
+      .charts-row-1 { grid-template-columns: 1fr; }
+      .charts-row-2 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+      .kpi-row { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo">
+        <div class="logo-box">
+          <svg viewBox="0 0 24 24"><path d="M7 14c0 1.1.9 2 2 2h2v-4H9c-1.1 0-2 .9-2 2zm10-9h-1V3h-2v2H10V3H8v2H7C5.9 5 5 5.9 5 7v12c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 14H7V9h10v10z"/></svg>
+        </div>
+        <span class="logo-text">PeinturePro <span>TN</span></span>
+      </div>
+    </div>
+    <nav class="sidebar-menu">
+      <div class="menu-label">Principal</div>
+      <a class="menu-item" href="/admin/dashboard.html"><span class="icon">📊</span> Dashboard</a>
+      <a class="menu-item" href="/admin/produits.html"><span class="icon">🎨</span> Produits</a>
+      <a class="menu-item" href="/admin/utilisateurs.html"><span class="icon">👥</span> Utilisateurs</a>
+      <div class="menu-label">Production</div>
+      <a class="menu-item" href="/admin/matieres-premieres.html"><span class="icon">🧪</span> Matières premières</a>
+      <a class="menu-item" href="/admin/lots-production.html"><span class="icon">🏭</span> Lots production</a>
+      <div class="menu-label">Analytique</div>
+      <a class="menu-item active" href="/admin/analytics.html"><span class="icon">📈</span> Analytics</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar" id="userAvatar">A</div>
+        <div>
+          <div class="user-name" id="userName">Admin</div>
+          <div class="user-role">Administrateur</div>
+        </div>
+      </div>
+      <button class="menu-item" onclick="logout()"><span class="icon">🚪</span> Déconnexion</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title">📈 Analytics & Rapports</div>
+      <div class="topbar-right">
+        <span id="lastUpdate" style="font-size:.78rem; color:var(--text-muted);"></span>
+        <button class="btn-export" onclick="exportCSV()">📥 Export CSV</button>
+        <button class="btn-export" onclick="loadAll()">🔄 Actualiser</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- KPIs -->
+      <div class="kpi-row">
+        <div class="kpi-card" data-icon="💰">
+          <div class="kpi-label">Chiffre d'affaires total</div>
+          <div class="kpi-value" id="kpiCA">—</div>
+          <div class="kpi-sub">Commandes livrées</div>
+          <div class="kpi-trend trend-up" id="kpiCATrend">↑ En cours de calcul</div>
+        </div>
+        <div class="kpi-card" data-icon="📦">
+          <div class="kpi-label">Commandes totales</div>
+          <div class="kpi-value" id="kpiCmd">—</div>
+          <div class="kpi-sub" id="kpiCmdSub">—</div>
+        </div>
+        <div class="kpi-card" data-icon="💧">
+          <div class="kpi-label">Litres vendus</div>
+          <div class="kpi-value" id="kpiLitres">—</div>
+          <div class="kpi-sub">Total produit vendu</div>
+        </div>
+        <div class="kpi-card" data-icon="👥">
+          <div class="kpi-label">Panier moyen</div>
+          <div class="kpi-value" id="kpiPanier">—</div>
+          <div class="kpi-sub">Par commande livrée</div>
+        </div>
+      </div>
+
+      <!-- Row 1 : CA + Doughnut -->
+      <div class="charts-row-1">
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <div class="chart-title">Évolution du CA mensuel</div>
+              <div class="chart-sub">12 derniers mois — commandes livrées</div>
+            </div>
+            <span class="chart-badge" id="caYear"></span>
+          </div>
+          <canvas id="caChart" height="110"></canvas>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <div class="chart-title">Répartition statuts</div>
+              <div class="chart-sub">Toutes commandes</div>
+            </div>
+          </div>
+          <canvas id="statusChart" height="200"></canvas>
+        </div>
+      </div>
+
+      <!-- Row 2 : Top produits + Livraisons -->
+      <div class="charts-row-2">
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <div class="chart-title">🏆 Top produits vendus</div>
+              <div class="chart-sub">Par chiffre d'affaires</div>
+            </div>
+          </div>
+          <div id="topProduits"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <div class="chart-title">🚚 Livraisons</div>
+              <div class="chart-sub">Statistiques de livraison</div>
+            </div>
+          </div>
+          <div class="liv-stats" id="livStats">
+            <div class="liv-stat"><div class="liv-stat-num" id="livTotal">—</div><div class="liv-stat-lbl">Total</div></div>
+            <div class="liv-stat"><div class="liv-stat-num" id="livEnCours">—</div><div class="liv-stat-lbl">En cours</div></div>
+            <div class="liv-stat"><div class="liv-stat-num" id="livLivrees">—</div><div class="liv-stat-lbl">Livrées</div></div>
+          </div>
+          <canvas id="livChart" height="160"></canvas>
+        </div>
+      </div>
+
+      <!-- Commandes par mois table -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">📅 Commandes par mois</div>
+            <div class="chart-sub">Nombre et montant</div>
+          </div>
+        </div>
+        <canvas id="cmdChart" height="80"></canvas>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    requireAuth(['admin']);
+
+    const user = Auth.getUser();
+    if (user) {
+      document.getElementById('userName').textContent   = user.nom;
+      document.getElementById('userAvatar').textContent = user.nom.charAt(0).toUpperCase();
+    }
+
+    document.getElementById('caYear').textContent       = new Date().getFullYear();
+    document.getElementById('lastUpdate').textContent   = `Mis à jour : ${new Date().toLocaleTimeString('fr-TN')}`;
+
+    const months = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+    const statusLabels = {
+      en_attente: { label: 'En attente',  color: '#F59E0B' },
+      confirmee:  { label: 'Confirmée',   color: '#3B82F6' },
+      en_cours:   { label: 'En cours',    color: '#10B981' },
+      livree:     { label: 'Livrée',      color: '#059669' },
+      annulee:    { label: 'Annulée',     color: '#EF4444' }
+    };
+
+    let charts = {};
+
+    async function loadAll() {
+      try {
+        const [cmdRes, livRes, prodRes] = await Promise.all([
+          api.get('/commandes'),
+          api.get('/livraisons'),
+          api.get('/produits')
+        ]);
+        const commandes  = await cmdRes.json();
+        const livraisons = await livRes.json();
+        const produits   = await prodRes.json();
+
+        computeKPIs(commandes);
+        renderCAChart(commandes);
+        renderStatusChart(commandes);
+        renderTopProduits(commandes, produits);
+        renderLivraisons(livraisons);
+        renderCmdChart(commandes);
+
+      } catch (err) { console.error(err); }
+    }
+
+    function computeKPIs(commandes) {
+      const livrees   = commandes.filter(c => c.statut === 'livree');
+      const ca        = livrees.reduce((s, c) => s + parseFloat(c.montant_total || 0), 0);
+      const litres    = livrees.reduce((s, c) => s + parseFloat(c.litres_calcules || 0), 0);
+      const panier    = livrees.length ? ca / livrees.length : 0;
+
+      document.getElementById('kpiCA').textContent     = ca.toFixed(0) + ' DT';
+      document.getElementById('kpiCmd').textContent    = commandes.length;
+      document.getElementById('kpiCmdSub').textContent = `${livrees.length} livrées`;
+      document.getElementById('kpiLitres').textContent = litres.toFixed(0) + ' L';
+      document.getElementById('kpiPanier').textContent = panier.toFixed(1) + ' DT';
+      document.getElementById('kpiCATrend').textContent = `↑ ${livrees.length} commandes livrées`;
+    }
+
+    function renderCAChart(commandes) {
+      const caData  = new Array(12).fill(0);
+      const cmdData = new Array(12).fill(0);
+      commandes.filter(c => c.statut === 'livree').forEach(c => {
+        const m = new Date(c.created_at).getMonth();
+        caData[m]  += parseFloat(c.montant_total || 0);
+        cmdData[m] += 1;
+      });
+
+      if (charts.ca) charts.ca.destroy();
+      charts.ca = new Chart(document.getElementById('caChart'), {
+        type: 'line',
+        data: {
+          labels: months,
+          datasets: [{
+            label: 'CA (DT)',
+            data: caData,
+            borderColor: 'rgba(200,68,26,.9)',
+            backgroundColor: 'rgba(200,68,26,.08)',
+            borderWidth: 2.5,
+            pointBackgroundColor: 'rgba(200,68,26,.9)',
+            pointRadius: 4,
+            fill: true,
+            tension: .4
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,.05)' } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    function renderStatusChart(commandes) {
+      const counts = {};
+      commandes.forEach(c => { counts[c.statut] = (counts[c.statut] || 0) + 1; });
+      const labels = Object.keys(counts).map(k => statusLabels[k]?.label || k);
+      const values = Object.values(counts);
+      const colors = Object.keys(counts).map(k => statusLabels[k]?.color || '#999');
+
+      if (charts.status) charts.status.destroy();
+      charts.status = new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut',
+        data: {
+          labels,
+          datasets: [{ data: values, backgroundColor: colors, borderWidth: 0, hoverOffset: 8 }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 10 } }
+          },
+          cutout: '65%'
+        }
+      });
+    }
+
+    function renderTopProduits(commandes, produits) {
+      const caParProduit = {};
+      commandes.filter(c => c.statut === 'livree').forEach(c => {
+        const key = c.produit_id || 'unknown';
+        caParProduit[key] = (caParProduit[key] || 0) + parseFloat(c.montant_total || 0);
+      });
+
+      const top = Object.entries(caParProduit)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
+
+      const maxVal  = top[0]?.[1] || 1;
+      const rankCls = ['gold', 'silver', 'bronze', '', ''];
+
+      document.getElementById('topProduits').innerHTML = top.length
+        ? top.map(([id, val], i) => {
+            const prod = produits.find(p => String(p.id) === String(id));
+            const pct  = (val / maxVal) * 100;
+            return `
+              <div class="top-produit-item">
+                <div class="top-rank ${rankCls[i]}">${i + 1}</div>
+                <div class="top-color" style="background:${prod?.couleur_code || '#CCC'}"></div>
+                <div class="top-name">${prod?.nom || 'Produit #' + id}</div>
+                <div class="top-bar-wrap">
+                  <div class="top-bar-bg">
+                    <div class="top-bar-fill" style="width:${pct}%"></div>
+                  </div>
+                </div>
+                <div class="top-val">${val.toFixed(0)} DT</div>
+              </div>`;
+          }).join('')
+        : '<p style="color:var(--text-muted); text-align:center; padding:2rem;">Aucune donnée</p>';
+    }
+
+    function renderLivraisons(livraisons) {
+      document.getElementById('livTotal').textContent   = livraisons.length;
+      document.getElementById('livEnCours').textContent = livraisons.filter(l => l.statut === 'en_cours').length;
+      document.getElementById('livLivrees').textContent = livraisons.filter(l => l.statut === 'livree').length;
+
+      const counts = { planifiee: 0, en_cours: 0, livree: 0 };
+      livraisons.forEach(l => { if (counts[l.statut] !== undefined) counts[l.statut]++; });
+
+      if (charts.liv) charts.liv.destroy();
+      charts.liv = new Chart(document.getElementById('livChart'), {
+        type: 'bar',
+        data: {
+          labels: ['Planifiées', 'En cours', 'Livrées'],
+          datasets: [{
+            data: [counts.planifiee, counts.en_cours, counts.livree],
+            backgroundColor: ['rgba(139,92,246,.7)', 'rgba(16,185,129,.7)', 'rgba(200,68,26,.7)'],
+            borderRadius: 6, borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,.05)' }, ticks: { stepSize: 1 } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    function renderCmdChart(commandes) {
+      const data = new Array(12).fill(0);
+      commandes.forEach(c => { data[new Date(c.created_at).getMonth()]++; });
+
+      if (charts.cmd) charts.cmd.destroy();
+      charts.cmd = new Chart(document.getElementById('cmdChart'), {
+        type: 'bar',
+        data: {
+          labels: months,
+          datasets: [{
+            label: 'Commandes',
+            data,
+            backgroundColor: months.map((_, i) =>
+              i === new Date().getMonth()
+                ? 'rgba(200,68,26,.85)'
+                : 'rgba(200,68,26,.2)'
+            ),
+            borderRadius: 6, borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,.05)' }, ticks: { stepSize: 1 } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    function exportCSV() {
+      api.get('/commandes').then(res => res.json()).then(data => {
+        const headers = ['ID', 'Client', 'Montant', 'Litres', 'Statut', 'Date'];
+        const rows    = data.map(c => [
+          c.id, c.client_nom || '', parseFloat(c.montant_total).toFixed(3),
+          parseFloat(c.litres_calcules).toFixed(2), c.statut,
+          new Date(c.created_at).toLocaleDateString('fr-TN')
+        ]);
+        const csv  = [headers, ...rows].map(r => r.join(',')).join('\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href = url; a.download = `commandes_${new Date().toISOString().slice(0,10)}.csv`;
+        a.click(); URL.revokeObjectURL(url);
+      });
+    }
+
+    loadAll();
+  </script>
+</body>
+</html>

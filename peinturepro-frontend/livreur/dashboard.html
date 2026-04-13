@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PeinturePro TN — Livreur</title>
+  <link rel="stylesheet" href="/css/main.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    body { background: #F4F1EE; min-height: 100vh; display: flex; }
+
+    .sidebar {
+      width: 240px; min-height: 100vh;
+      background: #0F2027; display: flex;
+      flex-direction: column; padding: 1.5rem 0;
+      position: fixed; top: 0; left: 0; z-index: 100;
+      box-shadow: 4px 0 20px rgba(0,0,0,.2);
+    }
+    .sidebar-brand {
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      margin-bottom: 1rem;
+    }
+    .logo { display: flex; align-items: center; gap: .65rem; }
+    .logo-box {
+      width: 36px; height: 36px; background: #10B981;
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    }
+    .logo-box svg { width: 20px; height: 20px; fill: white; }
+    .logo-text { font-family: var(--font-display); font-size: 1rem; color: white; }
+    .logo-text span { color: #34D399; }
+    .sidebar-menu { flex: 1; padding: 0 .75rem; }
+    .menu-label {
+      font-size: .65rem; font-weight: 600; letter-spacing: .12em;
+      text-transform: uppercase; color: rgba(255,255,255,.3);
+      padding: .75rem .75rem .35rem;
+    }
+    .menu-item {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .65rem .75rem; border-radius: 8px;
+      text-decoration: none; color: rgba(255,255,255,.55);
+      font-size: .88rem; font-weight: 500; transition: all .2s;
+      margin-bottom: .15rem; cursor: pointer; border: none;
+      background: none; width: 100%; text-align: left;
+    }
+    .menu-item:hover { background: rgba(255,255,255,.07); color: rgba(255,255,255,.85); }
+    .menu-item.active { background: #10B981; color: white; box-shadow: 0 4px 12px rgba(16,185,129,.3); }
+    .menu-item .icon { font-size: 1.1rem; width: 20px; text-align: center; }
+    .sidebar-footer { padding: 1rem .75rem 0; border-top: 1px solid rgba(255,255,255,.08); }
+    .user-info { display: flex; align-items: center; gap: .65rem; padding: .65rem .75rem; margin-bottom: .5rem; }
+    .user-avatar {
+      width: 34px; height: 34px; background: #10B981; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem; color: white; font-weight: 600;
+    }
+    .user-name { font-size: .83rem; color: white; font-weight: 500; }
+    .user-role { font-size: .7rem; color: rgba(255,255,255,.4); }
+
+    .main { margin-left: 240px; flex: 1; min-height: 100vh; }
+    .topbar {
+      background: white; padding: 1rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 4px rgba(0,0,0,.04);
+    }
+    .topbar-title { font-family: var(--font-display); font-size: 1.3rem; color: var(--dark); }
+    .topbar-right { display: flex; gap: .75rem; align-items: center; }
+    .online-dot {
+      width: 8px; height: 8px; background: #10B981;
+      border-radius: 50%; box-shadow: 0 0 6px #10B981;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .online-label { font-size: .82rem; color: #10B981; font-weight: 600; }
+
+    .content { padding: 2rem; }
+
+    /* KPIs */
+    .kpi-row {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1rem; margin-bottom: 2rem;
+    }
+    .kpi-card {
+      background: white; border-radius: var(--radius-md);
+      padding: 1.25rem; box-shadow: 0 2px 8px rgba(0,0,0,.05);
+      display: flex; align-items: center; gap: .85rem;
+      transition: transform .2s;
+    }
+    .kpi-card:hover { transform: translateY(-2px); }
+    .kpi-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; flex-shrink: 0;
+    }
+    .kpi-value { font-family: var(--font-display); font-size: 1.6rem; color: var(--dark); }
+    .kpi-label { font-size: .72rem; color: var(--text-muted); }
+
+    /* Layout principal */
+    .main-layout {
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      gap: 1.25rem;
+      height: calc(100vh - 200px);
+      min-height: 500px;
+    }
+
+    /* Liste livraisons */
+    .livraisons-panel {
+      background: white; border-radius: var(--radius-md);
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    .panel-header {
+      padding: 1.1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center;
+      justify-content: space-between;
+    }
+    .panel-title { font-family: var(--font-display); font-size: 1rem; color: var(--dark); }
+    .filter-tabs { display: flex; gap: .35rem; }
+    .ftab {
+      padding: .3rem .7rem; border-radius: 6px;
+      font-size: .75rem; font-weight: 600; cursor: pointer;
+      border: 1.5px solid var(--border); background: white;
+      color: var(--text-muted); transition: all .2s;
+    }
+    .ftab.active { background: #10B981; color: white; border-color: #10B981; }
+
+    .livraisons-list {
+      flex: 1; overflow-y: auto; padding: .75rem;
+    }
+
+    .liv-item {
+      border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      padding: 1rem; margin-bottom: .65rem; cursor: pointer;
+      transition: all .2s; position: relative;
+    }
+    .liv-item:hover { border-color: #10B981; box-shadow: 0 2px 12px rgba(16,185,129,.1); }
+    .liv-item.selected { border-color: #10B981; background: #F0FDF4; }
+    .liv-item.selected::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px; background: #10B981; border-radius: 3px 0 0 3px;
+    }
+
+    .liv-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: .5rem; }
+    .liv-num { font-weight: 700; font-size: .9rem; color: var(--dark); }
+    .liv-badge {
+      font-size: .7rem; font-weight: 600;
+      padding: .2rem .6rem; border-radius: 30px;
+    }
+    .b-planifiee { background: #EDE9FE; color: #5B21B6; }
+    .b-en_cours  { background: #D1FAE5; color: #065F46; }
+    .b-livree    { background: #F1F5F9; color: #475569; }
+
+    .liv-adresse { font-size: .83rem; color: var(--text); margin-bottom: .3rem; }
+    .liv-adresse strong { color: var(--dark); }
+    .liv-client { font-size: .75rem; color: var(--text-muted); }
+
+    .liv-actions { display: flex; gap: .5rem; margin-top: .75rem; }
+    .btn-liv {
+      flex: 1; padding: .4rem; border-radius: 6px;
+      font-size: .75rem; font-weight: 600; cursor: pointer;
+      border: none; font-family: var(--font-body); transition: all .2s;
+    }
+    .btn-prendre { background: #10B981; color: white; }
+    .btn-prendre:hover { background: #059669; }
+    .btn-livrer  { background: #3B82F6; color: white; }
+    .btn-livrer:hover  { background: #2563EB; }
+    .btn-map { background: var(--primary-light); color: var(--primary); border: 1px solid rgba(200,68,26,.2); }
+    .btn-map:hover { background: var(--primary); color: white; }
+
+    /* Carte Leaflet */
+    .map-panel {
+      background: white; border-radius: var(--radius-md);
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+      overflow: hidden; display: flex; flex-direction: column;
+    }
+    .map-header {
+      padding: 1.1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .map-title { font-family: var(--font-display); font-size: 1rem; color: var(--dark); }
+    .map-info { font-size: .78rem; color: var(--text-muted); }
+    #map { flex: 1; min-height: 400px; }
+
+    /* Info livraison sélectionnée */
+    .liv-detail {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid var(--border);
+      background: #F9FAFB;
+      display: none;
+    }
+    .liv-detail.show { display: block; }
+    .detail-row { display: flex; justify-content: space-between; font-size: .83rem; margin-bottom: .3rem; }
+    .detail-label { color: var(--text-muted); }
+    .detail-value { font-weight: 600; color: var(--dark); }
+
+    /* Empty */
+    .empty-livraisons {
+      text-align: center; padding: 3rem;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 1100px) {
+      .main-layout { grid-template-columns: 1fr; height: auto; }
+      .kpi-row { grid-template-columns: repeat(2, 1fr); }
+      #map { min-height: 300px; }
+    }
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo">
+        <div class="logo-box">
+          <svg viewBox="0 0 24 24"><path d="M7 14c0 1.1.9 2 2 2h2v-4H9c-1.1 0-2 .9-2 2zm10-9h-1V3h-2v2H10V3H8v2H7C5.9 5 5 5.9 5 7v12c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 14H7V9h10v10z"/></svg>
+        </div>
+        <span class="logo-text">PeinturePro <span>TN</span></span>
+      </div>
+    </div>
+    <nav class="sidebar-menu">
+      <div class="menu-label">Livraisons</div>
+      <a class="menu-item active" href="/livreur/dashboard.html"><span class="icon">🚚</span> Mes livraisons</a>
+      <a class="menu-item" href="#" onclick="filterTab('planifiee')"><span class="icon">📋</span> Planifiées</a>
+      <a class="menu-item" href="#" onclick="filterTab('en_cours')"><span class="icon">🔄</span> En cours</a>
+      <a class="menu-item" href="#" onclick="filterTab('livree')"><span class="icon">✅</span> Livrées</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar" id="userAvatar">L</div>
+        <div>
+          <div class="user-name" id="userName">Livreur</div>
+          <div class="user-role">Livreur</div>
+        </div>
+      </div>
+      <button class="menu-item" onclick="logout()"><span class="icon">🚪</span> Déconnexion</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title">🚚 Tableau de bord Livreur</div>
+      <div class="topbar-right">
+        <div class="online-dot"></div>
+        <span class="online-label">En ligne</span>
+        <button style="background:none; border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:.4rem .85rem; cursor:pointer; font-size:.82rem; color:var(--text-muted);" onclick="loadLivraisons()">
+          🔄 Actualiser
+        </button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- KPIs -->
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background:#EDE9FE">📋</div>
+          <div><div class="kpi-value" id="kpiPlanifiee">—</div><div class="kpi-label">Planifiées</div></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background:#D1FAE5">🔄</div>
+          <div><div class="kpi-value" id="kpiEnCours">—</div><div class="kpi-label">En cours</div></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background:#DBEAFE">✅</div>
+          <div><div class="kpi-value" id="kpiLivrees">—</div><div class="kpi-label">Livrées</div></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background:rgba(200,68,26,.1)">📦</div>
+          <div><div class="kpi-value" id="kpiTotal">—</div><div class="kpi-label">Total</div></div>
+        </div>
+      </div>
+
+      <!-- Layout carte + liste -->
+      <div class="main-layout">
+
+        <!-- Livraisons -->
+        <div class="livraisons-panel">
+          <div class="panel-header">
+            <span class="panel-title">Livraisons</span>
+            <div class="filter-tabs">
+              <button class="ftab active" onclick="filterTab('tous', this)">Tous</button>
+              <button class="ftab" onclick="filterTab('planifiee', this)">📋</button>
+              <button class="ftab" onclick="filterTab('en_cours', this)">🔄</button>
+              <button class="ftab" onclick="filterTab('livree', this)">✅</button>
+            </div>
+          </div>
+          <div class="livraisons-list" id="livraisonsList">
+            <div class="empty-livraisons">Chargement...</div>
+          </div>
+        </div>
+
+        <!-- Carte -->
+        <div class="map-panel">
+          <div class="map-header">
+            <span class="map-title">🗺️ Carte des chantiers</span>
+            <span class="map-info" id="mapInfo">Sélectionnez une livraison</span>
+          </div>
+          <div id="map"></div>
+          <div class="liv-detail" id="livDetail">
+            <div class="detail-row">
+              <span class="detail-label">Adresse</span>
+              <span class="detail-value" id="detailAdresse">—</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Ville</span>
+              <span class="detail-value" id="detailVille">—</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Client</span>
+              <span class="detail-value" id="detailClient">—</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Montant commande</span>
+              <span class="detail-value" id="detailMontant">—</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    requireAuth(['livreur', 'admin']);
+
+    const user = Auth.getUser();
+    if (user) {
+      document.getElementById('userName').textContent   = user.nom;
+      document.getElementById('userAvatar').textContent = user.nom.charAt(0).toUpperCase();
+    }
+
+    let allLivraisons  = [];
+    let currentFilter  = 'tous';
+    let map            = null;
+    let markers        = [];
+    let selectedLivId  = null;
+
+    // Init carte Leaflet — centré sur Tunis
+    function initMap() {
+      map = L.map('map').setView([36.8065, 10.1815], 7);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19
+      }).addTo(map);
+    }
+
+    function clearMarkers() {
+      markers.forEach(m => map.removeLayer(m));
+      markers = [];
+    }
+
+    function addMarker(lat, lng, title, statut, livId) {
+      const colors = { planifiee: '#7C3AED', en_cours: '#10B981', livree: '#6B7280' };
+      const color  = colors[statut] || '#C8441A';
+
+      const icon = L.divIcon({
+        html: `<div style="
+          background:${color}; color:white; border-radius:50%;
+          width:32px; height:32px; display:flex; align-items:center;
+          justify-content:center; font-size:14px;
+          box-shadow:0 2px 8px rgba(0,0,0,.3);
+          border:2px solid white;
+          cursor:pointer;
+        ">🚚</div>`,
+        className: '',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32]
+      });
+
+      const marker = L.marker([lat, lng], { icon })
+        .addTo(map)
+        .bindPopup(`<strong>${title}</strong><br/>Statut : ${statut}`)
+        .on('click', () => selectLivraison(livId));
+
+      markers.push(marker);
+      return marker;
+    }
+
+    async function loadLivraisons() {
+      try {
+        const res     = await api.get('/livraisons');
+        allLivraisons = await res.json();
+        updateKPIs(allLivraisons);
+        renderLivraisons(allLivraisons);
+        plotAllMarkers(allLivraisons);
+      } catch { document.getElementById('livraisonsList').innerHTML = '<div class="empty-livraisons">❌ Erreur de chargement</div>'; }
+    }
+
+    function updateKPIs(livs) {
+      document.getElementById('kpiPlanifiee').textContent = livs.filter(l => l.statut === 'planifiee').length;
+      document.getElementById('kpiEnCours').textContent   = livs.filter(l => l.statut === 'en_cours').length;
+      document.getElementById('kpiLivrees').textContent   = livs.filter(l => l.statut === 'livree').length;
+      document.getElementById('kpiTotal').textContent     = livs.length;
+    }
+
+    function plotAllMarkers(livs) {
+      clearMarkers();
+      livs.forEach(l => {
+        const lat = parseFloat(l.latitude  || l.chantier_latitude);
+        const lng = parseFloat(l.longitude || l.chantier_longitude);
+        if (!isNaN(lat) && !isNaN(lng)) {
+          addMarker(lat, lng, l.chantier_adresse || 'Chantier', l.statut, l.id);
+        }
+      });
+
+      // Si pas de coordonnées réelles, on place des marqueurs de démo sur les grandes villes tunisiennes
+      if (markers.length === 0 && livs.length > 0) {
+        const villes = [
+          { lat: 36.8065, lng: 10.1815, nom: 'Tunis' },
+          { lat: 36.7372, lng: 10.3148, nom: 'Ben Arous' },
+          { lat: 36.8676, lng: 10.3233, nom: 'Ariana' },
+          { lat: 35.6757, lng: 10.0975, nom: 'Sousse' },
+        ];
+        livs.forEach((l, i) => {
+          const v = villes[i % villes.length];
+          addMarker(v.lat, v.lng, l.chantier_adresse || v.nom, l.statut, l.id);
+        });
+      }
+    }
+
+    function renderLivraisons(livs) {
+      const list = document.getElementById('livraisonsList');
+      const filtered = currentFilter === 'tous' ? livs : livs.filter(l => l.statut === currentFilter);
+
+      if (!filtered.length) {
+        list.innerHTML = '<div class="empty-livraisons">Aucune livraison trouvée.</div>';
+        return;
+      }
+
+      const badgeCls   = { planifiee: 'b-planifiee', en_cours: 'b-en_cours', livree: 'b-livree' };
+      const badgeLabel = { planifiee: '📋 Planifiée', en_cours: '🔄 En cours', livree: '✅ Livrée' };
+
+      list.innerHTML = filtered.map(l => `
+        <div class="liv-item ${selectedLivId === l.id ? 'selected' : ''}"
+             id="liv-${l.id}" onclick="selectLivraison(${l.id})">
+          <div class="liv-header">
+            <span class="liv-num">Livraison #${l.id}</span>
+            <span class="liv-badge ${badgeCls[l.statut] || ''}">${badgeLabel[l.statut] || l.statut}</span>
+          </div>
+          <div class="liv-adresse">
+            📍 <strong>${l.chantier_adresse || 'Adresse non définie'}</strong>
+            ${l.ville ? ' — ' + l.ville : ''}
+          </div>
+          <div class="liv-client">
+            👤 ${l.client_nom || 'Client'} |
+            💰 ${l.montant_total ? parseFloat(l.montant_total).toFixed(3) + ' DT' : '—'}
+          </div>
+          <div class="liv-actions">
+            ${l.statut === 'planifiee'
+              ? `<button class="btn-liv btn-prendre" onclick="event.stopPropagation(); updateStatut(${l.id},'en_cours')">🔄 Prendre en charge</button>`
+              : ''}
+            ${l.statut === 'en_cours'
+              ? `<button class="btn-liv btn-livrer" onclick="event.stopPropagation(); updateStatut(${l.id},'livree')">✅ Marquer livrée</button>`
+              : ''}
+            <button class="btn-liv btn-map" onclick="event.stopPropagation(); zoomToLivraison(${l.id})">🗺️ Carte</button>
+          </div>
+        </div>`).join('');
+    }
+
+    function selectLivraison(id) {
+      selectedLivId = id;
+      const liv = allLivraisons.find(l => l.id === id);
+      if (!liv) return;
+
+      // Mettre à jour selection visuelle
+      document.querySelectorAll('.liv-item').forEach(el => el.classList.remove('selected'));
+      const el = document.getElementById(`liv-${id}`);
+      if (el) { el.classList.add('selected'); el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+
+      // Afficher détails
+      document.getElementById('detailAdresse').textContent = liv.chantier_adresse || '—';
+      document.getElementById('detailVille').textContent   = liv.ville || '—';
+      document.getElementById('detailClient').textContent  = liv.client_nom || '—';
+      document.getElementById('detailMontant').textContent = liv.montant_total ? parseFloat(liv.montant_total).toFixed(3) + ' DT' : '—';
+      document.getElementById('livDetail').classList.add('show');
+      document.getElementById('mapInfo').textContent = liv.chantier_adresse || 'Livraison #' + id;
+
+      zoomToLivraison(id);
+    }
+
+    function zoomToLivraison(id) {
+      const liv = allLivraisons.find(l => l.id === id);
+      if (!liv) return;
+      const lat = parseFloat(liv.latitude  || liv.chantier_latitude);
+      const lng = parseFloat(liv.longitude || liv.chantier_longitude);
+      if (!isNaN(lat) && !isNaN(lng)) {
+        map.setView([lat, lng], 14);
+      } else {
+        // Coordonnées de démo
+        const idx    = allLivraisons.indexOf(liv);
+        const villes = [
+          { lat: 36.8065, lng: 10.1815 },
+          { lat: 36.7372, lng: 10.3148 },
+          { lat: 36.8676, lng: 10.3233 },
+          { lat: 35.6757, lng: 10.0975 },
+        ];
+        const v = villes[idx % villes.length];
+        map.setView([v.lat, v.lng], 13);
+      }
+      markers[id % markers.length]?.openPopup();
+    }
+
+    function filterTab(statut, btn) {
+      currentFilter = statut;
+      document.querySelectorAll('.ftab').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderLivraisons(allLivraisons);
+    }
+
+    async function updateStatut(id, statut) {
+      const labels = { en_cours: 'prendre en charge', livree: 'marquer comme livrée' };
+      if (!confirm(`Voulez-vous ${labels[statut] || statut} cette livraison ?`)) return;
+      try {
+        const res = await api.put(`/livraisons/${id}/statut`, { statut, notes: '' });
+        if (res && res.ok) {
+          await loadLivraisons();
+          // Notification visuelle
+          showToast(statut === 'livree' ? '✅ Livraison complétée !' : '🔄 Livraison prise en charge !');
+        }
+      } catch { alert('Erreur lors de la mise à jour.'); }
+    }
+
+    function showToast(msg) {
+      const t = document.createElement('div');
+      t.style.cssText = `
+        position:fixed; bottom:2rem; right:2rem;
+        background:#10B981; color:white;
+        padding:.75rem 1.25rem; border-radius:var(--radius-sm);
+        font-size:.88rem; z-index:999;
+        box-shadow:0 4px 16px rgba(16,185,129,.4);
+        animation: slideUp .3s ease;
+      `;
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 3000);
+    }
+
+    // Init
+    initMap();
+    loadLivraisons();
+
+    // Auto-refresh toutes les 60 secondes
+    setInterval(loadLivraisons, 60000);
+  </script>
+</body>
+</html>

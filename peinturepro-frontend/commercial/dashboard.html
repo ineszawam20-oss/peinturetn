@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PeinturePro TN — Commercial</title>
+  <link rel="stylesheet" href="/css/main.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { background: #F4F1EE; min-height: 100vh; display: flex; }
+
+    .sidebar {
+      width: 240px; min-height: 100vh;
+      background: #1A2535; display: flex;
+      flex-direction: column; padding: 1.5rem 0;
+      position: fixed; top: 0; left: 0; z-index: 100;
+      box-shadow: 4px 0 20px rgba(0,0,0,.15);
+    }
+    .sidebar-brand {
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      margin-bottom: 1rem;
+    }
+    .logo { display: flex; align-items: center; gap: .65rem; }
+    .logo-box {
+      width: 36px; height: 36px; background: #3B82F6;
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    }
+    .logo-box svg { width: 20px; height: 20px; fill: white; }
+    .logo-text { font-family: var(--font-display); font-size: 1rem; color: white; }
+    .logo-text span { color: #60A5FA; }
+    .sidebar-menu { flex: 1; padding: 0 .75rem; }
+    .menu-label {
+      font-size: .65rem; font-weight: 600; letter-spacing: .12em;
+      text-transform: uppercase; color: rgba(255,255,255,.3);
+      padding: .75rem .75rem .35rem;
+    }
+    .menu-item {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .65rem .75rem; border-radius: 8px;
+      text-decoration: none; color: rgba(255,255,255,.55);
+      font-size: .88rem; font-weight: 500; transition: all .2s;
+      margin-bottom: .15rem; cursor: pointer; border: none;
+      background: none; width: 100%; text-align: left;
+    }
+    .menu-item:hover { background: rgba(255,255,255,.07); color: rgba(255,255,255,.85); }
+    .menu-item.active { background: #3B82F6; color: white; box-shadow: 0 4px 12px rgba(59,130,246,.3); }
+    .menu-item .icon { font-size: 1.1rem; width: 20px; text-align: center; }
+    .sidebar-footer { padding: 1rem .75rem 0; border-top: 1px solid rgba(255,255,255,.08); }
+    .user-info { display: flex; align-items: center; gap: .65rem; padding: .65rem .75rem; margin-bottom: .5rem; }
+    .user-avatar {
+      width: 34px; height: 34px; background: #3B82F6; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem; color: white; font-weight: 600;
+    }
+    .user-name { font-size: .83rem; color: white; font-weight: 500; }
+    .user-role { font-size: .7rem; color: rgba(255,255,255,.4); }
+
+    .main { margin-left: 240px; flex: 1; min-height: 100vh; }
+    .topbar {
+      background: white; padding: 1rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 4px rgba(0,0,0,.04);
+    }
+    .topbar-title { font-family: var(--font-display); font-size: 1.3rem; color: var(--dark); }
+    .topbar-right { display: flex; gap: .75rem; align-items: center; }
+    .btn-new {
+      background: #3B82F6; color: white; border: none;
+      border-radius: var(--radius-sm); padding: .55rem 1.1rem;
+      font-size: .88rem; font-weight: 600; cursor: pointer;
+      font-family: var(--font-body); transition: all .2s;
+    }
+    .btn-new:hover { background: #2563EB; }
+
+    .content { padding: 2rem; }
+
+    /* KPIs */
+    .kpi-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem; margin-bottom: 2rem;
+    }
+    .kpi-card {
+      background: white; border-radius: var(--radius-md);
+      padding: 1.4rem; box-shadow: 0 2px 8px rgba(0,0,0,.05);
+      border-top: 3px solid transparent; transition: transform .2s;
+    }
+    .kpi-card:hover { transform: translateY(-2px); }
+    .kpi-card.blue  { border-top-color: #3B82F6; }
+    .kpi-card.green { border-top-color: #10B981; }
+    .kpi-card.orange{ border-top-color: var(--accent); }
+    .kpi-card.red   { border-top-color: var(--primary); }
+    .kpi-icon { font-size: 1.5rem; margin-bottom: .75rem; }
+    .kpi-value { font-family: var(--font-display); font-size: 1.8rem; color: var(--dark); margin-bottom: .2rem; }
+    .kpi-label { font-size: .78rem; color: var(--text-muted); }
+
+    /* Layout 2 colonnes */
+    .two-col { display: grid; grid-template-columns: 1fr 380px; gap: 1.25rem; margin-bottom: 1.25rem; }
+
+    /* Cards */
+    .card {
+      background: white; border-radius: var(--radius-md);
+      padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    }
+    .card-title {
+      font-family: var(--font-display); font-size: 1rem; color: var(--dark);
+      margin-bottom: 1.25rem; padding-bottom: .75rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .card-link { font-size: .78rem; color: #3B82F6; text-decoration: none; font-family: var(--font-body); }
+
+    /* Table commandes */
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      font-size: .72rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .06em; color: var(--text-muted);
+      padding: .6rem .85rem; text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: .75rem .85rem; font-size: .85rem;
+      color: var(--text); border-bottom: 1px solid #FAF7F4;
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #FDFCFB; }
+
+    .status-badge {
+      display: inline-flex; align-items: center;
+      padding: .2rem .65rem; border-radius: 30px;
+      font-size: .72rem; font-weight: 600;
+    }
+    .s-en_attente { background: #FEF3C7; color: #92400E; }
+    .s-confirmee  { background: #DBEAFE; color: #1E40AF; }
+    .s-en_cours   { background: #D1FAE5; color: #065F46; }
+    .s-livree     { background: #D1FAE5; color: #065F46; }
+    .s-annulee    { background: #FEE2E2; color: #991B1B; }
+
+    .btn-statut {
+      background: none; border: 1.5px solid var(--border);
+      border-radius: 6px; padding: .25rem .6rem;
+      font-size: .75rem; cursor: pointer;
+      font-family: var(--font-body); transition: all .2s; color: var(--text-muted);
+    }
+    .btn-statut:hover { border-color: #3B82F6; color: #3B82F6; background: #EFF6FF; }
+
+    /* Devis liste */
+    .devis-item {
+      display: flex; align-items: center; gap: .85rem;
+      padding: .75rem 0; border-bottom: 1px solid #FAF7F4;
+    }
+    .devis-item:last-child { border-bottom: none; }
+    .devis-num {
+      font-family: monospace; font-size: .78rem;
+      background: #EFF6FF; color: #1E40AF;
+      padding: .15rem .5rem; border-radius: 4px; font-weight: 600;
+    }
+    .devis-client { flex: 1; font-size: .85rem; font-weight: 600; color: var(--dark); }
+    .devis-sub { font-size: .72rem; color: var(--text-muted); }
+    .devis-montant { font-family: var(--font-display); font-size: .95rem; color: #3B82F6; }
+    .devis-badge {
+      font-size: .7rem; font-weight: 600;
+      padding: .2rem .55rem; border-radius: 30px;
+    }
+    .d-brouillon { background: #F1F5F9; color: #475569; }
+    .d-envoye    { background: #DBEAFE; color: #1E40AF; }
+    .d-accepte   { background: #D1FAE5; color: #065F46; }
+    .d-refuse    { background: #FEE2E2; color: #991B1B; }
+    .d-expire    { background: #F1F5F9; color: #9CA3AF; }
+
+    /* Modal devis */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.5);
+      display: none; align-items: center; justify-content: center;
+      z-index: 200; backdrop-filter: blur(4px);
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: white; border-radius: var(--radius-lg);
+      padding: 2rem; width: 100%; max-width: 520px;
+      box-shadow: var(--shadow-lg);
+      animation: slideUp .3s cubic-bezier(.16,1,.3,1);
+      max-height: 90vh; overflow-y: auto;
+    }
+    @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    .modal-header {
+      display: flex; align-items: center;
+      justify-content: space-between; margin-bottom: 1.5rem;
+    }
+    .modal-title { font-family: var(--font-display); font-size: 1.3rem; color: var(--dark); }
+    .modal-close { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted); }
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .calc-result {
+      background: #EFF6FF; border: 1px solid #BFDBFE;
+      border-radius: var(--radius-sm); padding: .85rem 1rem;
+      margin: .75rem 0; font-size: .88rem; color: #1E40AF;
+    }
+    .calc-result strong { font-family: var(--font-display); font-size: 1.1rem; }
+    .modal-footer { display: flex; gap: .75rem; justify-content: flex-end; margin-top: 1.5rem; }
+    .btn-cancel {
+      background: var(--surface); border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm); padding: .65rem 1.25rem;
+      font-size: .88rem; cursor: pointer; font-family: var(--font-body);
+    }
+    .btn-save {
+      background: #3B82F6; color: white; border: none;
+      border-radius: var(--radius-sm); padding: .65rem 1.5rem;
+      font-size: .88rem; font-weight: 600; cursor: pointer; font-family: var(--font-body);
+    }
+
+    @media (max-width: 1100px) {
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .two-col { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo">
+        <div class="logo-box">
+          <svg viewBox="0 0 24 24"><path d="M7 14c0 1.1.9 2 2 2h2v-4H9c-1.1 0-2 .9-2 2zm10-9h-1V3h-2v2H10V3H8v2H7C5.9 5 5 5.9 5 7v12c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 14H7V9h10v10z"/></svg>
+        </div>
+        <span class="logo-text">PeinturePro <span>TN</span></span>
+      </div>
+    </div>
+    <nav class="sidebar-menu">
+      <div class="menu-label">Commercial</div>
+      <a class="menu-item active" href="/commercial/dashboard.html"><span class="icon">📊</span> Dashboard</a>
+      <a class="menu-item" href="/commercial/devis.html"><span class="icon">📄</span> Devis</a>
+      <div class="menu-label">Commandes</div>
+      <a class="menu-item" href="#" onclick="scrollToCommandes()"><span class="icon">📦</span> Commandes</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar" id="userAvatar">C</div>
+        <div>
+          <div class="user-name" id="userName">Commercial</div>
+          <div class="user-role">Commercial</div>
+        </div>
+      </div>
+      <button class="menu-item" onclick="logout()"><span class="icon">🚪</span> Déconnexion</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title">Dashboard Commercial</div>
+      <div class="topbar-right">
+        <button class="btn-new" onclick="openDevisModal()">+ Nouveau devis</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- KPIs -->
+      <div class="kpi-grid">
+        <div class="kpi-card blue">
+          <div class="kpi-icon">📄</div>
+          <div class="kpi-value" id="kpiDevis">—</div>
+          <div class="kpi-label">Devis créés</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-icon">✅</div>
+          <div class="kpi-value" id="kpiAcceptes">—</div>
+          <div class="kpi-label">Devis acceptés</div>
+        </div>
+        <div class="kpi-card orange">
+          <div class="kpi-icon">📦</div>
+          <div class="kpi-value" id="kpiCommandes">—</div>
+          <div class="kpi-label">Commandes en attente</div>
+        </div>
+        <div class="kpi-card red">
+          <div class="kpi-icon">💰</div>
+          <div class="kpi-value" id="kpiCA">—</div>
+          <div class="kpi-label">CA confirmé (DT)</div>
+        </div>
+      </div>
+
+      <!-- Commandes + Devis -->
+      <div class="two-col" id="commandesSection">
+        <div class="card">
+          <div class="card-title">
+            📦 Commandes récentes
+            <a href="#" class="card-link" onclick="exportCommandes()">📥 Export CSV</a>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>#</th><th>Client</th><th>Montant</th><th>Statut</th><th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="commandesTable">
+              <tr><td colspan="5" style="text-align:center; color:var(--text-muted)">Chargement...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            📄 Devis récents
+            <a href="/commercial/devis.html" class="card-link">Voir tout →</a>
+          </div>
+          <div id="devisList">
+            <p style="text-align:center; color:var(--text-muted); padding:2rem">Chargement...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart -->
+      <div class="card">
+        <div class="card-title">📈 Taux de transformation devis → commandes</div>
+        <canvas id="transformChart" height="80"></canvas>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal Devis -->
+  <div class="modal-overlay" id="devisModal" onclick="closeDevisModal(event)">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Nouveau devis</span>
+        <button class="modal-close" onclick="document.getElementById('devisModal').classList.remove('open')">✕</button>
+      </div>
+
+      <div class="alert alert-error" id="devisAlert">⚠️ <span id="devisAlertMsg"></span></div>
+
+      <div class="form-group">
+        <label>Client *</label>
+        <select class="form-control" id="dClient">
+          <option value="">Sélectionner un client...</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Produit *</label>
+        <select class="form-control" id="dProduit" onchange="calcDevis()">
+          <option value="">Sélectionner un produit...</option>
+        </select>
+      </div>
+
+      <div class="row-2">
+        <div class="form-group">
+          <label>Surface (m²) *</label>
+          <input type="number" class="form-control" id="dSurface"
+                 placeholder="50" min="1" oninput="calcDevis()"/>
+        </div>
+        <div class="form-group">
+          <label>Nombre de couches</label>
+          <select class="form-control" id="dCouches" onchange="calcDevis()">
+            <option value="1">1 couche</option>
+            <option value="2" selected>2 couches</option>
+            <option value="3">3 couches</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="calc-result" id="calcResult" style="display:none">
+        Litres nécessaires : <strong id="calcLitres">0</strong> L
+        &nbsp;|&nbsp; Montant estimé : <strong id="calcMontant">0</strong> DT
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="document.getElementById('devisModal').classList.remove('open')">Annuler</button>
+        <button class="btn-save" id="devisSaveBtn" onclick="saveDevis()">📄 Créer le devis</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    requireAuth(['commercial', 'admin']);
+
+    const user = Auth.getUser();
+    if (user) {
+      document.getElementById('userName').textContent   = user.nom;
+      document.getElementById('userAvatar').textContent = user.nom.charAt(0).toUpperCase();
+    }
+
+    let allCommandes = [];
+    let allDevis     = [];
+    let allClients   = [];
+    let allProduits  = [];
+    let chartInstance = null;
+
+    const devisLabels = {
+      brouillon: { label: 'Brouillon', cls: 'd-brouillon' },
+      envoye:    { label: 'Envoyé',    cls: 'd-envoye' },
+      accepte:   { label: 'Accepté',  cls: 'd-accepte' },
+      refuse:    { label: 'Refusé',   cls: 'd-refuse' },
+      expire:    { label: 'Expiré',   cls: 'd-expire' }
+    };
+
+    async function loadAll() {
+      try {
+        const [cmdRes, devRes, usrRes, prodRes] = await Promise.all([
+          api.get('/commandes'),
+          api.get('/devis'),
+          api.get('/utilisateurs'),
+          api.get('/produits')
+        ]);
+        allCommandes = await cmdRes.json();
+        allDevis     = await devRes.json();
+        const users  = await usrRes.json();
+        allClients   = users.filter(u => u.role === 'client' && u.actif);
+        allProduits  = await prodRes.json();
+
+        updateKPIs();
+        renderCommandes();
+        renderDevis();
+        renderTransformChart();
+        fillModalSelects();
+      } catch (err) { console.error(err); }
+    }
+
+    function updateKPIs() {
+      const acceptes   = allDevis.filter(d => d.statut === 'accepte').length;
+      const enAttente  = allCommandes.filter(c => c.statut === 'en_attente').length;
+      const ca         = allCommandes
+        .filter(c => ['confirmee','livree'].includes(c.statut))
+        .reduce((s, c) => s + parseFloat(c.montant_total || 0), 0);
+
+      document.getElementById('kpiDevis').textContent    = allDevis.length;
+      document.getElementById('kpiAcceptes').textContent = acceptes;
+      document.getElementById('kpiCommandes').textContent = enAttente;
+      document.getElementById('kpiCA').textContent        = ca.toFixed(0);
+    }
+
+    function renderCommandes() {
+      const tbody = document.getElementById('commandesTable');
+      const data  = allCommandes.slice(0, 10);
+      if (!data.length) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted)">Aucune commande</td></tr>';
+        return;
+      }
+      tbody.innerHTML = data.map(c => `
+        <tr>
+          <td style="font-weight:600">#${c.id}</td>
+          <td>${c.client_nom || '—'}</td>
+          <td style="font-weight:600; color:#3B82F6">${parseFloat(c.montant_total).toFixed(3)} DT</td>
+          <td><span class="status-badge s-${c.statut}">${c.statut.replace('_',' ')}</span></td>
+          <td>
+            ${c.statut === 'en_attente'
+              ? `<button class="btn-statut" onclick="confirmerCommande(${c.id})">✅ Confirmer</button>`
+              : '—'}
+          </td>
+        </tr>`).join('');
+    }
+
+    function renderDevis() {
+      const container = document.getElementById('devisList');
+      const data      = allDevis.slice(0, 6);
+      if (!data.length) {
+        container.innerHTML = '<p style="text-align:center; color:var(--text-muted); padding:2rem">Aucun devis</p>';
+        return;
+      }
+      container.innerHTML = data.map(d => {
+        const dl = devisLabels[d.statut] || { label: d.statut, cls: '' };
+        return `
+          <div class="devis-item">
+            <span class="devis-num">#${d.id}</span>
+            <div style="flex:1">
+              <div class="devis-client">${d.client_nom || 'Client #' + d.client_id}</div>
+              <div class="devis-sub">${d.surface_m2 ? d.surface_m2 + ' m²' : ''}</div>
+            </div>
+            <div class="devis-montant">${parseFloat(d.montant_total).toFixed(3)} DT</div>
+            <span class="devis-badge ${dl.cls}">${dl.label}</span>
+          </div>`;
+      }).join('');
+    }
+
+    function renderTransformChart() {
+      const total    = allDevis.length;
+      const acceptes = allDevis.filter(d => d.statut === 'accepte').length;
+      const refuses  = allDevis.filter(d => d.statut === 'refuse').length;
+      const en_cours = total - acceptes - refuses;
+      const taux     = total ? ((acceptes / total) * 100).toFixed(1) : 0;
+
+      if (chartInstance) chartInstance.destroy();
+      chartInstance = new Chart(document.getElementById('transformChart'), {
+        type: 'bar',
+        data: {
+          labels: ['Total devis', 'Acceptés', 'En cours', 'Refusés'],
+          datasets: [{
+            data: [total, acceptes, en_cours, refuses],
+            backgroundColor: [
+              'rgba(59,130,246,.7)', 'rgba(16,185,129,.7)',
+              'rgba(245,158,11,.7)', 'rgba(239,68,68,.7)'
+            ],
+            borderRadius: 8, borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            title: { display: true, text: `Taux de transformation : ${taux}%`, font: { size: 13 } }
+          },
+          scales: {
+            y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,.05)' }, ticks: { stepSize: 1 } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    async function confirmerCommande(id) {
+      if (!confirm('Confirmer cette commande ?')) return;
+      try {
+        const res = await api.put(`/commandes/${id}/statut`, { statut: 'confirmee' });
+        if (res && res.ok) await loadAll();
+      } catch { alert('Erreur.'); }
+    }
+
+    function fillModalSelects() {
+      const selClient = document.getElementById('dClient');
+      const selProduit = document.getElementById('dProduit');
+      selClient.innerHTML  = '<option value="">Sélectionner un client...</option>' +
+        allClients.map(c => `<option value="${c.id}">${c.nom}</option>`).join('');
+      selProduit.innerHTML = '<option value="">Sélectionner un produit...</option>' +
+        allProduits.map(p => `<option value="${p.id}" data-prix="${p.prix_litre}" data-rend="${p.rendement_m2_L}">${p.nom} — ${parseFloat(p.prix_litre).toFixed(3)} DT/L</option>`).join('');
+    }
+
+    function calcDevis() {
+      const surface  = parseFloat(document.getElementById('dSurface').value) || 0;
+      const couches  = parseInt(document.getElementById('dCouches').value);
+      const selProd  = document.getElementById('dProduit');
+      const opt      = selProd.options[selProd.selectedIndex];
+      if (!opt || !opt.dataset.prix || !surface) {
+        document.getElementById('calcResult').style.display = 'none'; return;
+      }
+      const rendement = parseFloat(opt.dataset.rend);
+      const prix      = parseFloat(opt.dataset.prix);
+      const litres    = Math.max(5, (surface * couches) / rendement);
+      const montant   = litres * prix;
+      document.getElementById('calcLitres').textContent  = litres.toFixed(2);
+      document.getElementById('calcMontant').textContent = montant.toFixed(3);
+      document.getElementById('calcResult').style.display = 'block';
+    }
+
+    async function saveDevis() {
+      const client_id  = document.getElementById('dClient').value;
+      const produit_id = document.getElementById('dProduit').value;
+      const surface_m2 = parseFloat(document.getElementById('dSurface').value);
+      const couches    = parseInt(document.getElementById('dCouches').value);
+      const btn        = document.getElementById('devisSaveBtn');
+
+      if (!client_id || !produit_id || !surface_m2) {
+        document.getElementById('devisAlertMsg').textContent = 'Tous les champs sont obligatoires.';
+        document.getElementById('devisAlert').classList.add('show');
+        return;
+      }
+
+      const selProd   = document.getElementById('dProduit');
+      const opt       = selProd.options[selProd.selectedIndex];
+      const rendement = parseFloat(opt.dataset.rend);
+      const prix      = parseFloat(opt.dataset.prix);
+      const litres    = Math.max(5, (surface_m2 * couches) / rendement);
+
+      btn.innerHTML = '<span class="spinner"></span>Création...';
+      btn.disabled  = true;
+
+      try {
+        const res = await api.post('/devis', {
+          client_id, surface_m2, produit_id,
+          prix_litre: prix, litres_calcules: litres
+        });
+        if (res && res.ok) {
+          document.getElementById('devisModal').classList.remove('open');
+          await loadAll();
+        } else {
+          const d = await res.json();
+          document.getElementById('devisAlertMsg').textContent = d.message || 'Erreur.';
+          document.getElementById('devisAlert').classList.add('show');
+        }
+      } catch { document.getElementById('devisAlertMsg').textContent = 'Erreur serveur.'; document.getElementById('devisAlert').classList.add('show'); }
+      finally  { btn.innerHTML = '📄 Créer le devis'; btn.disabled = false; }
+    }
+
+    function openDevisModal() {
+      document.getElementById('devisAlert').classList.remove('show');
+      document.getElementById('dClient').value  = '';
+      document.getElementById('dProduit').value = '';
+      document.getElementById('dSurface').value = '';
+      document.getElementById('calcResult').style.display = 'none';
+      document.getElementById('devisModal').classList.add('open');
+    }
+
+    function closeDevisModal(e) {
+      if (e.target === document.getElementById('devisModal'))
+        document.getElementById('devisModal').classList.remove('open');
+    }
+
+    function exportCommandes() {
+      const headers = ['ID', 'Client', 'Montant', 'Litres', 'Statut', 'Date'];
+      const rows    = allCommandes.map(c => [
+        c.id, c.client_nom || '', parseFloat(c.montant_total).toFixed(3),
+        parseFloat(c.litres_calcules).toFixed(2), c.statut,
+        new Date(c.created_at).toLocaleDateString('fr-TN')
+      ]);
+      const csv  = [headers, ...rows].map(r => r.join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href = url; a.download = `commandes_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+    }
+
+    function scrollToCommandes() {
+      document.getElementById('commandesSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    loadAll();
+  </script>
+</body>
+</html>

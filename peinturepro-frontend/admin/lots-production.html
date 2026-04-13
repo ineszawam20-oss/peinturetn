@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PeinturePro TN — Lots de Production</title>
+  <link rel="stylesheet" href="/css/main.css"/>
+  <style>
+    body { background: #F4F1EE; min-height: 100vh; display: flex; }
+
+    .sidebar {
+      width: 240px; min-height: 100vh;
+      background: var(--dark); display: flex;
+      flex-direction: column; padding: 1.5rem 0;
+      position: fixed; top: 0; left: 0; z-index: 100;
+      box-shadow: 4px 0 20px rgba(0,0,0,.15);
+    }
+    .sidebar-brand {
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      margin-bottom: 1rem;
+    }
+    .logo { display: flex; align-items: center; gap: .65rem; }
+    .logo-box {
+      width: 36px; height: 36px; background: var(--primary);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    }
+    .logo-box svg { width: 20px; height: 20px; fill: white; }
+    .logo-text { font-family: var(--font-display); font-size: 1rem; color: white; }
+    .logo-text span { color: var(--accent); }
+    .sidebar-menu { flex: 1; padding: 0 .75rem; }
+    .menu-label {
+      font-size: .65rem; font-weight: 600; letter-spacing: .12em;
+      text-transform: uppercase; color: rgba(255,255,255,.3);
+      padding: .75rem .75rem .35rem;
+    }
+    .menu-item {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .65rem .75rem; border-radius: 8px;
+      text-decoration: none; color: rgba(255,255,255,.55);
+      font-size: .88rem; font-weight: 500; transition: all .2s;
+      margin-bottom: .15rem; cursor: pointer; border: none;
+      background: none; width: 100%; text-align: left;
+    }
+    .menu-item:hover { background: rgba(255,255,255,.07); color: rgba(255,255,255,.85); }
+    .menu-item.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(200,68,26,.3); }
+    .menu-item .icon { font-size: 1.1rem; width: 20px; text-align: center; }
+    .sidebar-footer { padding: 1rem .75rem 0; border-top: 1px solid rgba(255,255,255,.08); }
+    .user-info { display: flex; align-items: center; gap: .65rem; padding: .65rem .75rem; margin-bottom: .5rem; }
+    .user-avatar {
+      width: 34px; height: 34px; background: var(--primary); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem; color: white; font-weight: 600;
+    }
+    .user-name { font-size: .83rem; color: white; font-weight: 500; }
+    .user-role { font-size: .7rem; color: rgba(255,255,255,.4); }
+
+    .main { margin-left: 240px; flex: 1; min-height: 100vh; }
+    .topbar {
+      background: white; padding: 1rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 4px rgba(0,0,0,.04);
+    }
+    .topbar-title { font-family: var(--font-display); font-size: 1.3rem; color: var(--dark); }
+    .content { padding: 2rem; }
+
+    /* Stats */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1rem; margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: white; border-radius: var(--radius-md);
+      padding: 1.25rem; box-shadow: 0 2px 8px rgba(0,0,0,.05);
+      display: flex; align-items: center; gap: .85rem;
+    }
+    .stat-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; flex-shrink: 0;
+    }
+    .stat-value { font-family: var(--font-display); font-size: 1.6rem; color: var(--dark); }
+    .stat-label { font-size: .72rem; color: var(--text-muted); }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap;
+    }
+    .toolbar-left { display: flex; gap: .75rem; flex-wrap: wrap; }
+    .search-box {
+      display: flex; align-items: center; gap: .5rem;
+      background: white; border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm); padding: .5rem 1rem;
+    }
+    .search-box input {
+      border: none; outline: none; font-family: var(--font-body);
+      font-size: .88rem; color: var(--text); width: 200px; background: transparent;
+    }
+    .filter-select {
+      border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      padding: .5rem .9rem; font-family: var(--font-body);
+      font-size: .85rem; color: var(--text); background: white;
+      cursor: pointer; outline: none;
+    }
+    .btn-add {
+      background: var(--primary); color: white; border: none;
+      border-radius: var(--radius-sm); padding: .6rem 1.25rem;
+      font-size: .88rem; font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; gap: .4rem;
+      transition: all .2s; font-family: var(--font-body);
+    }
+    .btn-add:hover { background: var(--primary-dark); }
+
+    /* Table */
+    .table-card {
+      background: white; border-radius: var(--radius-md);
+      box-shadow: 0 2px 8px rgba(0,0,0,.05); overflow: hidden;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead { background: #FAF7F4; }
+    th {
+      font-size: .72rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .06em; color: var(--text-muted);
+      padding: .85rem 1.25rem; text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: .9rem 1.25rem; font-size: .87rem;
+      color: var(--text); border-bottom: 1px solid #FAF7F4;
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #FDFCFB; }
+
+    .lot-num {
+      font-family: monospace; font-size: .82rem;
+      background: var(--primary-light); color: var(--primary);
+      padding: .2rem .6rem; border-radius: 4px; font-weight: 600;
+    }
+    .produit-cell { display: flex; align-items: center; gap: .6rem; }
+    .prod-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+    .exp-badge {
+      font-size: .72rem; font-weight: 600;
+      padding: .2rem .6rem; border-radius: 30px;
+    }
+    .exp-ok      { background: #D1FAE5; color: #065F46; }
+    .exp-soon    { background: #FEF3C7; color: #92400E; }
+    .exp-expired { background: #FEE2E2; color: #991B1B; }
+
+    .btn-icon {
+      width: 30px; height: 30px;
+      border: 1.5px solid var(--border); border-radius: 6px;
+      background: white; display: flex; align-items: center;
+      justify-content: center; cursor: pointer;
+      font-size: .82rem; transition: all .2s;
+    }
+    .btn-icon.danger:hover { border-color: #EF4444; background: #FEE2E2; }
+
+    .empty-row td { text-align: center; color: var(--text-muted); padding: 3rem; }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.5);
+      display: none; align-items: center; justify-content: center;
+      z-index: 200; backdrop-filter: blur(4px);
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: white; border-radius: var(--radius-lg);
+      padding: 2rem; width: 100%; max-width: 480px;
+      box-shadow: var(--shadow-lg);
+      animation: slideUp .3s cubic-bezier(.16,1,.3,1);
+    }
+    @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    .modal-header {
+      display: flex; align-items: center;
+      justify-content: space-between; margin-bottom: 1.5rem;
+    }
+    .modal-title { font-family: var(--font-display); font-size: 1.3rem; color: var(--dark); }
+    .modal-close { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted); }
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .num-preview {
+      background: var(--primary-light); border: 1px solid rgba(200,68,26,.2);
+      border-radius: var(--radius-sm); padding: .65rem 1rem;
+      font-size: .85rem; color: var(--primary); font-family: monospace;
+      font-weight: 600; margin-bottom: 1rem;
+    }
+    .modal-footer {
+      display: flex; gap: .75rem; justify-content: flex-end; margin-top: 1.5rem;
+    }
+    .btn-cancel {
+      background: var(--surface); border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm); padding: .65rem 1.25rem;
+      font-size: .88rem; cursor: pointer; font-family: var(--font-body);
+    }
+    .btn-save {
+      background: var(--primary); color: white; border: none;
+      border-radius: var(--radius-sm); padding: .65rem 1.5rem;
+      font-size: .88rem; font-weight: 600; cursor: pointer; font-family: var(--font-body);
+    }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+      .stats-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo">
+        <div class="logo-box">
+          <svg viewBox="0 0 24 24"><path d="M7 14c0 1.1.9 2 2 2h2v-4H9c-1.1 0-2 .9-2 2zm10-9h-1V3h-2v2H10V3H8v2H7C5.9 5 5 5.9 5 7v12c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 14H7V9h10v10z"/></svg>
+        </div>
+        <span class="logo-text">PeinturePro <span>TN</span></span>
+      </div>
+    </div>
+    <nav class="sidebar-menu">
+      <div class="menu-label">Principal</div>
+      <a class="menu-item" href="/admin/dashboard.html"><span class="icon">📊</span> Dashboard</a>
+      <a class="menu-item" href="/admin/produits.html"><span class="icon">🎨</span> Produits</a>
+      <a class="menu-item" href="/admin/utilisateurs.html"><span class="icon">👥</span> Utilisateurs</a>
+      <div class="menu-label">Production</div>
+      <a class="menu-item" href="/admin/matieres-premieres.html"><span class="icon">🧪</span> Matières premières</a>
+      <a class="menu-item active" href="/admin/lots-production.html"><span class="icon">🏭</span> Lots production</a>
+      <div class="menu-label">Analytique</div>
+      <a class="menu-item" href="/admin/analytics.html"><span class="icon">📈</span> Analytics</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar" id="userAvatar">A</div>
+        <div>
+          <div class="user-name" id="userName">Admin</div>
+          <div class="user-role">Administrateur</div>
+        </div>
+      </div>
+      <button class="menu-item" onclick="logout()"><span class="icon">🚪</span> Déconnexion</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title">🏭 Lots de production</div>
+      <span id="lotCount" style="font-size:.85rem; color:var(--text-muted);"></span>
+    </div>
+
+    <div class="content">
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(200,68,26,.1)">🏭</div>
+          <div><div class="stat-value" id="statTotal">0</div><div class="stat-label">Lots totaux</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(16,185,129,.1)">✅</div>
+          <div><div class="stat-value" id="statValides">0</div><div class="stat-label">Lots valides</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(239,68,68,.1)">⚠️</div>
+          <div><div class="stat-value" id="statExpires">0</div><div class="stat-label">Expirés / bientôt</div></div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <div class="search-box">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+            <input type="text" id="searchInput" placeholder="N° lot ou produit..." oninput="filterLots()"/>
+          </div>
+          <select class="filter-select" id="produitFilter" onchange="filterLots()">
+            <option value="">Tous les produits</option>
+          </select>
+        </div>
+        <button class="btn-add" onclick="openModal()">+ Nouveau lot</button>
+      </div>
+
+      <!-- Table -->
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>N° Lot</th>
+              <th>Produit</th>
+              <th>Quantité</th>
+              <th>Date production</th>
+              <th>Date expiration</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="lotsTable">
+            <tr class="empty-row"><td colspan="7">Chargement...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Nouveau lot de production</span>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+
+      <div class="alert alert-error" id="modalAlert">⚠️ <span id="modalAlertMsg"></span></div>
+
+      <div class="num-preview" id="numPreview">
+        N° : PEINT-<span id="datePart">AAAAMMJJ</span>-001
+      </div>
+
+      <div class="form-group">
+        <label>Produit *</label>
+        <select class="form-control" id="fProduit">
+          <option value="">Sélectionner un produit...</option>
+        </select>
+      </div>
+
+      <div class="row-2">
+        <div class="form-group">
+          <label>Quantité (litres) *</label>
+          <input type="number" class="form-control" id="fQuantite" placeholder="0" min="1" step="0.1"/>
+        </div>
+        <div class="form-group">
+          <label>Date d'expiration</label>
+          <input type="date" class="form-control" id="fExpiration"/>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+        <button class="btn-save" id="saveBtn" onclick="saveLot()">🏭 Créer le lot</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    requireAuth(['admin']);
+
+    const user = Auth.getUser();
+    if (user) {
+      document.getElementById('userName').textContent   = user.nom;
+      document.getElementById('userAvatar').textContent = user.nom.charAt(0).toUpperCase();
+    }
+
+    let allLots    = [];
+    let allProduits = [];
+
+    // Date part preview
+    const today    = new Date();
+    const datePart = today.toISOString().slice(0,10).replace(/-/g,'');
+    document.getElementById('datePart').textContent = datePart;
+
+    // Date min expiration = dans 1 mois
+    const minExp = new Date();
+    minExp.setMonth(minExp.getMonth() + 1);
+    document.getElementById('fExpiration').min   = minExp.toISOString().split('T')[0];
+    document.getElementById('fExpiration').value = minExp.toISOString().split('T')[0];
+
+    async function loadAll() {
+      await Promise.all([loadProduits(), loadLots()]);
+    }
+
+    async function loadProduits() {
+      try {
+        const res = await api.get('/produits');
+        allProduits = await res.json();
+        const sel1 = document.getElementById('fProduit');
+        const sel2 = document.getElementById('produitFilter');
+        allProduits.forEach(p => {
+          sel1.innerHTML += `<option value="${p.id}">${p.nom}</option>`;
+          sel2.innerHTML += `<option value="${p.id}">${p.nom}</option>`;
+        });
+      } catch {}
+    }
+
+    async function loadLots() {
+      try {
+        const res  = await api.get('/lots');
+        allLots    = await res.json();
+        document.getElementById('lotCount').textContent = `${allLots.length} lot(s)`;
+        updateStats(allLots);
+        renderLots(allLots);
+      } catch { document.getElementById('lotsTable').innerHTML = '<tr class="empty-row"><td colspan="7">❌ Erreur</td></tr>'; }
+    }
+
+    function updateStats(lots) {
+      const now      = new Date();
+      const soon     = new Date(); soon.setDate(soon.getDate() + 30);
+      const expires  = lots.filter(l => {
+        if (!l.date_expiration) return false;
+        const d = new Date(l.date_expiration);
+        return d < soon;
+      });
+      document.getElementById('statTotal').textContent   = lots.length;
+      document.getElementById('statValides').textContent = lots.length - expires.length;
+      document.getElementById('statExpires').textContent = expires.length;
+    }
+
+    function getExpStatus(dateStr) {
+      if (!dateStr) return { cls: 'exp-ok', label: 'N/A' };
+      const d    = new Date(dateStr);
+      const now  = new Date();
+      const soon = new Date(); soon.setDate(soon.getDate() + 30);
+      if (d < now)  return { cls: 'exp-expired', label: '❌ Expiré' };
+      if (d < soon) return { cls: 'exp-soon',    label: '⚠️ Bientôt' };
+      return { cls: 'exp-ok', label: '✓ Valide' };
+    }
+
+    function renderLots(lots) {
+      const tbody = document.getElementById('lotsTable');
+      if (!lots.length) {
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="7">Aucun lot trouvé.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = lots.map(l => {
+        const prod   = allProduits.find(p => p.id === l.produit_id);
+        const exp    = getExpStatus(l.date_expiration);
+        const datePr = new Date(l.created_at).toLocaleDateString('fr-TN', { day:'2-digit', month:'short', year:'numeric' });
+        const dateEx = l.date_expiration
+          ? new Date(l.date_expiration).toLocaleDateString('fr-TN', { day:'2-digit', month:'short', year:'numeric' })
+          : '—';
+        return `
+          <tr>
+            <td><span class="lot-num">${l.numero_lot}</span></td>
+            <td>
+              <div class="produit-cell">
+                <div class="prod-dot" style="background:${prod?.couleur_code || '#CCC'}"></div>
+                ${prod?.nom || '—'}
+              </div>
+            </td>
+            <td><strong>${parseFloat(l.quantite_litres).toFixed(1)}</strong> L</td>
+            <td style="color:var(--text-muted); font-size:.82rem">${datePr}</td>
+            <td style="font-size:.82rem">${dateEx}</td>
+            <td><span class="exp-badge ${exp.cls}">${exp.label}</span></td>
+            <td>
+              <button class="btn-icon danger" onclick="deleteLot(${l.id})" title="Supprimer">🗑️</button>
+            </td>
+          </tr>`;
+      }).join('');
+    }
+
+    function filterLots() {
+      const search  = document.getElementById('searchInput').value.toLowerCase();
+      const produit = document.getElementById('produitFilter').value;
+      let filtered  = allLots;
+      if (produit) filtered = filtered.filter(l => String(l.produit_id) === produit);
+      if (search)  filtered = filtered.filter(l =>
+        l.numero_lot.toLowerCase().includes(search) ||
+        (allProduits.find(p => p.id === l.produit_id)?.nom || '').toLowerCase().includes(search)
+      );
+      renderLots(filtered);
+    }
+
+    function openModal() {
+      document.getElementById('modalAlert').classList.remove('show');
+      document.getElementById('fProduit').value  = '';
+      document.getElementById('fQuantite').value = '';
+      document.getElementById('modalOverlay').classList.add('open');
+    }
+
+    async function saveLot() {
+      const produit_id       = document.getElementById('fProduit').value;
+      const quantite_litres  = parseFloat(document.getElementById('fQuantite').value);
+      const date_expiration  = document.getElementById('fExpiration').value;
+      const btn              = document.getElementById('saveBtn');
+
+      if (!produit_id || !quantite_litres) {
+        showAlert('Produit et quantité sont obligatoires.');
+        return;
+      }
+
+      btn.innerHTML = '<span class="spinner"></span>Création...';
+      btn.disabled  = true;
+
+      try {
+        const res = await api.post('/lots', { produit_id, quantite_litres, date_expiration });
+        if (res && res.ok) {
+          const data = await res.json();
+          closeModal();
+          await loadLots();
+          alert(`✅ Lot créé : ${data.numero_lot}`);
+        } else {
+          const d = await res.json();
+          showAlert(d.message || 'Erreur.');
+        }
+      } catch { showAlert('Erreur serveur.'); }
+      finally  { btn.innerHTML = '🏭 Créer le lot'; btn.disabled = false; }
+    }
+
+    async function deleteLot(id) {
+      if (!confirm('Supprimer ce lot ?')) return;
+      try {
+        await api.delete(`/lots/${id}`);
+        await loadLots();
+      } catch { alert('Erreur.'); }
+    }
+
+    function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+    function closeModalOutside(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
+    function showAlert(msg) {
+      document.getElementById('modalAlertMsg').textContent = msg;
+      document.getElementById('modalAlert').classList.add('show');
+    }
+
+    loadAll();
+  </script>
+</body>
+</html>
