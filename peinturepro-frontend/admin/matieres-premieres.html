@@ -394,7 +394,7 @@
     async function loadMP() {
       try {
         const res = await api.get('/matieres-premieres') ||
-                    await fetch('http://localhost:3000/api/matieres-premieres', {
+                    await fetch('http://localhost:3001/api/matieres-premieres', {
                       headers: { Authorization: `Bearer ${Auth.getToken()}` }
                     });
         allMP = await res.json();
@@ -497,7 +497,7 @@
       try {
         const endpoint = editingId ? `/matieres-premieres/${editingId}` : '/matieres-premieres';
         const method   = editingId ? 'PUT' : 'POST';
-        const res = await fetch(`http://localhost:3000/api${endpoint}`, {
+        const res = await fetch(`http://localhost:3001/api${endpoint}`, {
           method,
           headers: {
             'Content-Type': 'application/json',
@@ -514,7 +514,7 @@
     async function deleteMP(id) {
       if (!confirm('Supprimer cette matière ?')) return;
       try {
-        await fetch(`http://localhost:3000/api/matieres-premieres/${id}`, {
+        await fetch(`http://localhost:3001/api/matieres-premieres/${id}`, {
           method: 'DELETE',
           headers: { 'Authorization': `Bearer ${Auth.getToken()}` }
         });
