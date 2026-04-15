@@ -4,623 +4,1014 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PeinturePro TN — Commercial</title>
-  <link rel="stylesheet" href="/css/main.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body { background: #F4F1EE; min-height: 100vh; display: flex; }
+    /* ===== THÈME MODERNE SOMBRE ===== */
+    :root {
+      --bg-dark: #0a0a1a;
+      --bg-surface: #0f0f1f;
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --primary-light: #818cf8;
+      --accent: #f59e0b;
+      --accent-glow: #fbbf24;
+      --success: #10b981;
+      --text-white: #ffffff;
+      --text-gray: #a1a1aa;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --border-glow: rgba(99, 102, 241, 0.3);
+      --gradient-hero: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+      --shadow-glow: 0 0 30px rgba(99, 102, 241, 0.3);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --font-display: 'Poppins', system-ui, -apple-system, sans-serif;
+      --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    }
 
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg-dark);
+      font-family: var(--font-body);
+      color: var(--text-white);
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+    }
+
+    /* ===== SIDEBAR ===== */
     .sidebar {
-      width: 240px; min-height: 100vh;
-      background: #1A2535; display: flex;
-      flex-direction: column; padding: 1.5rem 0;
-      position: fixed; top: 0; left: 0; z-index: 100;
-      box-shadow: 4px 0 20px rgba(0,0,0,.15);
+      width: 260px;
+      min-height: 100vh;
+      background: rgba(15, 15, 31, 0.95);
+      backdrop-filter: blur(12px);
+      border-right: 1px solid rgba(99, 102, 241, 0.3);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+      transition: all 0.3s ease;
     }
     .sidebar-brand {
-      padding: 0 1.5rem 1.5rem;
-      border-bottom: 1px solid rgba(255,255,255,.08);
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(99, 102, 241, 0.3);
       margin-bottom: 1rem;
     }
-    .logo { display: flex; align-items: center; gap: .65rem; }
-    .logo-box {
-      width: 36px; height: 36px; background: #3B82F6;
-      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
     }
-    .logo-box svg { width: 20px; height: 20px; fill: white; }
-    .logo-text { font-family: var(--font-display); font-size: 1rem; color: white; }
-    .logo-text span { color: #60A5FA; }
-    .sidebar-menu { flex: 1; padding: 0 .75rem; }
+    .logo-image {
+      height: 40px;
+      width: auto;
+      filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.5));
+    }
+    .logo-text {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--text-white), var(--primary-light));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .logo-text span {
+      background: linear-gradient(135deg, var(--accent), var(--accent-glow));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .sidebar-menu {
+      flex: 1;
+      padding: 0 1rem;
+    }
     .menu-label {
-      font-size: .65rem; font-weight: 600; letter-spacing: .12em;
-      text-transform: uppercase; color: rgba(255,255,255,.3);
-      padding: .75rem .75rem .35rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-gray);
+      padding: 0.75rem 0.75rem 0.35rem;
     }
     .menu-item {
-      display: flex; align-items: center; gap: .75rem;
-      padding: .65rem .75rem; border-radius: 8px;
-      text-decoration: none; color: rgba(255,255,255,.55);
-      font-size: .88rem; font-weight: 500; transition: all .2s;
-      margin-bottom: .15rem; cursor: pointer; border: none;
-      background: none; width: 100%; text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0.75rem;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      color: var(--text-gray);
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      margin-bottom: 0.15rem;
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
     }
-    .menu-item:hover { background: rgba(255,255,255,.07); color: rgba(255,255,255,.85); }
-    .menu-item.active { background: #3B82F6; color: white; box-shadow: 0 4px 12px rgba(59,130,246,.3); }
-    .menu-item .icon { font-size: 1.1rem; width: 20px; text-align: center; }
-    .sidebar-footer { padding: 1rem .75rem 0; border-top: 1px solid rgba(255,255,255,.08); }
-    .user-info { display: flex; align-items: center; gap: .65rem; padding: .65rem .75rem; margin-bottom: .5rem; }
+    .menu-item .material-icons {
+      font-size: 20px;
+    }
+    .menu-item:hover {
+      background: rgba(99, 102, 241, 0.2);
+      color: var(--primary-light);
+    }
+    .menu-item.active {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(79, 70, 229, 0.4));
+      color: var(--primary-light);
+      border-left: 3px solid var(--primary);
+    }
+    .sidebar-footer {
+      padding: 1rem;
+      border-top: 1px solid rgba(99, 102, 241, 0.3);
+      margin-top: auto;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0.75rem;
+      margin-bottom: 0.5rem;
+    }
     .user-avatar {
-      width: 34px; height: 34px; background: #3B82F6; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: .85rem; color: white; font-weight: 600;
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: white;
     }
-    .user-name { font-size: .83rem; color: white; font-weight: 500; }
-    .user-role { font-size: .7rem; color: rgba(255,255,255,.4); }
+    .user-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-white);
+    }
+    .user-role {
+      font-size: 0.7rem;
+      color: var(--text-gray);
+    }
 
-    .main { margin-left: 240px; flex: 1; min-height: 100vh; }
+    /* ===== MAIN CONTENT ===== */
+    .main {
+      margin-left: 260px;
+      flex: 1;
+      min-height: 100vh;
+      background: var(--bg-dark);
+    }
     .topbar {
-      background: white; padding: 1rem 2rem;
-      display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid var(--border);
-      box-shadow: 0 1px 4px rgba(0,0,0,.04);
+      background: rgba(15, 15, 31, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(99, 102, 241, 0.3);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
     }
-    .topbar-title { font-family: var(--font-display); font-size: 1.3rem; color: var(--dark); }
-    .topbar-right { display: flex; gap: .75rem; align-items: center; }
+    .topbar-title {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      background: linear-gradient(135deg, var(--text-white), var(--primary-light));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .topbar-right {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
     .btn-new {
-      background: #3B82F6; color: white; border: none;
-      border-radius: var(--radius-sm); padding: .55rem 1.1rem;
-      font-size: .88rem; font-weight: 600; cursor: pointer;
-      font-family: var(--font-body); transition: all .2s;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 0.55rem 1.2rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.3s ease;
     }
-    .btn-new:hover { background: #2563EB; }
+    .btn-new:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+    }
+    .content {
+      padding: 2rem;
+    }
 
-    .content { padding: 2rem; }
-
-    /* KPIs */
+    /* ===== KPI CARDS ===== */
     .kpi-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr);
-      gap: 1.25rem; margin-bottom: 2rem;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 2rem;
     }
     .kpi-card {
-      background: white; border-radius: var(--radius-md);
-      padding: 1.4rem; box-shadow: 0 2px 8px rgba(0,0,0,.05);
-      border-top: 3px solid transparent; transition: transform .2s;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-md);
+      padding: 1.4rem;
+      transition: all 0.3s ease;
     }
-    .kpi-card:hover { transform: translateY(-2px); }
-    .kpi-card.blue  { border-top-color: #3B82F6; }
-    .kpi-card.green { border-top-color: #10B981; }
-    .kpi-card.orange{ border-top-color: var(--accent); }
-    .kpi-card.red   { border-top-color: var(--primary); }
-    .kpi-icon { font-size: 1.5rem; margin-bottom: .75rem; }
-    .kpi-value { font-family: var(--font-display); font-size: 1.8rem; color: var(--dark); margin-bottom: .2rem; }
-    .kpi-label { font-size: .78rem; color: var(--text-muted); }
+    .kpi-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-glow);
+    }
+    .kpi-icon .material-icons {
+      font-size: 28px;
+      color: var(--primary-light);
+      margin-bottom: 0.5rem;
+    }
+    .kpi-value {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      color: var(--accent);
+      margin-bottom: 0.2rem;
+    }
+    .kpi-label {
+      font-size: 0.7rem;
+      color: var(--text-gray);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
 
-    /* Layout 2 colonnes */
-    .two-col { display: grid; grid-template-columns: 1fr 380px; gap: 1.25rem; margin-bottom: 1.25rem; }
-
-    /* Cards */
+    /* ===== 2 COLONNES ===== */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
     .card {
-      background: white; border-radius: var(--radius-md);
-      padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,.05);
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-glow);
     }
     .card-title {
-      font-family: var(--font-display); font-size: 1rem; color: var(--dark);
-      margin-bottom: 1.25rem; padding-bottom: .75rem;
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
+      font-family: var(--font-display);
+      font-size: 1rem;
+      color: var(--primary-light);
+      margin-bottom: 1.2rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid rgba(99, 102, 241, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    .card-link { font-size: .78rem; color: #3B82F6; text-decoration: none; font-family: var(--font-body); }
+    .card-link {
+      font-size: 0.75rem;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .card-link:hover {
+      text-decoration: underline;
+    }
 
-    /* Table commandes */
-    table { width: 100%; border-collapse: collapse; }
+    /* Tableau */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
     th {
-      font-size: .72rem; font-weight: 600; text-transform: uppercase;
-      letter-spacing: .06em; color: var(--text-muted);
-      padding: .6rem .85rem; text-align: left;
-      border-bottom: 1px solid var(--border);
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-gray);
+      padding: 0.6rem 0.5rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(99, 102, 241, 0.3);
     }
     td {
-      padding: .75rem .85rem; font-size: .85rem;
-      color: var(--text); border-bottom: 1px solid #FAF7F4;
-      vertical-align: middle;
+      padding: 0.75rem 0.5rem;
+      font-size: 0.8rem;
+      color: var(--text-white);
+      border-bottom: 1px solid rgba(99, 102, 241, 0.15);
     }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: #FDFCFB; }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    tr:hover td {
+      background: rgba(99, 102, 241, 0.05);
+    }
 
+    /* Badges statut */
     .status-badge {
-      display: inline-flex; align-items: center;
-      padding: .2rem .65rem; border-radius: 30px;
-      font-size: .72rem; font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      font-weight: 600;
     }
-    .s-en_attente { background: #FEF3C7; color: #92400E; }
-    .s-confirmee  { background: #DBEAFE; color: #1E40AF; }
-    .s-en_cours   { background: #D1FAE5; color: #065F46; }
-    .s-livree     { background: #D1FAE5; color: #065F46; }
-    .s-annulee    { background: #FEE2E2; color: #991B1B; }
+    .s-en_attente { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .s-confirmee  { background: rgba(99, 102, 241, 0.15); color: var(--primary-light); border: 1px solid rgba(99, 102, 241, 0.4); }
+    .s-en_cours   { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .s-livree     { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .s-annulee    { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
 
     .btn-statut {
-      background: none; border: 1.5px solid var(--border);
-      border-radius: 6px; padding: .25rem .6rem;
-      font-size: .75rem; cursor: pointer;
-      font-family: var(--font-body); transition: all .2s; color: var(--text-muted);
+      background: transparent;
+      border: 1.5px solid rgba(99, 102, 241, 0.5);
+      border-radius: 6px;
+      padding: 0.25rem 0.7rem;
+      font-size: 0.7rem;
+      cursor: pointer;
+      color: var(--text-gray);
+      transition: all 0.2s;
     }
-    .btn-statut:hover { border-color: #3B82F6; color: #3B82F6; background: #EFF6FF; }
+    .btn-statut:hover {
+      border-color: var(--primary);
+      color: var(--primary-light);
+      background: rgba(99, 102, 241, 0.1);
+    }
 
-    /* Devis liste */
+    /* Liste devis */
     .devis-item {
-      display: flex; align-items: center; gap: .85rem;
-      padding: .75rem 0; border-bottom: 1px solid #FAF7F4;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.7rem 0;
+      border-bottom: 1px solid rgba(99, 102, 241, 0.15);
     }
-    .devis-item:last-child { border-bottom: none; }
+    .devis-item:last-child {
+      border-bottom: none;
+    }
     .devis-num {
-      font-family: monospace; font-size: .78rem;
-      background: #EFF6FF; color: #1E40AF;
-      padding: .15rem .5rem; border-radius: 4px; font-weight: 600;
+      font-family: monospace;
+      font-size: 0.75rem;
+      background: rgba(99, 102, 241, 0.2);
+      color: var(--primary-light);
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      font-weight: 600;
     }
-    .devis-client { flex: 1; font-size: .85rem; font-weight: 600; color: var(--dark); }
-    .devis-sub { font-size: .72rem; color: var(--text-muted); }
-    .devis-montant { font-family: var(--font-display); font-size: .95rem; color: #3B82F6; }
+    .devis-client {
+      flex: 1;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-white);
+    }
+    .devis-sub {
+      font-size: 0.7rem;
+      color: var(--text-gray);
+    }
+    .devis-montant {
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      color: var(--accent);
+    }
     .devis-badge {
-      font-size: .7rem; font-weight: 600;
-      padding: .2rem .55rem; border-radius: 30px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 40px;
     }
-    .d-brouillon { background: #F1F5F9; color: #475569; }
-    .d-envoye    { background: #DBEAFE; color: #1E40AF; }
-    .d-accepte   { background: #D1FAE5; color: #065F46; }
-    .d-refuse    { background: #FEE2E2; color: #991B1B; }
-    .d-expire    { background: #F1F5F9; color: #9CA3AF; }
+    .d-brouillon { background: rgba(161, 161, 170, 0.15); color: var(--text-gray); }
+    .d-envoye    { background: rgba(99, 102, 241, 0.15); color: var(--primary-light); }
+    .d-accepte   { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; }
+    .d-refuse    { background: rgba(239, 68, 68, 0.15); color: #fca5a5; }
+    .d-expire    { background: rgba(161, 161, 170, 0.15); color: var(--text-gray); }
 
-    /* Modal devis */
+    /* Chart */
+    canvas {
+      max-height: 250px;
+    }
+
+    /* Modal */
     .modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,.5);
-      display: none; align-items: center; justify-content: center;
-      z-index: 200; backdrop-filter: blur(4px);
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
     }
-    .modal-overlay.open { display: flex; }
+    .modal-overlay.open {
+      display: flex;
+    }
     .modal {
-      background: white; border-radius: var(--radius-lg);
-      padding: 2rem; width: 100%; max-width: 520px;
-      box-shadow: var(--shadow-lg);
-      animation: slideUp .3s cubic-bezier(.16,1,.3,1);
-      max-height: 90vh; overflow-y: auto;
+      background: var(--bg-surface);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: var(--shadow-glow);
+      animation: slideUp 0.3s ease;
     }
-    @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
     .modal-header {
-      display: flex; align-items: center;
-      justify-content: space-between; margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
     }
-    .modal-title { font-family: var(--font-display); font-size: 1.3rem; color: var(--dark); }
-    .modal-close { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted); }
-    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      background: linear-gradient(135deg, var(--text-white), var(--primary-light));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-gray);
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+    .modal-close:hover {
+      color: var(--primary-light);
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.75rem;
+      margin-bottom: 0.3rem;
+      color: var(--text-gray);
+    }
+    .form-control {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1.5px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 0.7rem;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--text-white);
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    select.form-control {
+      cursor: pointer;
+    }
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+    }
     .calc-result {
-      background: #EFF6FF; border: 1px solid #BFDBFE;
-      border-radius: var(--radius-sm); padding: .85rem 1rem;
-      margin: .75rem 0; font-size: .88rem; color: #1E40AF;
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 0.8rem;
+      margin: 0.8rem 0;
+      font-size: 0.85rem;
+      color: var(--primary-light);
+      display: none;
     }
-    .calc-result strong { font-family: var(--font-display); font-size: 1.1rem; }
-    .modal-footer { display: flex; gap: .75rem; justify-content: flex-end; margin-top: 1.5rem; }
+    .calc-result.show {
+      display: block;
+    }
+    .alert {
+      background: rgba(239, 68, 68, 0.15);
+      border-left: 3px solid #ef4444;
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 1rem;
+      font-size: 0.8rem;
+      color: #fca5a5;
+      display: none;
+      margin-bottom: 1rem;
+    }
+    .alert.show {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .modal-footer {
+      display: flex;
+      gap: 0.8rem;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
+    }
     .btn-cancel {
-      background: var(--surface); border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm); padding: .65rem 1.25rem;
-      font-size: .88rem; cursor: pointer; font-family: var(--font-body);
+      background: transparent;
+      border: 1.5px solid rgba(99, 102, 241, 0.5);
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 1.2rem;
+      font-size: 0.8rem;
+      color: var(--text-gray);
+      cursor: pointer;
+    }
+    .btn-cancel:hover {
+      border-color: var(--primary);
+      color: var(--primary-light);
     }
     .btn-save {
-      background: #3B82F6; color: white; border: none;
-      border-radius: var(--radius-sm); padding: .65rem 1.5rem;
-      font-size: .88rem; font-weight: 600; cursor: pointer; font-family: var(--font-body);
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 1.5rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
     }
+    .btn-save:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin-right: 0.4rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    @media (max-width: 1100px) {
+    /* Responsive */
+    @media (max-width: 1000px) {
       .kpi-grid { grid-template-columns: repeat(2, 1fr); }
       .two-col { grid-template-columns: 1fr; }
     }
     @media (max-width: 768px) {
       .sidebar { display: none; }
       .main { margin-left: 0; }
+      .topbar { padding: 1rem; }
+      .content { padding: 1rem; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="sidebar-brand">
-      <div class="logo">
-        <div class="logo-box">
-          <svg viewBox="0 0 24 24"><path d="M7 14c0 1.1.9 2 2 2h2v-4H9c-1.1 0-2 .9-2 2zm10-9h-1V3h-2v2H10V3H8v2H7C5.9 5 5 5.9 5 7v12c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 14H7V9h10v10z"/></svg>
-        </div>
-        <span class="logo-text">PeinturePro <span>TN</span></span>
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+  <div class="nav-brand">
+    <img src="../images/logo.png" alt="PeinturePro TN" class="logo-image">
+   
+  </div>
+  </div>
+  <nav class="sidebar-menu">
+    <div class="menu-label">Commercial</div>
+    <a class="menu-item active" href="/commercial/dashboard.html">
+      <span class="material-icons">dashboard</span> Dashboard
+    </a>
+    <a class="menu-item" href="/commercial/devis.html">
+      <span class="material-icons">description</span> Devis
+    </a>
+    <div class="menu-label">Commandes</div>
+    <a class="menu-item" href="#" onclick="scrollToCommandes()">
+      <span class="material-icons">shopping_cart</span> Commandes
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="user-avatar" id="userAvatar">C</div>
+      <div>
+        <div class="user-name" id="userName">Commercial</div>
+        <div class="user-role">Commercial</div>
       </div>
     </div>
-    <nav class="sidebar-menu">
-      <div class="menu-label">Commercial</div>
-      <a class="menu-item active" href="/commercial/dashboard.html"><span class="icon">📊</span> Dashboard</a>
-      <a class="menu-item" href="/commercial/devis.html"><span class="icon">📄</span> Devis</a>
-      <div class="menu-label">Commandes</div>
-      <a class="menu-item" href="#" onclick="scrollToCommandes()"><span class="icon">📦</span> Commandes</a>
-    </nav>
-    <div class="sidebar-footer">
-      <div class="user-info">
-        <div class="user-avatar" id="userAvatar">C</div>
-        <div>
-          <div class="user-name" id="userName">Commercial</div>
-          <div class="user-role">Commercial</div>
-        </div>
-      </div>
-      <button class="menu-item" onclick="logout()"><span class="icon">🚪</span> Déconnexion</button>
+    <button class="menu-item" onclick="logout()">
+      <span class="material-icons">logout</span> Déconnexion
+    </button>
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">Dashboard Commercial</div>
+    <div class="topbar-right">
+      <button class="btn-new" onclick="openDevisModal()">
+        <span class="material-icons">add</span> Nouveau devis
+      </button>
     </div>
-  </aside>
+  </div>
 
-  <!-- Main -->
-  <div class="main">
-    <div class="topbar">
-      <div class="topbar-title">Dashboard Commercial</div>
-      <div class="topbar-right">
-        <button class="btn-new" onclick="openDevisModal()">+ Nouveau devis</button>
+  <div class="content">
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon"><span class="material-icons">description</span></div>
+        <div class="kpi-value" id="kpiDevis">—</div>
+        <div class="kpi-label">Devis créés</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon"><span class="material-icons">check_circle</span></div>
+        <div class="kpi-value" id="kpiAcceptes">—</div>
+        <div class="kpi-label">Devis acceptés</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon"><span class="material-icons">pending</span></div>
+        <div class="kpi-value" id="kpiCommandes">—</div>
+        <div class="kpi-label">Commandes en attente</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon"><span class="material-icons">payments</span></div>
+        <div class="kpi-value" id="kpiCA">—</div>
+        <div class="kpi-label">CA confirmé (DT)</div>
       </div>
     </div>
 
-    <div class="content">
-
-      <!-- KPIs -->
-      <div class="kpi-grid">
-        <div class="kpi-card blue">
-          <div class="kpi-icon">📄</div>
-          <div class="kpi-value" id="kpiDevis">—</div>
-          <div class="kpi-label">Devis créés</div>
-        </div>
-        <div class="kpi-card green">
-          <div class="kpi-icon">✅</div>
-          <div class="kpi-value" id="kpiAcceptes">—</div>
-          <div class="kpi-label">Devis acceptés</div>
-        </div>
-        <div class="kpi-card orange">
-          <div class="kpi-icon">📦</div>
-          <div class="kpi-value" id="kpiCommandes">—</div>
-          <div class="kpi-label">Commandes en attente</div>
-        </div>
-        <div class="kpi-card red">
-          <div class="kpi-icon">💰</div>
-          <div class="kpi-value" id="kpiCA">—</div>
-          <div class="kpi-label">CA confirmé (DT)</div>
-        </div>
-      </div>
-
-      <!-- Commandes + Devis -->
-      <div class="two-col" id="commandesSection">
-        <div class="card">
-          <div class="card-title">
-            📦 Commandes récentes
-            <a href="#" class="card-link" onclick="exportCommandes()">📥 Export CSV</a>
-          </div>
-          <table>
-            <thead>
-              <tr>
-                <th>#</th><th>Client</th><th>Montant</th><th>Statut</th><th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="commandesTable">
-              <tr><td colspan="5" style="text-align:center; color:var(--text-muted)">Chargement...</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="card">
-          <div class="card-title">
-            📄 Devis récents
-            <a href="/commercial/devis.html" class="card-link">Voir tout →</a>
-          </div>
-          <div id="devisList">
-            <p style="text-align:center; color:var(--text-muted); padding:2rem">Chargement...</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Chart -->
+    <!-- Commandes + Devis -->
+    <div class="two-col" id="commandesSection">
       <div class="card">
-        <div class="card-title">📈 Taux de transformation devis → commandes</div>
-        <canvas id="transformChart" height="80"></canvas>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- Modal Devis -->
-  <div class="modal-overlay" id="devisModal" onclick="closeDevisModal(event)">
-    <div class="modal">
-      <div class="modal-header">
-        <span class="modal-title">Nouveau devis</span>
-        <button class="modal-close" onclick="document.getElementById('devisModal').classList.remove('open')">✕</button>
-      </div>
-
-      <div class="alert alert-error" id="devisAlert">⚠️ <span id="devisAlertMsg"></span></div>
-
-      <div class="form-group">
-        <label>Client *</label>
-        <select class="form-control" id="dClient">
-          <option value="">Sélectionner un client...</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>Produit *</label>
-        <select class="form-control" id="dProduit" onchange="calcDevis()">
-          <option value="">Sélectionner un produit...</option>
-        </select>
-      </div>
-
-      <div class="row-2">
-        <div class="form-group">
-          <label>Surface (m²) *</label>
-          <input type="number" class="form-control" id="dSurface"
-                 placeholder="50" min="1" oninput="calcDevis()"/>
+        <div class="card-title">
+          <span class="material-icons" style="font-size: 18px;">shopping_cart</span> Commandes récentes
+          <a href="#" class="card-link" onclick="exportCommandes()">
+            <span class="material-icons" style="font-size: 14px;">download</span> Export CSV
+          </a>
         </div>
-        <div class="form-group">
-          <label>Nombre de couches</label>
-          <select class="form-control" id="dCouches" onchange="calcDevis()">
-            <option value="1">1 couche</option>
-            <option value="2" selected>2 couches</option>
-            <option value="3">3 couches</option>
-          </select>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>Client</th><th>Montant</th><th>Statut</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="commandesTable">
+            <tr><td colspan="5" style="text-align:center; color:var(--text-gray)">Chargement...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="material-icons" style="font-size: 18px;">description</span> Devis récents
+          <a href="/commercial/devis.html" class="card-link">Voir tout →</a>
+        </div>
+        <div id="devisList">
+          <p style="text-align:center; color:var(--text-gray); padding:2rem">Chargement...</p>
         </div>
       </div>
+    </div>
 
-      <div class="calc-result" id="calcResult" style="display:none">
-        Litres nécessaires : <strong id="calcLitres">0</strong> L
-        &nbsp;|&nbsp; Montant estimé : <strong id="calcMontant">0</strong> DT
+    <!-- Chart -->
+    <div class="card">
+      <div class="card-title">
+        <span class="material-icons" style="font-size: 18px;">bar_chart</span> Taux de transformation devis → commandes
       </div>
-
-      <div class="modal-footer">
-        <button class="btn-cancel" onclick="document.getElementById('devisModal').classList.remove('open')">Annuler</button>
-        <button class="btn-save" id="devisSaveBtn" onclick="saveDevis()">📄 Créer le devis</button>
-      </div>
+      <canvas id="transformChart" height="80"></canvas>
     </div>
   </div>
+</div>
 
-  <script src="/js/api.js"></script>
-  <script src="/js/auth.js"></script>
-  <script>
-    requireAuth(['commercial', 'admin']);
+<!-- Modal Devis -->
+<div class="modal-overlay" id="devisModal" onclick="closeDevisModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Nouveau devis</span>
+      <button class="modal-close" onclick="document.getElementById('devisModal').classList.remove('open')">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <div class="alert" id="devisAlert">
+      <span class="material-icons" style="font-size: 16px;">error_outline</span>
+      <span id="devisAlertMsg"></span>
+    </div>
+    <div class="form-group">
+      <label>Client *</label>
+      <select class="form-control" id="dClient">
+        <option value="">Sélectionner un client...</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Produit *</label>
+      <select class="form-control" id="dProduit" onchange="calcDevis()">
+        <option value="">Sélectionner un produit...</option>
+      </select>
+    </div>
+    <div class="row-2">
+      <div class="form-group">
+        <label>Surface (m²) *</label>
+        <input type="number" class="form-control" id="dSurface" placeholder="50" min="1" oninput="calcDevis()">
+      </div>
+      <div class="form-group">
+        <label>Nombre de couches</label>
+        <select class="form-control" id="dCouches" onchange="calcDevis()">
+          <option value="1">1 couche</option>
+          <option value="2" selected>2 couches</option>
+          <option value="3">3 couches</option>
+        </select>
+      </div>
+    </div>
+    <div class="calc-result" id="calcResult">
+      Litres nécessaires : <strong id="calcLitres">0</strong> L
+      &nbsp;|&nbsp; Montant estimé : <strong id="calcMontant">0</strong> DT
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="document.getElementById('devisModal').classList.remove('open')">Annuler</button>
+      <button class="btn-save" id="devisSaveBtn" onclick="saveDevis()">Créer le devis</button>
+    </div>
+  </div>
+</div>
 
-    const user = Auth.getUser();
-    if (user) {
-      document.getElementById('userName').textContent   = user.nom;
-      document.getElementById('userAvatar').textContent = user.nom.charAt(0).toUpperCase();
-    }
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+  requireAuth(['commercial', 'admin']);
 
-    let allCommandes = [];
-    let allDevis     = [];
-    let allClients   = [];
-    let allProduits  = [];
-    let chartInstance = null;
+  const user = Auth.getUser();
+  if (user) {
+    document.getElementById('userName').textContent = user.nom;
+    document.getElementById('userAvatar').textContent = user.nom.charAt(0).toUpperCase();
+  }
 
-    const devisLabels = {
-      brouillon: { label: 'Brouillon', cls: 'd-brouillon' },
-      envoye:    { label: 'Envoyé',    cls: 'd-envoye' },
-      accepte:   { label: 'Accepté',  cls: 'd-accepte' },
-      refuse:    { label: 'Refusé',   cls: 'd-refuse' },
-      expire:    { label: 'Expiré',   cls: 'd-expire' }
-    };
+  let allCommandes = [];
+  let allDevis     = [];
+  let allClients   = [];
+  let allProduits  = [];
+  let chartInstance = null;
 
-    async function loadAll() {
-      try {
-        const [cmdRes, devRes, usrRes, prodRes] = await Promise.all([
-          api.get('/commandes'),
-          api.get('/devis'),
-          api.get('/utilisateurs'),
-          api.get('/produits')
-        ]);
-        allCommandes = await cmdRes.json();
-        allDevis     = await devRes.json();
-        const users  = await usrRes.json();
-        allClients   = users.filter(u => u.role === 'client' && u.actif);
-        allProduits  = await prodRes.json();
+  const devisLabels = {
+    brouillon: { label: 'Brouillon', cls: 'd-brouillon' },
+    envoye:    { label: 'Envoyé',    cls: 'd-envoye' },
+    accepte:   { label: 'Accepté',  cls: 'd-accepte' },
+    refuse:    { label: 'Refusé',   cls: 'd-refuse' },
+    expire:    { label: 'Expiré',   cls: 'd-expire' }
+  };
 
-        updateKPIs();
-        renderCommandes();
-        renderDevis();
-        renderTransformChart();
-        fillModalSelects();
-      } catch (err) { console.error(err); }
-    }
-
-    function updateKPIs() {
-      const acceptes   = allDevis.filter(d => d.statut === 'accepte').length;
-      const enAttente  = allCommandes.filter(c => c.statut === 'en_attente').length;
-      const ca         = allCommandes
-        .filter(c => ['confirmee','livree'].includes(c.statut))
-        .reduce((s, c) => s + parseFloat(c.montant_total || 0), 0);
-
-      document.getElementById('kpiDevis').textContent    = allDevis.length;
-      document.getElementById('kpiAcceptes').textContent = acceptes;
-      document.getElementById('kpiCommandes').textContent = enAttente;
-      document.getElementById('kpiCA').textContent        = ca.toFixed(0);
-    }
-
-    function renderCommandes() {
-      const tbody = document.getElementById('commandesTable');
-      const data  = allCommandes.slice(0, 10);
-      if (!data.length) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted)">Aucune commande</td></tr>';
-        return;
-      }
-      tbody.innerHTML = data.map(c => `
-        <tr>
-          <td style="font-weight:600">#${c.id}</td>
-          <td>${c.client_nom || '—'}</td>
-          <td style="font-weight:600; color:#3B82F6">${parseFloat(c.montant_total).toFixed(3)} DT</td>
-          <td><span class="status-badge s-${c.statut}">${c.statut.replace('_',' ')}</span></td>
-          <td>
-            ${c.statut === 'en_attente'
-              ? `<button class="btn-statut" onclick="confirmerCommande(${c.id})">✅ Confirmer</button>`
-              : '—'}
-          </td>
-        </tr>`).join('');
-    }
-
-    function renderDevis() {
-      const container = document.getElementById('devisList');
-      const data      = allDevis.slice(0, 6);
-      if (!data.length) {
-        container.innerHTML = '<p style="text-align:center; color:var(--text-muted); padding:2rem">Aucun devis</p>';
-        return;
-      }
-      container.innerHTML = data.map(d => {
-        const dl = devisLabels[d.statut] || { label: d.statut, cls: '' };
-        return `
-          <div class="devis-item">
-            <span class="devis-num">#${d.id}</span>
-            <div style="flex:1">
-              <div class="devis-client">${d.client_nom || 'Client #' + d.client_id}</div>
-              <div class="devis-sub">${d.surface_m2 ? d.surface_m2 + ' m²' : ''}</div>
-            </div>
-            <div class="devis-montant">${parseFloat(d.montant_total).toFixed(3)} DT</div>
-            <span class="devis-badge ${dl.cls}">${dl.label}</span>
-          </div>`;
-      }).join('');
-    }
-
-    function renderTransformChart() {
-      const total    = allDevis.length;
-      const acceptes = allDevis.filter(d => d.statut === 'accepte').length;
-      const refuses  = allDevis.filter(d => d.statut === 'refuse').length;
-      const en_cours = total - acceptes - refuses;
-      const taux     = total ? ((acceptes / total) * 100).toFixed(1) : 0;
-
-      if (chartInstance) chartInstance.destroy();
-      chartInstance = new Chart(document.getElementById('transformChart'), {
-        type: 'bar',
-        data: {
-          labels: ['Total devis', 'Acceptés', 'En cours', 'Refusés'],
-          datasets: [{
-            data: [total, acceptes, en_cours, refuses],
-            backgroundColor: [
-              'rgba(59,130,246,.7)', 'rgba(16,185,129,.7)',
-              'rgba(245,158,11,.7)', 'rgba(239,68,68,.7)'
-            ],
-            borderRadius: 8, borderWidth: 0
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { display: false },
-            title: { display: true, text: `Taux de transformation : ${taux}%`, font: { size: 13 } }
-          },
-          scales: {
-            y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,.05)' }, ticks: { stepSize: 1 } },
-            x: { grid: { display: false } }
-          }
-        }
-      });
-    }
-
-    async function confirmerCommande(id) {
-      if (!confirm('Confirmer cette commande ?')) return;
-      try {
-        const res = await api.put(`/commandes/${id}/statut`, { statut: 'confirmee' });
-        if (res && res.ok) await loadAll();
-      } catch { alert('Erreur.'); }
-    }
-
-    function fillModalSelects() {
-      const selClient = document.getElementById('dClient');
-      const selProduit = document.getElementById('dProduit');
-      selClient.innerHTML  = '<option value="">Sélectionner un client...</option>' +
-        allClients.map(c => `<option value="${c.id}">${c.nom}</option>`).join('');
-      selProduit.innerHTML = '<option value="">Sélectionner un produit...</option>' +
-        allProduits.map(p => `<option value="${p.id}" data-prix="${p.prix_litre}" data-rend="${p.rendement_m2_L}">${p.nom} — ${parseFloat(p.prix_litre).toFixed(3)} DT/L</option>`).join('');
-    }
-
-    function calcDevis() {
-      const surface  = parseFloat(document.getElementById('dSurface').value) || 0;
-      const couches  = parseInt(document.getElementById('dCouches').value);
-      const selProd  = document.getElementById('dProduit');
-      const opt      = selProd.options[selProd.selectedIndex];
-      if (!opt || !opt.dataset.prix || !surface) {
-        document.getElementById('calcResult').style.display = 'none'; return;
-      }
-      const rendement = parseFloat(opt.dataset.rend);
-      const prix      = parseFloat(opt.dataset.prix);
-      const litres    = Math.max(5, (surface * couches) / rendement);
-      const montant   = litres * prix;
-      document.getElementById('calcLitres').textContent  = litres.toFixed(2);
-      document.getElementById('calcMontant').textContent = montant.toFixed(3);
-      document.getElementById('calcResult').style.display = 'block';
-    }
-
-    async function saveDevis() {
-      const client_id  = document.getElementById('dClient').value;
-      const produit_id = document.getElementById('dProduit').value;
-      const surface_m2 = parseFloat(document.getElementById('dSurface').value);
-      const couches    = parseInt(document.getElementById('dCouches').value);
-      const btn        = document.getElementById('devisSaveBtn');
-
-      if (!client_id || !produit_id || !surface_m2) {
-        document.getElementById('devisAlertMsg').textContent = 'Tous les champs sont obligatoires.';
-        document.getElementById('devisAlert').classList.add('show');
-        return;
-      }
-
-      const selProd   = document.getElementById('dProduit');
-      const opt       = selProd.options[selProd.selectedIndex];
-      const rendement = parseFloat(opt.dataset.rend);
-      const prix      = parseFloat(opt.dataset.prix);
-      const litres    = Math.max(5, (surface_m2 * couches) / rendement);
-
-      btn.innerHTML = '<span class="spinner"></span>Création...';
-      btn.disabled  = true;
-
-      try {
-        const res = await api.post('/devis', {
-          client_id, surface_m2, produit_id,
-          prix_litre: prix, litres_calcules: litres
-        });
-        if (res && res.ok) {
-          document.getElementById('devisModal').classList.remove('open');
-          await loadAll();
-        } else {
-          const d = await res.json();
-          document.getElementById('devisAlertMsg').textContent = d.message || 'Erreur.';
-          document.getElementById('devisAlert').classList.add('show');
-        }
-      } catch { document.getElementById('devisAlertMsg').textContent = 'Erreur serveur.'; document.getElementById('devisAlert').classList.add('show'); }
-      finally  { btn.innerHTML = '📄 Créer le devis'; btn.disabled = false; }
-    }
-
-    function openDevisModal() {
-      document.getElementById('devisAlert').classList.remove('show');
-      document.getElementById('dClient').value  = '';
-      document.getElementById('dProduit').value = '';
-      document.getElementById('dSurface').value = '';
-      document.getElementById('calcResult').style.display = 'none';
-      document.getElementById('devisModal').classList.add('open');
-    }
-
-    function closeDevisModal(e) {
-      if (e.target === document.getElementById('devisModal'))
-        document.getElementById('devisModal').classList.remove('open');
-    }
-
-    function exportCommandes() {
-      const headers = ['ID', 'Client', 'Montant', 'Litres', 'Statut', 'Date'];
-      const rows    = allCommandes.map(c => [
-        c.id, c.client_nom || '', parseFloat(c.montant_total).toFixed(3),
-        parseFloat(c.litres_calcules).toFixed(2), c.statut,
-        new Date(c.created_at).toLocaleDateString('fr-TN')
+  async function loadAll() {
+    try {
+      const [cmdRes, devRes, usrRes, prodRes] = await Promise.all([
+        api.get('/commandes'),
+        api.get('/devis'),
+        api.get('/utilisateurs'),
+        api.get('/produits')
       ]);
-      const csv  = [headers, ...rows].map(r => r.join(',')).join('\n');
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      const url  = URL.createObjectURL(blob);
-      const a    = document.createElement('a');
-      a.href = url; a.download = `commandes_${new Date().toISOString().slice(0,10)}.csv`;
-      a.click();
+      allCommandes = await cmdRes.json();
+      allDevis     = await devRes.json();
+      const users  = await usrRes.json();
+      allClients   = users.filter(u => u.role === 'client' && u.actif);
+      allProduits  = await prodRes.json();
+
+      updateKPIs();
+      renderCommandes();
+      renderDevis();
+      renderTransformChart();
+      fillModalSelects();
+    } catch (err) { console.error(err); }
+  }
+
+  function updateKPIs() {
+    const acceptes   = allDevis.filter(d => d.statut === 'accepte').length;
+    const enAttente  = allCommandes.filter(c => c.statut === 'en_attente').length;
+    const ca         = allCommandes
+      .filter(c => ['confirmee','livree'].includes(c.statut))
+      .reduce((s, c) => s + parseFloat(c.montant_total || 0), 0);
+
+    document.getElementById('kpiDevis').textContent    = allDevis.length;
+    document.getElementById('kpiAcceptes').textContent = acceptes;
+    document.getElementById('kpiCommandes').textContent = enAttente;
+    document.getElementById('kpiCA').textContent        = ca.toFixed(0);
+  }
+
+  function renderCommandes() {
+    const tbody = document.getElementById('commandesTable');
+    const data  = allCommandes.slice(0, 10);
+    if (!data.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-gray)">Aucune commande</td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map(c => `
+      <tr>
+        <td style="font-weight:600">#${c.id}</td>
+        <td>${c.client_nom || '—'}</td>
+        <td style="font-weight:600; color:var(--accent)">${parseFloat(c.montant_total).toFixed(3)} DT</td>
+        <td><span class="status-badge s-${c.statut}">${c.statut.replace('_',' ')}</span></td>
+        <td>
+          ${c.statut === 'en_attente'
+            ? `<button class="btn-statut" onclick="confirmerCommande(${c.id})">✅ Confirmer</button>`
+            : '—'}
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function renderDevis() {
+    const container = document.getElementById('devisList');
+    const data      = allDevis.slice(0, 6);
+    if (!data.length) {
+      container.innerHTML = '<p style="text-align:center; color:var(--text-gray); padding:2rem">Aucun devis</p>';
+      return;
+    }
+    container.innerHTML = data.map(d => {
+      const dl = devisLabels[d.statut] || { label: d.statut, cls: '' };
+      return `
+        <div class="devis-item">
+          <span class="devis-num">#${d.id}</span>
+          <div style="flex:1">
+            <div class="devis-client">${d.client_nom || 'Client #' + d.client_id}</div>
+            <div class="devis-sub">${d.surface_m2 ? d.surface_m2 + ' m²' : ''}</div>
+          </div>
+          <div class="devis-montant">${parseFloat(d.montant_total).toFixed(3)} DT</div>
+          <span class="devis-badge ${dl.cls}">${dl.label}</span>
+        </div>`;
+    }).join('');
+  }
+
+  function renderTransformChart() {
+    const total    = allDevis.length;
+    const acceptes = allDevis.filter(d => d.statut === 'accepte').length;
+    const refuses  = allDevis.filter(d => d.statut === 'refuse').length;
+    const en_cours = total - acceptes - refuses;
+    const taux     = total ? ((acceptes / total) * 100).toFixed(1) : 0;
+
+    if (chartInstance) chartInstance.destroy();
+    const ctx = document.getElementById('transformChart').getContext('2d');
+    chartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Total devis', 'Acceptés', 'En cours', 'Refusés'],
+        datasets: [{
+          data: [total, acceptes, en_cours, refuses],
+          backgroundColor: [
+            'rgba(99, 102, 241, 0.7)',
+            'rgba(16, 185, 129, 0.7)',
+            'rgba(245, 158, 11, 0.7)',
+            'rgba(239, 68, 68, 0.7)'
+          ],
+          borderRadius: 8,
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          title: { display: true, text: `Taux de transformation : ${taux}%`, color: '#a1a1aa', font: { size: 12 } }
+        },
+        scales: {
+          y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#a1a1aa', stepSize: 1 } },
+          x: { grid: { display: false }, ticks: { color: '#a1a1aa' } }
+        }
+      }
+    });
+  }
+
+  async function confirmerCommande(id) {
+    if (!confirm('Confirmer cette commande ?')) return;
+    try {
+      const res = await api.put(`/commandes/${id}/statut`, { statut: 'confirmee' });
+      if (res && res.ok) await loadAll();
+    } catch { alert('Erreur.'); }
+  }
+
+  function fillModalSelects() {
+    const selClient = document.getElementById('dClient');
+    const selProduit = document.getElementById('dProduit');
+    selClient.innerHTML = '<option value="">Sélectionner un client...</option>' +
+      allClients.map(c => `<option value="${c.id}">${c.nom}</option>`).join('');
+    selProduit.innerHTML = '<option value="">Sélectionner un produit...</option>' +
+      allProduits.map(p => `<option value="${p.id}" data-prix="${p.prix_litre}" data-rend="${p.rendement_m2_L}">${p.nom} — ${parseFloat(p.prix_litre).toFixed(3)} DT/L</option>`).join('');
+  }
+
+  function calcDevis() {
+    const surface  = parseFloat(document.getElementById('dSurface').value) || 0;
+    const couches  = parseInt(document.getElementById('dCouches').value);
+    const selProd  = document.getElementById('dProduit');
+    const opt      = selProd.options[selProd.selectedIndex];
+    if (!opt || !opt.dataset.prix || !surface) {
+      document.getElementById('calcResult').classList.remove('show');
+      return;
+    }
+    const rendement = parseFloat(opt.dataset.rend);
+    const prix      = parseFloat(opt.dataset.prix);
+    const litres    = Math.max(5, (surface * couches) / rendement);
+    const montant   = litres * prix;
+    document.getElementById('calcLitres').textContent  = litres.toFixed(2);
+    document.getElementById('calcMontant').textContent = montant.toFixed(3);
+    document.getElementById('calcResult').classList.add('show');
+  }
+
+  async function saveDevis() {
+    const client_id  = document.getElementById('dClient').value;
+    const produit_id = document.getElementById('dProduit').value;
+    const surface_m2 = parseFloat(document.getElementById('dSurface').value);
+    const couches    = parseInt(document.getElementById('dCouches').value);
+    const btn        = document.getElementById('devisSaveBtn');
+    const alertBox   = document.getElementById('devisAlert');
+
+    alertBox.classList.remove('show');
+
+    if (!client_id || !produit_id || !surface_m2) {
+      document.getElementById('devisAlertMsg').textContent = 'Tous les champs sont obligatoires.';
+      alertBox.classList.add('show');
+      return;
     }
 
-    function scrollToCommandes() {
-      document.getElementById('commandesSection').scrollIntoView({ behavior: 'smooth' });
-    }
+    const selProd   = document.getElementById('dProduit');
+    const opt       = selProd.options[selProd.selectedIndex];
+    const rendement = parseFloat(opt.dataset.rend);
+    const prix      = parseFloat(opt.dataset.prix);
+    const litres    = Math.max(5, (surface_m2 * couches) / rendement);
 
-    loadAll();
-  </script>
+    btn.innerHTML = '<span class="spinner"></span> Création...';
+    btn.disabled  = true;
+
+    try {
+      const res = await api.post('/devis', {
+        client_id, surface_m2, produit_id,
+        prix_litre: prix, litres_calcules: litres
+      });
+      if (res && res.ok) {
+        document.getElementById('devisModal').classList.remove('open');
+        await loadAll();
+      } else {
+        const d = await res.json();
+        document.getElementById('devisAlertMsg').textContent = d.message || 'Erreur.';
+        alertBox.classList.add('show');
+      }
+    } catch {
+      document.getElementById('devisAlertMsg').textContent = 'Erreur serveur.';
+      alertBox.classList.add('show');
+    } finally {
+      btn.innerHTML = 'Créer le devis';
+      btn.disabled = false;
+    }
+  }
+
+  function openDevisModal() {
+    document.getElementById('devisAlert').classList.remove('show');
+    document.getElementById('dClient').value = '';
+    document.getElementById('dProduit').value = '';
+    document.getElementById('dSurface').value = '';
+    document.getElementById('calcResult').classList.remove('show');
+    document.getElementById('devisModal').classList.add('open');
+  }
+
+  function closeDevisModal(e) {
+    if (e.target === document.getElementById('devisModal'))
+      document.getElementById('devisModal').classList.remove('open');
+  }
+
+  function exportCommandes() {
+    const headers = ['ID', 'Client', 'Montant', 'Litres', 'Statut', 'Date'];
+    const rows    = allCommandes.map(c => [
+      c.id, c.client_nom || '', parseFloat(c.montant_total).toFixed(3),
+      parseFloat(c.litres_calcules).toFixed(2), c.statut,
+      new Date(c.created_at).toLocaleDateString('fr-TN')
+    ]);
+    const csv  = [headers, ...rows].map(r => r.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url;
+    a.download = `commandes_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function scrollToCommandes() {
+    document.getElementById('commandesSection').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+    window.location.href = '/login-admin.html';
+  }
+
+  loadAll();
+</script>
 </body>
 </html>

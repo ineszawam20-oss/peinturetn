@@ -4,532 +4,942 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PeinturePro TN — Matières Premières</title>
-  <link rel="stylesheet" href="/css/main.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
-    body { background: #F4F1EE; min-height: 100vh; display: flex; }
+    /* ===== THÈME MODERNE SOMBRE ===== */
+    :root {
+      --bg-dark: #0a0a1a;
+      --bg-surface: #0f0f1f;
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --primary-light: #818cf8;
+      --accent: #f59e0b;
+      --accent-glow: #fbbf24;
+      --success: #10b981;
+      --text-white: #ffffff;
+      --text-gray: #a1a1aa;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --border-glow: rgba(99, 102, 241, 0.3);
+      --gradient-hero: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+      --shadow-glow: 0 0 30px rgba(99, 102, 241, 0.3);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --font-display: 'Poppins', system-ui, -apple-system, sans-serif;
+      --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    }
 
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg-dark);
+      font-family: var(--font-body);
+      color: var(--text-white);
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+    }
+
+    /* ===== SIDEBAR ===== */
     .sidebar {
-      width: 240px; min-height: 100vh;
-      background: var(--dark);
-      display: flex; flex-direction: column;
-      padding: 1.5rem 0;
-      position: fixed; top: 0; left: 0;
+      width: 260px;
+      min-height: 100vh;
+      background: rgba(15, 15, 31, 0.95);
+      backdrop-filter: blur(12px);
+      border-right: 1px solid rgba(99, 102, 241, 0.3);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
       z-index: 100;
-      box-shadow: 4px 0 20px rgba(0,0,0,.15);
     }
     .sidebar-brand {
-      padding: 0 1.5rem 1.5rem;
-      border-bottom: 1px solid rgba(255,255,255,.08);
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(99, 102, 241, 0.3);
       margin-bottom: 1rem;
     }
-    .logo { display: flex; align-items: center; gap: .65rem; }
-    .logo-box {
-      width: 36px; height: 36px;
-      background: var(--primary); border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
     }
-    .logo-box svg { width: 20px; height: 20px; fill: white; }
-    .logo-text { font-family: var(--font-display); font-size: 1rem; color: white; }
-    .logo-text span { color: var(--accent); }
-    .sidebar-menu { flex: 1; padding: 0 .75rem; }
+    .logo-image {
+      height: 40px;
+      width: auto;
+      filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.5));
+    }
+    .logo-text {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--text-white), var(--primary-light));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .logo-text span {
+      background: linear-gradient(135deg, var(--accent), var(--accent-glow));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .sidebar-menu {
+      flex: 1;
+      padding: 0 1rem;
+    }
     .menu-label {
-      font-size: .65rem; font-weight: 600;
-      letter-spacing: .12em; text-transform: uppercase;
-      color: rgba(255,255,255,.3);
-      padding: .75rem .75rem .35rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-gray);
+      padding: 0.75rem 0.75rem 0.35rem;
     }
     .menu-item {
-      display: flex; align-items: center; gap: .75rem;
-      padding: .65rem .75rem; border-radius: 8px;
-      text-decoration: none; color: rgba(255,255,255,.55);
-      font-size: .88rem; font-weight: 500;
-      transition: all .2s; margin-bottom: .15rem;
-      cursor: pointer; border: none;
-      background: none; width: 100%; text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0.75rem;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      color: var(--text-gray);
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      margin-bottom: 0.15rem;
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
     }
-    .menu-item:hover { background: rgba(255,255,255,.07); color: rgba(255,255,255,.85); }
-    .menu-item.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(200,68,26,.3); }
-    .menu-item .icon { font-size: 1.1rem; width: 20px; text-align: center; }
+    .menu-item .material-icons {
+      font-size: 20px;
+    }
+    .menu-item:hover {
+      background: rgba(99, 102, 241, 0.2);
+      color: var(--primary-light);
+    }
+    .menu-item.active {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(79, 70, 229, 0.4));
+      color: var(--primary-light);
+      border-left: 3px solid var(--primary);
+    }
     .sidebar-footer {
-      padding: 1rem .75rem 0;
-      border-top: 1px solid rgba(255,255,255,.08);
+      padding: 1rem;
+      border-top: 1px solid rgba(99, 102, 241, 0.3);
+      margin-top: auto;
     }
-    .user-info { display: flex; align-items: center; gap: .65rem; padding: .65rem .75rem; margin-bottom: .5rem; }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0.75rem;
+      margin-bottom: 0.5rem;
+    }
     .user-avatar {
-      width: 34px; height: 34px;
-      background: var(--primary); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: .85rem; color: white; font-weight: 600;
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: white;
     }
-    .user-name { font-size: .83rem; color: white; font-weight: 500; }
-    .user-role { font-size: .7rem; color: rgba(255,255,255,.4); }
+    .user-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-white);
+    }
+    .user-role {
+      font-size: 0.7rem;
+      color: var(--text-gray);
+    }
 
-    .main { margin-left: 240px; flex: 1; min-height: 100vh; }
+    /* ===== MAIN ===== */
+    .main {
+      margin-left: 260px;
+      flex: 1;
+      min-height: 100vh;
+      background: var(--bg-dark);
+    }
     .topbar {
-      background: white; padding: 1rem 2rem;
-      display: flex; align-items: center;
+      background: rgba(15, 15, 31, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(99, 102, 241, 0.3);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid var(--border);
-      box-shadow: 0 1px 4px rgba(0,0,0,.04);
+      position: sticky;
+      top: 0;
+      z-index: 90;
     }
-    .topbar-title { font-family: var(--font-display); font-size: 1.3rem; color: var(--dark); }
+    .topbar-title {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      background: linear-gradient(135deg, var(--text-white), var(--primary-light));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .topbar-right {
+      font-size: 0.8rem;
+      color: var(--text-gray);
+    }
+    .content {
+      padding: 2rem;
+    }
 
-    .content { padding: 2rem; }
-
-    /* Alertes */
+    /* ===== ALERTES ===== */
     .alerts-bar {
-      background: #FEF3C7;
-      border: 1px solid #F59E0B;
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.4);
       border-radius: var(--radius-md);
       padding: 1rem 1.25rem;
       margin-bottom: 1.5rem;
       display: none;
     }
-    .alerts-bar.show { display: block; }
-    .alerts-bar-title {
-      font-weight: 600; color: #92400E;
-      margin-bottom: .5rem; font-size: .9rem;
+    .alerts-bar.show {
+      display: block;
     }
-    .alert-pills { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .alerts-bar-title {
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .alert-pills {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
     .alert-pill {
-      background: #FEF9E7; border: 1px solid #F59E0B;
-      border-radius: 30px; padding: .25rem .85rem;
-      font-size: .78rem; color: #92400E; font-weight: 500;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: 30px;
+      padding: 0.25rem 0.85rem;
+      font-size: 0.75rem;
+      color: var(--accent);
+      font-weight: 500;
     }
 
-    /* Toolbar */
+    /* ===== TOOLBAR ===== */
     .toolbar {
-      display: flex; align-items: center;
+      display: flex;
+      align-items: center;
       justify-content: space-between;
-      margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+      gap: 1rem;
+      flex-wrap: wrap;
     }
     .search-box {
-      display: flex; align-items: center; gap: .5rem;
-      background: white; border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm); padding: .5rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1.5px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 0.5rem 1rem;
+    }
+    .search-box .material-icons {
+      font-size: 18px;
+      color: var(--text-gray);
     }
     .search-box input {
-      border: none; outline: none;
-      font-family: var(--font-body); font-size: .88rem;
-      color: var(--text); width: 200px; background: transparent;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--text-white);
+      width: 200px;
+    }
+    .search-box input::placeholder {
+      color: var(--text-gray);
     }
     .btn-add {
-      background: var(--primary); color: white;
-      border: none; border-radius: var(--radius-sm);
-      padding: .6rem 1.25rem; font-size: .88rem;
-      font-weight: 600; cursor: pointer;
-      display: flex; align-items: center; gap: .4rem;
-      transition: all .2s; font-family: var(--font-body);
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 1.2rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.3s ease;
     }
-    .btn-add:hover { background: var(--primary-dark); }
+    .btn-add .material-icons {
+      font-size: 18px;
+    }
+    .btn-add:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+    }
 
-    /* Grid */
+    /* ===== GRID MATIÈRES ===== */
     .mp-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 1.25rem;
     }
     .mp-card {
-      background: white; border-radius: var(--radius-md);
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-md);
       padding: 1.4rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,.05);
-      transition: transform .2s, box-shadow .2s;
-      position: relative; overflow: hidden;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
-    .mp-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.08); }
+    .mp-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-glow);
+    }
     .mp-card::before {
       content: '';
-      position: absolute; top: 0; left: 0; right: 0;
-      height: 3px; background: var(--primary);
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--primary);
     }
-    .mp-card.alert-card::before { background: #F59E0B; }
-
+    .mp-card.alert-card::before {
+      background: var(--accent);
+    }
     .mp-header {
-      display: flex; align-items: center;
-      justify-content: space-between; margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
     }
     .mp-icon {
-      width: 44px; height: 44px;
-      background: var(--primary-light);
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.3rem;
+      width: 48px;
+      height: 48px;
+      background: rgba(99, 102, 241, 0.15);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mp-icon .material-icons {
+      font-size: 28px;
+      color: var(--primary-light);
     }
     .mp-alert-badge {
-      background: #FEF3C7; color: #92400E;
-      font-size: .7rem; font-weight: 600;
-      padding: .2rem .6rem; border-radius: 30px;
-      border: 1px solid #F59E0B;
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent);
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 30px;
+      border: 1px solid rgba(245, 158, 11, 0.4);
     }
-
     .mp-name {
       font-family: var(--font-display);
-      font-size: 1.05rem; color: var(--dark); margin-bottom: .3rem;
+      font-size: 1rem;
+      color: var(--text-white);
+      margin-bottom: 0.3rem;
     }
-    .mp-unite { font-size: .78rem; color: var(--text-muted); margin-bottom: 1rem; }
-
-    /* Barre de stock */
-    .stock-bar-wrap { margin-bottom: 1rem; }
+    .mp-unite {
+      font-size: 0.75rem;
+      color: var(--text-gray);
+      margin-bottom: 1rem;
+    }
+    .stock-bar-wrap {
+      margin-bottom: 1rem;
+    }
     .stock-bar-header {
-      display: flex; justify-content: space-between;
-      font-size: .78rem; margin-bottom: .35rem;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      margin-bottom: 0.35rem;
     }
-    .stock-bar-label { color: var(--text-muted); }
-    .stock-bar-value { font-weight: 600; color: var(--dark); }
+    .stock-bar-label {
+      color: var(--text-gray);
+    }
+    .stock-bar-value {
+      font-weight: 600;
+      color: var(--text-white);
+    }
     .stock-bar-bg {
-      height: 8px; background: #F0EBE6;
-      border-radius: 4px; overflow: hidden;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
     }
     .stock-bar-fill {
-      height: 100%; border-radius: 4px;
-      transition: width .5s ease;
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.5s ease;
     }
-    .stock-bar-fill.ok  { background: #10B981; }
-    .stock-bar-fill.low { background: #F59E0B; }
-    .stock-bar-fill.empty { background: #EF4444; }
+    .stock-bar-fill.ok    { background: var(--success); }
+    .stock-bar-fill.low   { background: var(--accent); }
+    .stock-bar-fill.empty { background: #ef4444; }
 
     .mp-footer {
-      display: flex; align-items: center;
+      display: flex;
+      align-items: center;
       justify-content: space-between;
-      padding-top: .85rem; border-top: 1px solid var(--border);
+      padding-top: 0.8rem;
+      border-top: 1px solid rgba(99, 102, 241, 0.3);
     }
-    .mp-min { font-size: .75rem; color: var(--text-muted); }
-    .mp-min strong { color: var(--dark); }
-    .mp-actions { display: flex; gap: .4rem; }
+    .mp-min {
+      font-size: 0.7rem;
+      color: var(--text-gray);
+    }
+    .mp-min strong {
+      color: var(--text-white);
+    }
+    .mp-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
     .btn-icon {
-      width: 32px; height: 32px;
-      border: 1.5px solid var(--border);
-      border-radius: 6px; background: white;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; font-size: .85rem; transition: all .2s;
+      width: 32px;
+      height: 32px;
+      border: 1.5px solid rgba(99, 102, 241, 0.5);
+      border-radius: 6px;
+      background: transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-gray);
     }
-    .btn-icon:hover { border-color: var(--primary); background: var(--primary-light); }
-    .btn-icon.danger:hover { border-color: #EF4444; background: #FEE2E2; }
+    .btn-icon .material-icons {
+      font-size: 16px;
+    }
+    .btn-icon:hover {
+      border-color: var(--primary);
+      color: var(--primary-light);
+      background: rgba(99, 102, 241, 0.1);
+    }
+    .btn-icon.danger:hover {
+      border-color: #ef4444;
+      color: #fca5a5;
+      background: rgba(239, 68, 68, 0.1);
+    }
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-gray);
+      grid-column: 1/-1;
+    }
+    .empty-state .material-icons {
+      font-size: 48px;
+      margin-bottom: 0.5rem;
+      opacity: 0.5;
+    }
 
-    /* Modal */
+    /* ===== MODAL ===== */
     .modal-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.5);
-      display: none; align-items: center;
-      justify-content: center; z-index: 200;
-      backdrop-filter: blur(4px);
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
     }
-    .modal-overlay.open { display: flex; }
+    .modal-overlay.open {
+      display: flex;
+    }
     .modal {
-      background: white; border-radius: var(--radius-lg);
-      padding: 2rem; width: 100%; max-width: 460px;
-      box-shadow: var(--shadow-lg);
-      animation: slideUp .3s cubic-bezier(.16,1,.3,1);
+      background: var(--bg-surface);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: var(--shadow-glow);
+      animation: slideUp 0.3s ease;
     }
-    @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
     .modal-header {
-      display: flex; align-items: center;
-      justify-content: space-between; margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
     }
-    .modal-title { font-family: var(--font-display); font-size: 1.3rem; color: var(--dark); }
-    .modal-close { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted); }
-    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      background: linear-gradient(135deg, var(--text-white), var(--primary-light));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-gray);
+      cursor: pointer;
+    }
+    .modal-close .material-icons {
+      font-size: 22px;
+    }
+    .modal-close:hover {
+      color: var(--primary-light);
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.75rem;
+      margin-bottom: 0.3rem;
+      color: var(--text-gray);
+    }
+    .form-control {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1.5px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 0.7rem;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--text-white);
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    select.form-control {
+      cursor: pointer;
+    }
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+    }
+    .alert {
+      background: rgba(239, 68, 68, 0.15);
+      border-left: 3px solid #ef4444;
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 1rem;
+      font-size: 0.8rem;
+      color: #fca5a5;
+      display: none;
+      margin-bottom: 1rem;
+    }
+    .alert.show {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
     .modal-footer {
-      display: flex; gap: .75rem;
-      justify-content: flex-end; margin-top: 1.5rem;
+      display: flex;
+      gap: 0.8rem;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
     }
     .btn-cancel {
-      background: var(--surface); border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm); padding: .65rem 1.25rem;
-      font-size: .88rem; cursor: pointer; font-family: var(--font-body);
+      background: transparent;
+      border: 1.5px solid rgba(99, 102, 241, 0.5);
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 1.2rem;
+      font-size: 0.8rem;
+      color: var(--text-gray);
+      cursor: pointer;
+    }
+    .btn-cancel:hover {
+      border-color: var(--primary);
+      color: var(--primary-light);
     }
     .btn-save {
-      background: var(--primary); color: white;
-      border: none; border-radius: var(--radius-sm);
-      padding: .65rem 1.5rem; font-size: .88rem;
-      font-weight: 600; cursor: pointer; font-family: var(--font-body);
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 1.5rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
     }
+    .btn-save:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin-right: 0.4rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .empty-state { text-align: center; padding: 4rem; color: var(--text-muted); grid-column: 1/-1; }
-
+    /* Responsive */
     @media (max-width: 768px) {
       .sidebar { display: none; }
       .main { margin-left: 0; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+      .search-box input { width: 100%; }
+      .topbar { padding: 1rem; }
+      .content { padding: 1rem; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="sidebar-brand">
-      <div class="logo">
-        <div class="logo-box">
-          <svg viewBox="0 0 24 24"><path d="M7 14c0 1.1.9 2 2 2h2v-4H9c-1.1 0-2 .9-2 2zm10-9h-1V3h-2v2H10V3H8v2H7C5.9 5 5 5.9 5 7v12c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 14H7V9h10v10z"/></svg>
-        </div>
-        <span class="logo-text">PeinturePro <span>TN</span></span>
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+  <div class="nav-brand">
+    <img src="../images/logo.png" alt="PeinturePro TN" class="logo-image">
+   
+  </div>
+  </div>
+  <nav class="sidebar-menu">
+    <div class="menu-label">Principal</div>
+    <a class="menu-item" href="/admin/dashboard.html">
+      <span class="material-icons">dashboard</span> Dashboard
+    </a>
+    <a class="menu-item" href="/admin/produits.html">
+      <span class="material-icons">palette</span> Produits
+    </a>
+    <a class="menu-item" href="/admin/utilisateurs.html">
+      <span class="material-icons">people</span> Utilisateurs
+    </a>
+    <div class="menu-label">Production</div>
+    <a class="menu-item active" href="/admin/matieres-premieres.html">
+      <span class="material-icons">science</span> Matières premières
+    </a>
+    <a class="menu-item" href="/admin/lots-production.html">
+      <span class="material-icons">factory</span> Lots production
+    </a>
+    <div class="menu-label">Analytique</div>
+    <a class="menu-item" href="/admin/analytics.html">
+      <span class="material-icons">analytics</span> Analytics
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="user-avatar" id="userAvatar">A</div>
+      <div>
+        <div class="user-name" id="userName">Admin</div>
+        <div class="user-role">Administrateur</div>
       </div>
     </div>
-    <nav class="sidebar-menu">
-      <div class="menu-label">Principal</div>
-      <a class="menu-item" href="/admin/dashboard.html"><span class="icon">📊</span> Dashboard</a>
-      <a class="menu-item" href="/admin/produits.html"><span class="icon">🎨</span> Produits</a>
-      <a class="menu-item" href="/admin/utilisateurs.html"><span class="icon">👥</span> Utilisateurs</a>
-      <div class="menu-label">Production</div>
-      <a class="menu-item active" href="/admin/matieres-premieres.html"><span class="icon">🧪</span> Matières premières</a>
-      <a class="menu-item" href="/admin/lots-production.html"><span class="icon">🏭</span> Lots production</a>
-      <div class="menu-label">Analytique</div>
-      <a class="menu-item" href="/admin/analytics.html"><span class="icon">📈</span> Analytics</a>
-    </nav>
-    <div class="sidebar-footer">
-      <div class="user-info">
-        <div class="user-avatar" id="userAvatar">A</div>
-        <div>
-          <div class="user-name" id="userName">Admin</div>
-          <div class="user-role">Administrateur</div>
-        </div>
-      </div>
-      <button class="menu-item" onclick="logout()"><span class="icon">🚪</span> Déconnexion</button>
+    <button class="menu-item" onclick="logout()">
+      <span class="material-icons">logout</span> Déconnexion
+    </button>
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">
+      <span class="material-icons">science</span> Matières premières
     </div>
-  </aside>
-
-  <!-- Main -->
-  <div class="main">
-    <div class="topbar">
-      <div class="topbar-title">🧪 Matières premières</div>
-      <span id="mpCount" style="font-size:.85rem; color:var(--text-muted);"></span>
-    </div>
-
-    <div class="content">
-
-      <!-- Alertes -->
-      <div class="alerts-bar" id="alertsBar">
-        <div class="alerts-bar-title">⚠️ Stock bas détecté</div>
-        <div class="alert-pills" id="alertPills"></div>
-      </div>
-
-      <!-- Toolbar -->
-      <div class="toolbar">
-        <div class="search-box">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-          </svg>
-          <input type="text" id="searchInput" placeholder="Rechercher..." oninput="filterMP()"/>
-        </div>
-        <button class="btn-add" onclick="openModal()">+ Ajouter une matière</button>
-      </div>
-
-      <!-- Grid -->
-      <div class="mp-grid" id="mpGrid">
-        <div class="empty-state">Chargement...</div>
-      </div>
-
-    </div>
+    <div class="topbar-right" id="mpCount"></div>
   </div>
 
-  <!-- Modal -->
-  <div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
-    <div class="modal">
-      <div class="modal-header">
-        <span class="modal-title" id="modalTitle">Nouvelle matière</span>
-        <button class="modal-close" onclick="closeModal()">✕</button>
+  <div class="content">
+    <!-- Alertes stock bas -->
+    <div class="alerts-bar" id="alertsBar">
+      <div class="alerts-bar-title">
+        <span class="material-icons">warning</span> Stock bas détecté
       </div>
+      <div class="alert-pills" id="alertPills"></div>
+    </div>
 
-      <div class="alert alert-error" id="modalAlert">⚠️ <span id="modalAlertMsg"></span></div>
-
-      <div class="form-group">
-        <label>Nom de la matière *</label>
-        <input type="text" class="form-control" id="fNom" placeholder="Ex: Pigment blanc titane"/>
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="search-box">
+        <span class="material-icons">search</span>
+        <input type="text" id="searchInput" placeholder="Rechercher..." oninput="filterMP()">
       </div>
+      <button class="btn-add" onclick="openModal()">
+        <span class="material-icons">add</span> Ajouter une matière
+      </button>
+    </div>
 
-      <div class="row-2">
-        <div class="form-group">
-          <label>Unité *</label>
-          <select class="form-control" id="fUnite">
-            <option value="kg">kg</option>
-            <option value="L">Litre (L)</option>
-            <option value="g">g</option>
-            <option value="ml">ml</option>
-            <option value="unité">unité</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Stock actuel *</label>
-          <input type="number" class="form-control" id="fStock" placeholder="0" min="0" step="0.01"/>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Stock minimum (alerte)</label>
-        <input type="number" class="form-control" id="fStockMin" placeholder="10" min="0" step="0.01"/>
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn-cancel" onclick="closeModal()">Annuler</button>
-        <button class="btn-save" id="saveBtn" onclick="saveMP()">💾 Enregistrer</button>
+    <!-- Grid -->
+    <div class="mp-grid" id="mpGrid">
+      <div class="empty-state">
+        <span class="material-icons">hourglass_empty</span>
+        <p>Chargement...</p>
       </div>
     </div>
   </div>
+</div>
 
-  <script src="/js/api.js"></script>
-  <script src="/js/auth.js"></script>
-  <script>
-    requireAuth(['admin']);
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modalTitle">Nouvelle matière</span>
+      <button class="modal-close" onclick="closeModal()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <div class="alert" id="modalAlert">
+      <span class="material-icons" style="font-size: 16px;">error_outline</span>
+      <span id="modalAlertMsg"></span>
+    </div>
+    <div class="form-group">
+      <label>Nom de la matière *</label>
+      <input type="text" class="form-control" id="fNom" placeholder="Ex: Pigment blanc titane">
+    </div>
+    <div class="row-2">
+      <div class="form-group">
+        <label>Unité *</label>
+        <select class="form-control" id="fUnite">
+          <option value="kg">kg</option>
+          <option value="L">Litre (L)</option>
+          <option value="g">g</option>
+          <option value="ml">ml</option>
+          <option value="unité">unité</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Stock actuel *</label>
+        <input type="number" class="form-control" id="fStock" placeholder="0" min="0" step="0.01">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Stock minimum (alerte)</label>
+      <input type="number" class="form-control" id="fStockMin" placeholder="10" min="0" step="0.01">
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+      <button class="btn-save" id="saveBtn" onclick="saveMP()">Enregistrer</button>
+    </div>
+  </div>
+</div>
 
-    const user = Auth.getUser();
-    if (user) {
-      document.getElementById('userName').textContent   = user.nom;
-      document.getElementById('userAvatar').textContent = user.nom.charAt(0).toUpperCase();
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+  requireAuth(['admin']);
+
+  const user = Auth.getUser();
+  if (user) {
+    document.getElementById('userName').textContent = user.nom;
+    document.getElementById('userAvatar').textContent = user.nom.charAt(0).toUpperCase();
+  }
+
+  let allMP = [];
+  let editingId = null;
+
+  // Fonction pour obtenir l'icône Material en fonction du nom
+  function getIcon(nom) {
+    const n = nom.toLowerCase();
+    if (n.includes('pigment'))  return 'palette';
+    if (n.includes('résine') || n.includes('resine')) return 'opacity';
+    if (n.includes('solvant'))  return 'water_drop';
+    if (n.includes('eau'))      return 'water_drop';
+    if (n.includes('sel') || n.includes('poudre'))   return 'grain';
+    return 'science';
+  }
+
+  async function loadMP() {
+    try {
+      const res = await api.get('/matieres-premieres');
+      allMP = await res.json();
+      document.getElementById('mpCount').textContent = `${allMP.length} matière(s)`;
+      renderMP(allMP);
+      checkAlerts(allMP);
+    } catch (err) {
+      document.getElementById('mpGrid').innerHTML = '<div class="empty-state"><span class="material-icons">error_outline</span><p>❌ Erreur de chargement</p></div>';
     }
+  }
 
-    let allMP    = [];
-    let editingId = null;
-
-    // Icônes selon nom
-    function getIcon(nom) {
-      const n = nom.toLowerCase();
-      if (n.includes('pigment'))  return '🎨';
-      if (n.includes('résine') || n.includes('resine')) return '🧴';
-      if (n.includes('solvant'))  return '💧';
-      if (n.includes('eau'))      return '💧';
-      if (n.includes('sel') || n.includes('poudre'))   return '🧂';
-      return '🧪';
+  function renderMP(items) {
+    const grid = document.getElementById('mpGrid');
+    if (!items.length) {
+      grid.innerHTML = '<div class="empty-state"><span class="material-icons">inventory_2</span><p>Aucune matière trouvée.</p></div>';
+      return;
     }
-
-    async function loadMP() {
-      try {
-        const res = await api.get('/matieres-premieres') ||
-                    await fetch('http://localhost:3001/api/matieres-premieres', {
-                      headers: { Authorization: `Bearer ${Auth.getToken()}` }
-                    });
-        allMP = await res.json();
-        document.getElementById('mpCount').textContent = `${allMP.length} matière(s)`;
-        renderMP(allMP);
-        checkAlerts(allMP);
-      } catch { document.getElementById('mpGrid').innerHTML = '<div class="empty-state">❌ Erreur de chargement</div>'; }
-    }
-
-    function renderMP(items) {
-      const grid = document.getElementById('mpGrid');
-      if (!items.length) { grid.innerHTML = '<div class="empty-state">Aucune matière trouvée.</div>'; return; }
-
-      grid.innerHTML = items.map(m => {
-        const stock   = parseFloat(m.stock_actuel);
-        const min     = parseFloat(m.stock_minimum);
-        const pct     = min > 0 ? Math.min((stock / (min * 2)) * 100, 100) : 100;
-        const cls     = stock <= 0 ? 'empty' : stock <= min ? 'low' : 'ok';
-        const isAlert = stock <= min;
-
-        return `
-          <div class="mp-card ${isAlert ? 'alert-card' : ''}">
-            <div class="mp-header">
-              <div class="mp-icon">${getIcon(m.nom)}</div>
-              ${isAlert ? '<span class="mp-alert-badge">⚠️ Stock bas</span>' : ''}
+    grid.innerHTML = items.map(m => {
+      const stock = parseFloat(m.stock_actuel);
+      const min = parseFloat(m.stock_minimum);
+      const pct = min > 0 ? Math.min((stock / (min * 2)) * 100, 100) : 100;
+      const cls = stock <= 0 ? 'empty' : stock <= min ? 'low' : 'ok';
+      const isAlert = stock <= min;
+      const icon = getIcon(m.nom);
+      return `
+        <div class="mp-card ${isAlert ? 'alert-card' : ''}">
+          <div class="mp-header">
+            <div class="mp-icon"><span class="material-icons">${icon}</span></div>
+            ${isAlert ? '<span class="mp-alert-badge">⚠️ Stock bas</span>' : ''}
+          </div>
+          <div class="mp-name">${escapeHtml(m.nom)}</div>
+          <div class="mp-unite">Unité : ${m.unite}</div>
+          <div class="stock-bar-wrap">
+            <div class="stock-bar-header">
+              <span class="stock-bar-label">Stock actuel</span>
+              <span class="stock-bar-value">${stock} ${m.unite}</span>
             </div>
-            <div class="mp-name">${m.nom}</div>
-            <div class="mp-unite">Unité : ${m.unite}</div>
-            <div class="stock-bar-wrap">
-              <div class="stock-bar-header">
-                <span class="stock-bar-label">Stock actuel</span>
-                <span class="stock-bar-value">${stock} ${m.unite}</span>
-              </div>
-              <div class="stock-bar-bg">
-                <div class="stock-bar-fill ${cls}" style="width:${pct}%"></div>
-              </div>
+            <div class="stock-bar-bg">
+              <div class="stock-bar-fill ${cls}" style="width:${pct}%"></div>
             </div>
-            <div class="mp-footer">
-              <div class="mp-min">Min : <strong>${min} ${m.unite}</strong></div>
-              <div class="mp-actions">
-                <button class="btn-icon" onclick="editMP(${m.id})" title="Modifier">✏️</button>
-                <button class="btn-icon danger" onclick="deleteMP(${m.id})" title="Supprimer">🗑️</button>
-              </div>
+          </div>
+          <div class="mp-footer">
+            <div class="mp-min">Min : <strong>${min} ${m.unite}</strong></div>
+            <div class="mp-actions">
+              <button class="btn-icon" onclick="editMP(${m.id})" title="Modifier">
+                <span class="material-icons">edit</span>
+              </button>
+              <button class="btn-icon danger" onclick="deleteMP(${m.id})" title="Supprimer">
+                <span class="material-icons">delete</span>
+              </button>
             </div>
-          </div>`;
-      }).join('');
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function checkAlerts(items) {
+    const low = items.filter(m => parseFloat(m.stock_actuel) <= parseFloat(m.stock_minimum));
+    if (low.length) {
+      document.getElementById('alertsBar').classList.add('show');
+      document.getElementById('alertPills').innerHTML = low.map(m =>
+        `<span class="alert-pill">⚠️ ${escapeHtml(m.nom)} (${m.stock_actuel} ${m.unite})</span>`
+      ).join('');
+    } else {
+      document.getElementById('alertsBar').classList.remove('show');
+    }
+  }
+
+  function filterMP() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    renderMP(search ? allMP.filter(m => m.nom.toLowerCase().includes(search)) : allMP);
+  }
+
+  function openModal(id = null) {
+    editingId = id;
+    document.getElementById('modalAlert').classList.remove('show');
+    if (!id) {
+      document.getElementById('modalTitle').textContent = 'Nouvelle matière';
+      document.getElementById('fNom').value = '';
+      document.getElementById('fUnite').value = 'kg';
+      document.getElementById('fStock').value = '';
+      document.getElementById('fStockMin').value = '10';
+    }
+    document.getElementById('modalOverlay').classList.add('open');
+  }
+
+  function editMP(id) {
+    const m = allMP.find(x => x.id === id);
+    if (!m) return;
+    editingId = id;
+    document.getElementById('modalTitle').textContent = 'Modifier la matière';
+    document.getElementById('fNom').value = m.nom;
+    document.getElementById('fUnite').value = m.unite;
+    document.getElementById('fStock').value = m.stock_actuel;
+    document.getElementById('fStockMin').value = m.stock_minimum;
+    document.getElementById('modalOverlay').classList.add('open');
+  }
+
+  async function saveMP() {
+    const nom = document.getElementById('fNom').value.trim();
+    const unite = document.getElementById('fUnite').value;
+    const stock = parseFloat(document.getElementById('fStock').value) || 0;
+    const stockMin = parseFloat(document.getElementById('fStockMin').value) || 10;
+    const btn = document.getElementById('saveBtn');
+
+    if (!nom) {
+      showAlert('Le nom est obligatoire.');
+      return;
     }
 
-    function checkAlerts(items) {
-      const low = items.filter(m => parseFloat(m.stock_actuel) <= parseFloat(m.stock_minimum));
-      if (low.length) {
-        document.getElementById('alertsBar').classList.add('show');
-        document.getElementById('alertPills').innerHTML =
-          low.map(m => `<span class="alert-pill">⚠️ ${m.nom} (${m.stock_actuel} ${m.unite})</span>`).join('');
-      }
-    }
+    btn.innerHTML = '<span class="spinner"></span> Enregistrement...';
+    btn.disabled = true;
 
-    function filterMP() {
-      const search = document.getElementById('searchInput').value.toLowerCase();
-      renderMP(search ? allMP.filter(m => m.nom.toLowerCase().includes(search)) : allMP);
-    }
-
-    function openModal(id = null) {
-      editingId = id;
-      document.getElementById('modalAlert').classList.remove('show');
-      if (!id) {
-        document.getElementById('modalTitle').textContent = 'Nouvelle matière';
-        document.getElementById('fNom').value      = '';
-        document.getElementById('fUnite').value    = 'kg';
-        document.getElementById('fStock').value    = '';
-        document.getElementById('fStockMin').value = '10';
-      }
-      document.getElementById('modalOverlay').classList.add('open');
-    }
-
-    function editMP(id) {
-      const m = allMP.find(x => x.id === id);
-      if (!m) return;
-      editingId = id;
-      document.getElementById('modalTitle').textContent = 'Modifier la matière';
-      document.getElementById('fNom').value      = m.nom;
-      document.getElementById('fUnite').value    = m.unite;
-      document.getElementById('fStock').value    = m.stock_actuel;
-      document.getElementById('fStockMin').value = m.stock_minimum;
-      document.getElementById('modalOverlay').classList.add('open');
-    }
-
-    async function saveMP() {
-      const nom      = document.getElementById('fNom').value.trim();
-      const unite    = document.getElementById('fUnite').value;
-      const stock    = parseFloat(document.getElementById('fStock').value) || 0;
-      const stockMin = parseFloat(document.getElementById('fStockMin').value) || 10;
-      const btn      = document.getElementById('saveBtn');
-
-      if (!nom) { showAlert('Le nom est obligatoire.'); return; }
-
-      btn.innerHTML = '<span class="spinner"></span>...';
-      btn.disabled  = true;
-
-      try {
-        const endpoint = editingId ? `/matieres-premieres/${editingId}` : '/matieres-premieres';
-        const method   = editingId ? 'PUT' : 'POST';
-        const res = await fetch(`http://localhost:3001/api${endpoint}`, {
-          method,
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${Auth.getToken()}`
-          },
-          body: JSON.stringify({ nom, unite, stock_actuel: stock, stock_minimum: stockMin })
-        });
-        if (res.ok) { closeModal(); await loadMP(); }
-        else { const d = await res.json(); showAlert(d.message || 'Erreur.'); }
-      } catch { showAlert('Erreur serveur.'); }
-      finally  { btn.innerHTML = '💾 Enregistrer'; btn.disabled = false; }
-    }
-
-    async function deleteMP(id) {
-      if (!confirm('Supprimer cette matière ?')) return;
-      try {
-        await fetch(`http://localhost:3001/api/matieres-premieres/${id}`, {
-          method: 'DELETE',
-          headers: { 'Authorization': `Bearer ${Auth.getToken()}` }
-        });
+    try {
+      const endpoint = editingId ? `/matieres-premieres/${editingId}` : '/matieres-premieres';
+      const method = editingId ? 'PUT' : 'POST';
+      const res = await api.fetch(endpoint, {
+        method,
+        body: JSON.stringify({ nom, unite, stock_actuel: stock, stock_minimum: stockMin })
+      });
+      if (res && res.ok) {
+        closeModal();
         await loadMP();
-      } catch { alert('Erreur.'); }
+      } else {
+        const d = await res.json();
+        showAlert(d.message || 'Erreur lors de l\'enregistrement.');
+      }
+    } catch (err) {
+      showAlert('Erreur serveur.');
+    } finally {
+      btn.innerHTML = 'Enregistrer';
+      btn.disabled = false;
     }
+  }
 
-    function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); editingId = null; }
-    function closeModalOutside(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
-    function showAlert(msg) {
-      document.getElementById('modalAlertMsg').textContent = msg;
-      document.getElementById('modalAlert').classList.add('show');
+  async function deleteMP(id) {
+    if (!confirm('Supprimer cette matière ?')) return;
+    try {
+      const res = await api.delete(`/matieres-premieres/${id}`);
+      if (res && res.ok) await loadMP();
+      else alert('Erreur lors de la suppression.');
+    } catch (err) {
+      alert('Erreur serveur.');
     }
+  }
 
-    loadMP();
-  </script>
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    editingId = null;
+  }
+  function closeModalOutside(e) {
+    if (e.target === document.getElementById('modalOverlay')) closeModal();
+  }
+  function showAlert(msg) {
+    document.getElementById('modalAlertMsg').textContent = msg;
+    document.getElementById('modalAlert').classList.add('show');
+  }
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+  function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+    window.location.href = '/login-admin.html';
+  }
+
+  loadMP();
+</script>
 </body>
 </html>

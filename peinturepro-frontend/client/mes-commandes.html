@@ -4,63 +4,200 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PeinturePro TN — Mes Commandes</title>
-  <link rel="stylesheet" href="../css/main.css"/>
+  <!-- Google Fonts + Material Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
-    body { background: var(--surface); min-height: 100vh; }
+    /* ===== THÈME MODERNE ===== */
+    :root {
+      --bg-dark: #0a0a1a;
+      --bg-surface: #0f0f1f;
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --primary-light: #818cf8;
+      --accent: #f59e0b;
+      --accent-glow: #fbbf24;
+      --success: #10b981;
+      --text-white: #ffffff;
+      --text-gray: #a1a1aa;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --border-glow: rgba(99, 102, 241, 0.3);
+      --gradient-hero: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+      --shadow-glow: 0 0 30px rgba(99, 102, 241, 0.3);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --font-display: 'Poppins', system-ui, -apple-system, sans-serif;
+      --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    }
 
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg-dark);
+      font-family: var(--font-body);
+      color: var(--text-white);
+      overflow-x: hidden;
+    }
+
+    /* Décors de fond */
+    .deco-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .deco-bg svg {
+      width: 100%;
+      height: 100%;
+      animation: rotateSlow 30s linear infinite;
+    }
+    @keyframes rotateSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* ===== NAVBAR ===== */
     .navbar {
-      background: var(--white);
-      border-bottom: 1.5px solid var(--border);
-      padding: 0 2rem;
-      height: 64px;
+      background: rgba(10, 10, 26, 0.8);
+      backdrop-filter: blur(12px);
+      padding: 0.8rem 3rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
       position: sticky;
       top: 0;
       z-index: 100;
-      box-shadow: var(--shadow-sm);
+      border-bottom: 1px solid rgba(99, 102, 241, 0.2);
     }
-    .nav-brand { font-family: var(--font-display); font-size: 1.2rem; color: var(--dark); }
-    .nav-brand span { color: var(--primary); }
-    .nav-links { display: flex; gap: 1rem; align-items: center; }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .logo-image {
+      height: 45px;
+      width: auto;
+      filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.5));
+      transition: all 0.3s ease;
+    }
+    .logo-image:hover {
+      filter: drop-shadow(0 0 20px var(--primary));
+      transform: scale(1.05);
+    }
+    .brand-text {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--text-white), var(--primary-light));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .brand-text span {
+      background: linear-gradient(135deg, var(--accent), var(--accent-glow));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
     .nav-link {
-      font-size: .88rem; color: var(--text-muted);
-      text-decoration: none; padding: .4rem .75rem;
-      border-radius: var(--radius-sm); transition: all .2s;
+      font-size: 0.85rem;
+      color: var(--text-gray);
+      text-decoration: none;
+      padding: 0.4rem 0.75rem;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .nav-link .material-icons {
+      font-size: 18px;
     }
     .nav-link:hover, .nav-link.active {
-      background: var(--primary-light); color: var(--primary); font-weight: 600;
+      background: rgba(99, 102, 241, 0.2);
+      color: var(--primary-light);
     }
     .btn-logout {
-      background: none; border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm); padding: .45rem .9rem;
-      font-size: .82rem; color: var(--text-muted); cursor: pointer;
+      background: transparent;
+      border: 1.5px solid rgba(99, 102, 241, 0.5);
+      border-radius: var(--radius-sm);
+      padding: 0.45rem 0.9rem;
+      font-size: 0.82rem;
+      color: var(--text-gray);
+      cursor: pointer;
+      transition: all 0.2s;
     }
-    .btn-logout:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-logout:hover {
+      border-color: var(--primary);
+      color: var(--primary-light);
+      transform: translateY(-2px);
+    }
 
-    /* ===== Page ===== */
+    /* ===== PAGE ===== */
     .page {
-      max-width: 900px;
+      max-width: 1100px;
       margin: 0 auto;
-      padding: 2.5rem 2rem;
+      padding: 2rem;
+      position: relative;
+      z-index: 2;
     }
 
-    /* ===== Header ===== */
+    /* Header */
     .page-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
     .page-title {
       font-family: var(--font-display);
       font-size: 1.8rem;
-      color: var(--dark);
+      background: linear-gradient(135deg, var(--text-white), var(--primary-light));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
-    .page-title span { color: var(--text-muted); font-size: 1rem; font-family: var(--font-body); margin-left: .5rem; }
+    .page-title span {
+      font-size: 0.9rem;
+      color: var(--text-gray);
+      background: none;
+      -webkit-background-clip: unset;
+      margin-left: 0.5rem;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 1.2rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+    }
 
-    /* ===== Stats ===== */
+    /* Stats */
     .stats-row {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -68,166 +205,203 @@
       margin-bottom: 2rem;
     }
     .stat-card {
-      background: var(--white);
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(99, 102, 241, 0.3);
       border-radius: var(--radius-md);
-      padding: 1.25rem;
-      box-shadow: var(--shadow-sm);
+      padding: 1.2rem;
       text-align: center;
+      transition: transform 0.3s ease;
+    }
+    .stat-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-glow);
     }
     .stat-value {
       font-family: var(--font-display);
       font-size: 1.8rem;
-      color: var(--primary);
-      margin-bottom: .2rem;
+      color: var(--accent);
+      margin-bottom: 0.2rem;
     }
-    .stat-label { font-size: .78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; }
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--text-gray);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
 
-    /* ===== Filtres statut ===== */
+    /* Filtres */
     .status-filters {
       display: flex;
-      gap: .5rem;
+      gap: 0.5rem;
       margin-bottom: 1.5rem;
       flex-wrap: wrap;
     }
     .status-btn {
-      border: 1.5px solid var(--border);
-      background: var(--white);
-      border-radius: 30px;
-      padding: .35rem .9rem;
-      font-size: .82rem;
-      color: var(--text-muted);
+      background: transparent;
+      border: 1.5px solid rgba(99, 102, 241, 0.3);
+      border-radius: 40px;
+      padding: 0.4rem 1rem;
+      font-size: 0.8rem;
+      color: var(--text-gray);
       cursor: pointer;
-      transition: all .2s;
-      display: flex;
+      transition: all 0.2s;
+      display: inline-flex;
       align-items: center;
-      gap: .35rem;
+      gap: 0.4rem;
+    }
+    .status-btn .material-icons {
+      font-size: 16px;
     }
     .status-btn:hover, .status-btn.active {
       border-color: var(--primary);
-      background: var(--primary-light);
-      color: var(--primary);
-      font-weight: 600;
+      background: rgba(99, 102, 241, 0.2);
+      color: var(--primary-light);
     }
 
-    /* ===== Loading ===== */
+    /* Loading */
     .loading {
       text-align: center;
       padding: 4rem;
-      color: var(--text-muted);
+      color: var(--text-gray);
     }
     .loading .spinner {
-      width: 36px; height: 36px;
-      border: 3px solid var(--border);
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(99, 102, 241, 0.3);
       border-top-color: var(--primary);
       border-radius: 50%;
-      animation: spin .8s linear infinite;
+      animation: spin 0.8s linear infinite;
       margin: 0 auto 1rem;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ===== Empty ===== */
+    /* Empty state */
     .empty-state {
       text-align: center;
-      padding: 4rem;
-      background: var(--white);
+      padding: 3rem;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(99, 102, 241, 0.3);
       border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-sm);
     }
-    .empty-state svg { opacity: .25; margin-bottom: 1rem; }
-    .empty-state p { color: var(--text-muted); margin-bottom: 1.25rem; }
+    .empty-state .material-icons {
+      font-size: 56px;
+      opacity: 0.4;
+      margin-bottom: 1rem;
+    }
+    .empty-state p {
+      color: var(--text-gray);
+      margin-bottom: 1.2rem;
+    }
 
-    /* ===== Commande card ===== */
+    /* Commande card */
     .commande-card {
-      background: var(--white);
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(99, 102, 241, 0.3);
       border-radius: var(--radius-md);
-      box-shadow: var(--shadow-sm);
       margin-bottom: 1rem;
       overflow: hidden;
-      transition: box-shadow .2s;
+      transition: all 0.3s ease;
     }
-    .commande-card:hover { box-shadow: var(--shadow-md); }
-
+    .commande-card:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-glow);
+    }
     .commande-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 1.1rem 1.5rem;
+      padding: 1.2rem 1.5rem;
       cursor: pointer;
       border-bottom: 1px solid transparent;
-      transition: border-color .2s;
+      transition: border-color 0.2s;
     }
     .commande-card.open .commande-header {
-      border-bottom-color: var(--border);
+      border-bottom-color: rgba(99, 102, 241, 0.3);
     }
-
-    .cmd-left { display: flex; align-items: center; gap: 1rem; }
+    .cmd-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
     .cmd-num {
       font-family: var(--font-display);
-      font-size: 1.05rem;
-      color: var(--dark);
+      font-size: 1rem;
+      color: var(--text-white);
     }
-    .cmd-date { font-size: .8rem; color: var(--text-muted); }
-
-    /* Badge statut */
+    .cmd-date {
+      font-size: 0.75rem;
+      color: var(--text-gray);
+    }
+    /* Badges statut */
     .status-badge {
       display: inline-flex;
       align-items: center;
-      gap: .35rem;
-      padding: .3rem .8rem;
-      border-radius: 30px;
-      font-size: .75rem;
+      gap: 0.3rem;
+      padding: 0.25rem 0.8rem;
+      border-radius: 40px;
+      font-size: 0.7rem;
       font-weight: 600;
     }
-    .status-en_attente   { background: #FEF9E7; color: #7D6608; border: 1px solid #F0D060; }
-    .status-confirmee    { background: #EBF5FB; color: #1A5276; border: 1px solid #5DADE2; }
-    .status-en_cours     { background: #EAF4F4; color: #0E6655; border: 1px solid #48C9B0; }
-    .status-livree       { background: #E6F6EE; color: #1D6A42; border: 1px solid #58D68D; }
-    .status-annulee      { background: #FDEDEC; color: #922B21; border: 1px solid #F1948A; }
+    .status-badge .material-icons {
+      font-size: 14px;
+    }
+    .status-en_attente   { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .status-confirmee    { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+    .status-en_cours     { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .status-livree       { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .status-annulee      { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
 
     .cmd-montant {
       font-family: var(--font-display);
       font-size: 1.1rem;
-      color: var(--primary);
+      color: var(--accent);
     }
     .cmd-chevron {
-      color: var(--text-muted);
-      transition: transform .3s;
-      font-size: .85rem;
+      color: var(--text-gray);
+      transition: transform 0.3s;
     }
-    .commande-card.open .cmd-chevron { transform: rotate(180deg); }
+    .commande-card.open .cmd-chevron {
+      transform: rotate(180deg);
+    }
 
     /* Détails expandés */
     .commande-details {
       display: none;
-      padding: 1.25rem 1.5rem;
+      padding: 1.2rem 1.5rem;
     }
-    .commande-card.open .commande-details { display: block; }
-
+    .commande-card.open .commande-details {
+      display: block;
+    }
     .details-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 1rem;
-      margin-bottom: 1.25rem;
+      margin-bottom: 1.2rem;
     }
     .detail-item .detail-label {
-      font-size: .72rem;
+      font-size: 0.7rem;
       text-transform: uppercase;
-      letter-spacing: .06em;
-      color: var(--text-muted);
-      margin-bottom: .2rem;
+      letter-spacing: 0.08em;
+      color: var(--text-gray);
+      margin-bottom: 0.2rem;
     }
     .detail-item .detail-value {
-      font-size: .9rem;
+      font-size: 0.9rem;
       font-weight: 600;
-      color: var(--dark);
+      color: var(--text-white);
     }
 
-    /* Timeline statut */
+    /* Timeline */
     .timeline {
       display: flex;
       align-items: center;
       gap: 0;
-      margin-top: 1rem;
+      margin-top: 0.8rem;
     }
     .tl-step {
       flex: 1;
@@ -241,23 +415,27 @@
       left: 50%;
       right: -50%;
       height: 2px;
-      background: var(--border);
+      background: rgba(99, 102, 241, 0.3);
       z-index: 0;
     }
-    .tl-step:last-child::before { display: none; }
+    .tl-step:last-child::before {
+      display: none;
+    }
     .tl-dot {
-      width: 28px; height: 28px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
-      border: 2px solid var(--border);
-      background: var(--white);
+      border: 2px solid rgba(99, 102, 241, 0.5);
+      background: var(--bg-surface);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto .4rem;
-      font-size: .75rem;
+      margin: 0 auto 0.4rem;
+      font-size: 0.7rem;
       position: relative;
       z-index: 1;
-      transition: all .3s;
+      transition: all 0.3s;
+      color: var(--text-gray);
     }
     .tl-step.done .tl-dot {
       background: var(--primary);
@@ -267,241 +445,272 @@
     .tl-step.active .tl-dot {
       border-color: var(--primary);
       color: var(--primary);
-      box-shadow: 0 0 0 4px rgba(200,68,26,.15);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
     }
-    .tl-step.done::before { background: var(--primary); }
-    .tl-label { font-size: .68rem; color: var(--text-muted); }
-    .tl-step.done .tl-label, .tl-step.active .tl-label { color: var(--primary); font-weight: 600; }
+    .tl-step.done::before {
+      background: var(--primary);
+    }
+    .tl-label {
+      font-size: 0.65rem;
+      color: var(--text-gray);
+    }
+    .tl-step.done .tl-label, .tl-step.active .tl-label {
+      color: var(--primary-light);
+      font-weight: 600;
+    }
 
-    @media (max-width: 600px) {
+    /* Responsive */
+    @media (max-width: 700px) {
+      .navbar { padding: 0.8rem 1.5rem; }
+      .page { padding: 1rem; }
       .stats-row { grid-template-columns: repeat(2, 1fr); }
       .details-grid { grid-template-columns: 1fr 1fr; }
-      .page { padding: 1rem; }
+      .commande-header { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+      .cmd-left { width: 100%; justify-content: space-between; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="nav-brand">PeinturePro <span>TN</span></div>
-    <div class="nav-links">
-      <a href="catalogue.html" class="nav-link">Catalogue</a>
-      <a href="simulateur.html" class="nav-link">Simulateur</a>
-      <a href="mes-commandes.html" class="nav-link active">Mes commandes</a>
-      <button class="btn-logout" onclick="logout()">Déconnexion</button>
-    </div>
-  </nav>
+<!-- Décors de fond -->
+<div class="deco-bg">
+  <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+    <circle cx="200" cy="200" r="400" fill="none" stroke="rgba(255,255,255,.02)" stroke-width="1"/>
+    <circle cx="1000" cy="600" r="350" fill="none" stroke="rgba(255,255,255,.02)" stroke-width="1"/>
+    <circle cx="600" cy="400" r="550" fill="none" stroke="rgba(255,255,255,.01)" stroke-width="1"/>
+    <ellipse cx="150" cy="650" rx="200" ry="80" fill="rgba(99,102,241,.05)" transform="rotate(-15,150,650)"/>
+    <ellipse cx="1050" cy="150" rx="180" ry="70" fill="rgba(168,85,247,.05)" transform="rotate(20,1050,150)"/>
+  </svg>
+</div>
 
-  <div class="page">
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="nav-brand">
+    <img src="../images/logo.png" alt="PeinturePro TN" class="logo-image">
+   
+  </div>
+  <div class="nav-links">
+    <a href="catalogue.html" class="nav-link">
+      <span class="material-icons">palette</span> Catalogue
+    </a>
+    <a href="simulateur.html" class="nav-link">
+      <span class="material-icons">calculate</span> Simulateur
+    </a>
+    <a href="mes-commandes.html" class="nav-link active">
+      <span class="material-icons">receipt</span> Mes commandes
+    </a>
+    <button class="btn-logout" onclick="logout()">Déconnexion</button>
+  </div>
+</nav>
 
-    <!-- Header -->
-    <div class="page-header">
-      <h1 class="page-title">
-        Mes commandes
-        <span id="totalCount"></span>
-      </h1>
-      <a href="catalogue.html" class="btn-primary" style="text-decoration:none; padding:.6rem 1.25rem; font-size:.88rem;">
-        + Nouvelle commande
-      </a>
-    </div>
-
-    <!-- Stats -->
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-value" id="statTotal">0</div>
-        <div class="stat-label">Total commandes</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="statEnCours">0</div>
-        <div class="stat-label">En cours</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="statLivrees">0</div>
-        <div class="stat-label">Livrées</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="statMontant">0</div>
-        <div class="stat-label">Total DT</div>
-      </div>
-    </div>
-
-    <!-- Filtres -->
-    <div class="status-filters">
-      <button class="status-btn active" onclick="filterStatus('tous', this)">📋 Toutes</button>
-      <button class="status-btn" onclick="filterStatus('en_attente', this)">⏳ En attente</button>
-      <button class="status-btn" onclick="filterStatus('confirmee', this)">✅ Confirmées</button>
-      <button class="status-btn" onclick="filterStatus('en_cours', this)">🚚 En cours</button>
-      <button class="status-btn" onclick="filterStatus('livree', this)">📦 Livrées</button>
-      <button class="status-btn" onclick="filterStatus('annulee', this)">❌ Annulées</button>
-    </div>
-
-    <!-- Liste commandes -->
-    <div id="loadingState" class="loading">
-      <div class="spinner"></div>
-      Chargement de vos commandes...
-    </div>
-
-    <div id="commandesList"></div>
-
+<div class="page">
+  <!-- Header -->
+  <div class="page-header">
+    <h1 class="page-title">
+      Mes commandes
+      <span id="totalCount"></span>
+    </h1>
+    <a href="catalogue.html" class="btn-primary">
+      <span class="material-icons">add</span> Nouvelle commande
+    </a>
   </div>
 
-  <script src="../js/api.js"></script>
-  <script src="../js/auth.js"></script>
-  <script>
-    requireAuth(['client']);
-    displayUserInfo();
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-value" id="statTotal">0</div>
+      <div class="stat-label">Total commandes</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statEnCours">0</div>
+      <div class="stat-label">En cours</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statLivrees">0</div>
+      <div class="stat-label">Livrées</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statMontant">0</div>
+      <div class="stat-label">Total DT</div>
+    </div>
+  </div>
 
-    let allCommandes  = [];
-    let currentFilter = 'tous';
+  <!-- Filtres -->
+  <div class="status-filters">
+    <button class="status-btn active" onclick="filterStatus('tous', this)">
+      <span class="material-icons">list_alt</span> Toutes
+    </button>
+    <button class="status-btn" onclick="filterStatus('en_attente', this)">
+      <span class="material-icons">schedule</span> En attente
+    </button>
+    <button class="status-btn" onclick="filterStatus('confirmee', this)">
+      <span class="material-icons">check_circle</span> Confirmées
+    </button>
+    <button class="status-btn" onclick="filterStatus('en_cours', this)">
+      <span class="material-icons">local_shipping</span> En cours
+    </button>
+    <button class="status-btn" onclick="filterStatus('livree', this)">
+      <span class="material-icons">inventory_2</span> Livrées
+    </button>
+    <button class="status-btn" onclick="filterStatus('annulee', this)">
+      <span class="material-icons">cancel</span> Annulées
+    </button>
+  </div>
 
-    const statusLabels = {
-      en_attente: { label: 'En attente',  icon: '⏳' },
-      confirmee:  { label: 'Confirmée',   icon: '✅' },
-      en_cours:   { label: 'En cours',    icon: '🚚' },
-      livree:     { label: 'Livrée',      icon: '📦' },
-      annulee:    { label: 'Annulée',     icon: '❌' }
-    };
+  <!-- Liste commandes -->
+  <div id="loadingState" class="loading">
+    <div class="spinner"></div>
+    Chargement de vos commandes...
+  </div>
+  <div id="commandesList"></div>
+</div>
 
-    const timelineSteps = [
-      { key: 'en_attente', label: 'Reçue',      icon: '📝' },
-      { key: 'confirmee',  label: 'Confirmée',  icon: '✅' },
-      { key: 'en_cours',   label: 'En livraison', icon: '🚚' },
-      { key: 'livree',     label: 'Livrée',     icon: '📦' }
-    ];
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+  requireAuth(['client']);
+  displayUserInfo();
 
-    const statusOrder = ['en_attente', 'confirmee', 'en_cours', 'livree'];
+  let allCommandes  = [];
+  let currentFilter = 'tous';
 
-    // ===== Charger les commandes =====
-    async function loadCommandes() {
-      try {
-        const res  = await api.get('/commandes');
-        const data = await res.json();
-        allCommandes = data;
+  const statusLabels = {
+    en_attente: { label: 'En attente',  icon: 'schedule' },
+    confirmee:  { label: 'Confirmée',   icon: 'check_circle' },
+    en_cours:   { label: 'En cours',    icon: 'local_shipping' },
+    livree:     { label: 'Livrée',      icon: 'inventory_2' },
+    annulee:    { label: 'Annulée',     icon: 'cancel' }
+  };
 
-        document.getElementById('loadingState').style.display = 'none';
-        updateStats(data);
-        renderCommandes(data);
-      } catch {
-        document.getElementById('loadingState').innerHTML = '❌ Erreur de chargement.';
-      }
+  const timelineSteps = [
+    { key: 'en_attente', label: 'Reçue',      icon: 'receipt' },
+    { key: 'confirmee',  label: 'Confirmée',  icon: 'check_circle' },
+    { key: 'en_cours',   label: 'En livraison', icon: 'local_shipping' },
+    { key: 'livree',     label: 'Livrée',     icon: 'inventory_2' }
+  ];
+
+  const statusOrder = ['en_attente', 'confirmee', 'en_cours', 'livree'];
+
+  async function loadCommandes() {
+    try {
+      const res = await api.get('/commandes');
+      const data = await res.json();
+      allCommandes = data;
+      document.getElementById('loadingState').style.display = 'none';
+      updateStats(data);
+      renderCommandes(data);
+    } catch (err) {
+      document.getElementById('loadingState').innerHTML = '❌ Erreur de chargement.';
+    }
+  }
+
+  function updateStats(commandes) {
+    const enCours = commandes.filter(c => ['en_attente','confirmee','en_cours'].includes(c.statut)).length;
+    const livrees = commandes.filter(c => c.statut === 'livree').length;
+    const montant = commandes.reduce((s, c) => s + parseFloat(c.montant_total || 0), 0);
+    document.getElementById('statTotal').textContent = commandes.length;
+    document.getElementById('statEnCours').textContent = enCours;
+    document.getElementById('statLivrees').textContent = livrees;
+    document.getElementById('statMontant').textContent = montant.toFixed(0);
+    document.getElementById('totalCount').textContent = `(${commandes.length})`;
+  }
+
+  function filterStatus(status, btn) {
+    currentFilter = status;
+    document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filtered = status === 'tous' ? allCommandes : allCommandes.filter(c => c.statut === status);
+    renderCommandes(filtered);
+  }
+
+  function renderCommandes(commandes) {
+    const list = document.getElementById('commandesList');
+    if (!commandes.length) {
+      list.innerHTML = `
+        <div class="empty-state">
+          <span class="material-icons">receipt_long</span>
+          <p>Aucune commande trouvée.</p>
+          <a href="catalogue.html" class="btn-primary" style="text-decoration:none;">
+            <span class="material-icons">shopping_cart</span> Passer une commande
+          </a>
+        </div>`;
+      return;
     }
 
-    // ===== Stats =====
-    function updateStats(commandes) {
-      const enCours  = commandes.filter(c => ['en_attente','confirmee','en_cours'].includes(c.statut)).length;
-      const livrees  = commandes.filter(c => c.statut === 'livree').length;
-      const montant  = commandes.reduce((s, c) => s + parseFloat(c.montant_total || 0), 0);
+    list.innerHTML = commandes.map(cmd => {
+      const s = statusLabels[cmd.statut] || { label: cmd.statut, icon: 'help' };
+      const date = new Date(cmd.created_at).toLocaleDateString('fr-TN', {
+        day: '2-digit', month: 'long', year: 'numeric'
+      });
+      const dateLiv = cmd.date_livraison_souhaitee
+        ? new Date(cmd.date_livraison_souhaitee).toLocaleDateString('fr-TN', { day: '2-digit', month: 'short' })
+        : 'Non précisée';
 
-      document.getElementById('statTotal').textContent   = commandes.length;
-      document.getElementById('statEnCours').textContent = enCours;
-      document.getElementById('statLivrees').textContent = livrees;
-      document.getElementById('statMontant').textContent = montant.toFixed(0);
-      document.getElementById('totalCount').textContent  = `(${commandes.length})`;
-    }
-
-    // ===== Filtrer =====
-    function filterStatus(status, btn) {
-      currentFilter = status;
-      document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-
-      const filtered = status === 'tous'
-        ? allCommandes
-        : allCommandes.filter(c => c.statut === status);
-
-      renderCommandes(filtered);
-    }
-
-    // ===== Rendu commandes =====
-    function renderCommandes(commandes) {
-      const list = document.getElementById('commandesList');
-
-      if (!commandes.length) {
-        list.innerHTML = `
-          <div class="empty-state">
-            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-              <polyline points="14 2 14 8 20 8"/>
-            </svg>
-            <p>Aucune commande trouvée.</p>
-            <a href="catalogue.html" class="btn-primary" style="text-decoration:none; display:inline-block;">
-              Passer une commande
-            </a>
-          </div>`;
-        return;
-      }
-
-      list.innerHTML = commandes.map(cmd => {
-        const s        = statusLabels[cmd.statut] || { label: cmd.statut, icon: '•' };
-        const date     = new Date(cmd.created_at).toLocaleDateString('fr-TN', {
-          day: '2-digit', month: 'long', year: 'numeric'
-        });
-        const dateLiv  = cmd.date_livraison_souhaitee
-          ? new Date(cmd.date_livraison_souhaitee).toLocaleDateString('fr-TN', { day: '2-digit', month: 'short' })
-          : 'Non précisée';
-
-        // Timeline
-        const currentIdx = statusOrder.indexOf(cmd.statut);
-        const timeline = timelineSteps.map((step, i) => {
-          const isDone   = i < currentIdx;
-          const isActive = i === currentIdx;
-          return `
-            <div class="tl-step ${isDone ? 'done' : ''} ${isActive ? 'active' : ''}">
-              <div class="tl-dot">${step.icon}</div>
-              <div class="tl-label">${step.label}</div>
-            </div>`;
-        }).join('');
-
+      const currentIdx = statusOrder.indexOf(cmd.statut);
+      const timeline = timelineSteps.map((step, i) => {
+        const isDone = i < currentIdx;
+        const isActive = i === currentIdx;
         return `
-          <div class="commande-card" id="cmd-${cmd.id}">
-            <div class="commande-header" onclick="toggleCard(${cmd.id})">
-              <div class="cmd-left">
-                <div>
-                  <div class="cmd-num">Commande #${cmd.id}</div>
-                  <div class="cmd-date">${date}</div>
-                </div>
-                <span class="status-badge status-${cmd.statut}">
-                  ${s.icon} ${s.label}
-                </span>
-              </div>
-              <div style="display:flex; align-items:center; gap:1rem;">
-                <div class="cmd-montant">${parseFloat(cmd.montant_total).toFixed(3)} DT</div>
-                <span class="cmd-chevron">▼</span>
-              </div>
-            </div>
-
-            <div class="commande-details">
-              <div class="details-grid">
-                <div class="detail-item">
-                  <div class="detail-label">Quantité</div>
-                  <div class="detail-value">${parseFloat(cmd.litres_calcules).toFixed(2)} L</div>
-                </div>
-                <div class="detail-item">
-                  <div class="detail-label">Surface</div>
-                  <div class="detail-value">${cmd.surface_m2 ? parseFloat(cmd.surface_m2).toFixed(0) + ' m²' : '—'}</div>
-                </div>
-                <div class="detail-item">
-                  <div class="detail-label">Livraison souhaitée</div>
-                  <div class="detail-value">${dateLiv}</div>
-                </div>
-              </div>
-
-              <div style="font-size:.8rem; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:.75rem;">
-                Suivi de commande
-              </div>
-              <div class="timeline">${timeline}</div>
-            </div>
+          <div class="tl-step ${isDone ? 'done' : ''} ${isActive ? 'active' : ''}">
+            <div class="tl-dot"><span class="material-icons" style="font-size: 14px;">${step.icon}</span></div>
+            <div class="tl-label">${step.label}</div>
           </div>`;
       }).join('');
-    }
 
-    function toggleCard(id) {
-      const card = document.getElementById(`cmd-${id}`);
-      card.classList.toggle('open');
-    }
+      return `
+        <div class="commande-card" id="cmd-${cmd.id}">
+          <div class="commande-header" onclick="toggleCard(${cmd.id})">
+            <div class="cmd-left">
+              <div>
+                <div class="cmd-num">Commande #${cmd.id}</div>
+                <div class="cmd-date">${date}</div>
+              </div>
+              <span class="status-badge status-${cmd.statut}">
+                <span class="material-icons">${s.icon}</span> ${s.label}
+              </span>
+            </div>
+            <div style="display:flex; align-items:center; gap:1rem;">
+              <div class="cmd-montant">${parseFloat(cmd.montant_total).toFixed(3)} DT</div>
+              <span class="cmd-chevron material-icons">expand_more</span>
+            </div>
+          </div>
+          <div class="commande-details">
+            <div class="details-grid">
+              <div class="detail-item">
+                <div class="detail-label">Quantité</div>
+                <div class="detail-value">${parseFloat(cmd.litres_calcules).toFixed(2)} L</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Surface</div>
+                <div class="detail-value">${cmd.surface_m2 ? parseFloat(cmd.surface_m2).toFixed(0) + ' m²' : '—'}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Livraison souhaitée</div>
+                <div class="detail-value">${dateLiv}</div>
+              </div>
+            </div>
+            <div style="font-size:0.7rem; font-weight:600; color:var(--text-gray); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.6rem;">
+              Suivi de commande
+            </div>
+            <div class="timeline">${timeline}</div>
+          </div>
+        </div>`;
+    }).join('');
+  }
 
-    loadCommandes();
-  </script>
+  function toggleCard(id) {
+    const card = document.getElementById(`cmd-${id}`);
+    if (card) card.classList.toggle('open');
+  }
+
+  function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+    window.location.href = '/login-client.html';
+  }
+
+  loadCommandes();
+</script>
 </body>
 </html>

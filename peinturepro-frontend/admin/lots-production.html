@@ -4,521 +4,961 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PeinturePro TN — Lots de Production</title>
-  <link rel="stylesheet" href="/css/main.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
-    body { background: #F4F1EE; min-height: 100vh; display: flex; }
+    /* ===== THÈME MODERNE SOMBRE ===== */
+    :root {
+      --bg-dark: #0a0a1a;
+      --bg-surface: #0f0f1f;
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --primary-light: #818cf8;
+      --accent: #f59e0b;
+      --accent-glow: #fbbf24;
+      --success: #10b981;
+      --text-white: #ffffff;
+      --text-gray: #a1a1aa;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --border-glow: rgba(99, 102, 241, 0.3);
+      --gradient-hero: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+      --shadow-glow: 0 0 30px rgba(99, 102, 241, 0.3);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --font-display: 'Poppins', system-ui, -apple-system, sans-serif;
+      --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    }
 
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg-dark);
+      font-family: var(--font-body);
+      color: var(--text-white);
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+    }
+
+    /* ===== SIDEBAR ===== */
     .sidebar {
-      width: 240px; min-height: 100vh;
-      background: var(--dark); display: flex;
-      flex-direction: column; padding: 1.5rem 0;
-      position: fixed; top: 0; left: 0; z-index: 100;
-      box-shadow: 4px 0 20px rgba(0,0,0,.15);
+      width: 260px;
+      min-height: 100vh;
+      background: rgba(15, 15, 31, 0.95);
+      backdrop-filter: blur(12px);
+      border-right: 1px solid rgba(99, 102, 241, 0.3);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
     }
     .sidebar-brand {
-      padding: 0 1.5rem 1.5rem;
-      border-bottom: 1px solid rgba(255,255,255,.08);
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(99, 102, 241, 0.3);
       margin-bottom: 1rem;
     }
-    .logo { display: flex; align-items: center; gap: .65rem; }
-    .logo-box {
-      width: 36px; height: 36px; background: var(--primary);
-      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
     }
-    .logo-box svg { width: 20px; height: 20px; fill: white; }
-    .logo-text { font-family: var(--font-display); font-size: 1rem; color: white; }
-    .logo-text span { color: var(--accent); }
-    .sidebar-menu { flex: 1; padding: 0 .75rem; }
+    .logo-image {
+      height: 40px;
+      width: auto;
+      filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.5));
+    }
+    .logo-text {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--text-white), var(--primary-light));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .logo-text span {
+      background: linear-gradient(135deg, var(--accent), var(--accent-glow));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .sidebar-menu {
+      flex: 1;
+      padding: 0 1rem;
+    }
     .menu-label {
-      font-size: .65rem; font-weight: 600; letter-spacing: .12em;
-      text-transform: uppercase; color: rgba(255,255,255,.3);
-      padding: .75rem .75rem .35rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-gray);
+      padding: 0.75rem 0.75rem 0.35rem;
     }
     .menu-item {
-      display: flex; align-items: center; gap: .75rem;
-      padding: .65rem .75rem; border-radius: 8px;
-      text-decoration: none; color: rgba(255,255,255,.55);
-      font-size: .88rem; font-weight: 500; transition: all .2s;
-      margin-bottom: .15rem; cursor: pointer; border: none;
-      background: none; width: 100%; text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0.75rem;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      color: var(--text-gray);
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      margin-bottom: 0.15rem;
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
     }
-    .menu-item:hover { background: rgba(255,255,255,.07); color: rgba(255,255,255,.85); }
-    .menu-item.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(200,68,26,.3); }
-    .menu-item .icon { font-size: 1.1rem; width: 20px; text-align: center; }
-    .sidebar-footer { padding: 1rem .75rem 0; border-top: 1px solid rgba(255,255,255,.08); }
-    .user-info { display: flex; align-items: center; gap: .65rem; padding: .65rem .75rem; margin-bottom: .5rem; }
+    .menu-item .material-icons {
+      font-size: 20px;
+    }
+    .menu-item:hover {
+      background: rgba(99, 102, 241, 0.2);
+      color: var(--primary-light);
+    }
+    .menu-item.active {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(79, 70, 229, 0.4));
+      color: var(--primary-light);
+      border-left: 3px solid var(--primary);
+    }
+    .sidebar-footer {
+      padding: 1rem;
+      border-top: 1px solid rgba(99, 102, 241, 0.3);
+      margin-top: auto;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0.75rem;
+      margin-bottom: 0.5rem;
+    }
     .user-avatar {
-      width: 34px; height: 34px; background: var(--primary); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: .85rem; color: white; font-weight: 600;
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: white;
     }
-    .user-name { font-size: .83rem; color: white; font-weight: 500; }
-    .user-role { font-size: .7rem; color: rgba(255,255,255,.4); }
+    .user-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-white);
+    }
+    .user-role {
+      font-size: 0.7rem;
+      color: var(--text-gray);
+    }
 
-    .main { margin-left: 240px; flex: 1; min-height: 100vh; }
+    /* ===== MAIN ===== */
+    .main {
+      margin-left: 260px;
+      flex: 1;
+      min-height: 100vh;
+      background: var(--bg-dark);
+    }
     .topbar {
-      background: white; padding: 1rem 2rem;
-      display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid var(--border);
-      box-shadow: 0 1px 4px rgba(0,0,0,.04);
+      background: rgba(15, 15, 31, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(99, 102, 241, 0.3);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
     }
-    .topbar-title { font-family: var(--font-display); font-size: 1.3rem; color: var(--dark); }
-    .content { padding: 2rem; }
+    .topbar-title {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      background: linear-gradient(135deg, var(--text-white), var(--primary-light));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .topbar-right {
+      font-size: 0.8rem;
+      color: var(--text-gray);
+    }
 
-    /* Stats */
+    .content {
+      padding: 2rem;
+    }
+
+    /* ===== STATS ===== */
     .stats-row {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 1rem; margin-bottom: 2rem;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
     }
     .stat-card {
-      background: white; border-radius: var(--radius-md);
-      padding: 1.25rem; box-shadow: 0 2px 8px rgba(0,0,0,.05);
-      display: flex; align-items: center; gap: .85rem;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      transition: all 0.3s ease;
+    }
+    .stat-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-glow);
     }
     .stat-icon {
-      width: 44px; height: 44px; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.2rem; flex-shrink: 0;
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     }
-    .stat-value { font-family: var(--font-display); font-size: 1.6rem; color: var(--dark); }
-    .stat-label { font-size: .72rem; color: var(--text-muted); }
+    .stat-icon .material-icons {
+      font-size: 28px;
+    }
+    .stat-icon.orange { background: rgba(245, 158, 11, 0.15); color: var(--accent); }
+    .stat-icon.green  { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; }
+    .stat-icon.red    { background: rgba(239, 68, 68, 0.15); color: #fca5a5; }
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      color: var(--accent);
+    }
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--text-gray);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
 
-    /* Toolbar */
+    /* ===== TOOLBAR ===== */
     .toolbar {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      gap: 1rem;
+      flex-wrap: wrap;
     }
-    .toolbar-left { display: flex; gap: .75rem; flex-wrap: wrap; }
+    .toolbar-left {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
     .search-box {
-      display: flex; align-items: center; gap: .5rem;
-      background: white; border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm); padding: .5rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1.5px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 0.5rem 1rem;
+    }
+    .search-box .material-icons {
+      font-size: 18px;
+      color: var(--text-gray);
     }
     .search-box input {
-      border: none; outline: none; font-family: var(--font-body);
-      font-size: .88rem; color: var(--text); width: 200px; background: transparent;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--text-white);
+      width: 200px;
+    }
+    .search-box input::placeholder {
+      color: var(--text-gray);
     }
     .filter-select {
-      border: 1.5px solid var(--border); border-radius: var(--radius-sm);
-      padding: .5rem .9rem; font-family: var(--font-body);
-      font-size: .85rem; color: var(--text); background: white;
-      cursor: pointer; outline: none;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1.5px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 0.5rem 0.9rem;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--text-white);
+      cursor: pointer;
+      outline: none;
+    }
+    .filter-select option {
+      background: var(--bg-surface);
     }
     .btn-add {
-      background: var(--primary); color: white; border: none;
-      border-radius: var(--radius-sm); padding: .6rem 1.25rem;
-      font-size: .88rem; font-weight: 600; cursor: pointer;
-      display: flex; align-items: center; gap: .4rem;
-      transition: all .2s; font-family: var(--font-body);
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 1.2rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.3s ease;
     }
-    .btn-add:hover { background: var(--primary-dark); }
+    .btn-add .material-icons {
+      font-size: 18px;
+    }
+    .btn-add:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+    }
 
-    /* Table */
+    /* ===== TABLE ===== */
     .table-card {
-      background: white; border-radius: var(--radius-md);
-      box-shadow: 0 2px 8px rgba(0,0,0,.05); overflow: hidden;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: all 0.3s ease;
     }
-    table { width: 100%; border-collapse: collapse; }
-    thead { background: #FAF7F4; }
+    .table-card:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-glow);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead {
+      background: rgba(0, 0, 0, 0.2);
+    }
     th {
-      font-size: .72rem; font-weight: 600; text-transform: uppercase;
-      letter-spacing: .06em; color: var(--text-muted);
-      padding: .85rem 1.25rem; text-align: left;
-      border-bottom: 1px solid var(--border);
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-gray);
+      padding: 0.85rem 1.25rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(99, 102, 241, 0.3);
     }
     td {
-      padding: .9rem 1.25rem; font-size: .87rem;
-      color: var(--text); border-bottom: 1px solid #FAF7F4;
+      padding: 0.9rem 1.25rem;
+      font-size: 0.85rem;
+      color: var(--text-white);
+      border-bottom: 1px solid rgba(99, 102, 241, 0.15);
       vertical-align: middle;
     }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: #FDFCFB; }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    tr:hover td {
+      background: rgba(99, 102, 241, 0.05);
+    }
 
     .lot-num {
-      font-family: monospace; font-size: .82rem;
-      background: var(--primary-light); color: var(--primary);
-      padding: .2rem .6rem; border-radius: 4px; font-weight: 600;
+      font-family: monospace;
+      font-size: 0.8rem;
+      background: rgba(99, 102, 241, 0.2);
+      color: var(--primary-light);
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-weight: 600;
     }
-    .produit-cell { display: flex; align-items: center; gap: .6rem; }
-    .prod-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-
+    .produit-cell {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .prod-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
     .exp-badge {
-      font-size: .72rem; font-weight: 600;
-      padding: .2rem .6rem; border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 30px;
     }
-    .exp-ok      { background: #D1FAE5; color: #065F46; }
-    .exp-soon    { background: #FEF3C7; color: #92400E; }
-    .exp-expired { background: #FEE2E2; color: #991B1B; }
+    .exp-ok      { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; }
+    .exp-soon    { background: rgba(245, 158, 11, 0.15); color: var(--accent); }
+    .exp-expired { background: rgba(239, 68, 68, 0.15); color: #fca5a5; }
 
     .btn-icon {
-      width: 30px; height: 30px;
-      border: 1.5px solid var(--border); border-radius: 6px;
-      background: white; display: flex; align-items: center;
-      justify-content: center; cursor: pointer;
-      font-size: .82rem; transition: all .2s;
+      width: 32px;
+      height: 32px;
+      border: 1.5px solid rgba(99, 102, 241, 0.5);
+      border-radius: 6px;
+      background: transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-gray);
     }
-    .btn-icon.danger:hover { border-color: #EF4444; background: #FEE2E2; }
+    .btn-icon .material-icons {
+      font-size: 16px;
+    }
+    .btn-icon:hover {
+      border-color: #ef4444;
+      color: #fca5a5;
+      background: rgba(239, 68, 68, 0.1);
+    }
+    .empty-row td {
+      text-align: center;
+      color: var(--text-gray);
+      padding: 3rem;
+    }
 
-    .empty-row td { text-align: center; color: var(--text-muted); padding: 3rem; }
-
-    /* Modal */
+    /* ===== MODAL ===== */
     .modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,.5);
-      display: none; align-items: center; justify-content: center;
-      z-index: 200; backdrop-filter: blur(4px);
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
     }
-    .modal-overlay.open { display: flex; }
+    .modal-overlay.open {
+      display: flex;
+    }
     .modal {
-      background: white; border-radius: var(--radius-lg);
-      padding: 2rem; width: 100%; max-width: 480px;
-      box-shadow: var(--shadow-lg);
-      animation: slideUp .3s cubic-bezier(.16,1,.3,1);
+      background: var(--bg-surface);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: var(--shadow-glow);
+      animation: slideUp 0.3s ease;
     }
-    @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
     .modal-header {
-      display: flex; align-items: center;
-      justify-content: space-between; margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
     }
-    .modal-title { font-family: var(--font-display); font-size: 1.3rem; color: var(--dark); }
-    .modal-close { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted); }
-    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      background: linear-gradient(135deg, var(--text-white), var(--primary-light));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-gray);
+      cursor: pointer;
+    }
+    .modal-close .material-icons {
+      font-size: 22px;
+    }
+    .modal-close:hover {
+      color: var(--primary-light);
+    }
     .num-preview {
-      background: var(--primary-light); border: 1px solid rgba(200,68,26,.2);
-      border-radius: var(--radius-sm); padding: .65rem 1rem;
-      font-size: .85rem; color: var(--primary); font-family: monospace;
-      font-weight: 600; margin-bottom: 1rem;
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 0.65rem 1rem;
+      font-size: 0.85rem;
+      color: var(--primary-light);
+      font-family: monospace;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.75rem;
+      margin-bottom: 0.3rem;
+      color: var(--text-gray);
+    }
+    .form-control {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1.5px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 0.7rem;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--text-white);
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    select.form-control {
+      cursor: pointer;
+    }
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+    }
+    .alert {
+      background: rgba(239, 68, 68, 0.15);
+      border-left: 3px solid #ef4444;
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 1rem;
+      font-size: 0.8rem;
+      color: #fca5a5;
+      display: none;
+      margin-bottom: 1rem;
+    }
+    .alert.show {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
     .modal-footer {
-      display: flex; gap: .75rem; justify-content: flex-end; margin-top: 1.5rem;
+      display: flex;
+      gap: 0.8rem;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
     }
     .btn-cancel {
-      background: var(--surface); border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm); padding: .65rem 1.25rem;
-      font-size: .88rem; cursor: pointer; font-family: var(--font-body);
+      background: transparent;
+      border: 1.5px solid rgba(99, 102, 241, 0.5);
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 1.2rem;
+      font-size: 0.8rem;
+      color: var(--text-gray);
+      cursor: pointer;
+    }
+    .btn-cancel:hover {
+      border-color: var(--primary);
+      color: var(--primary-light);
     }
     .btn-save {
-      background: var(--primary); color: white; border: none;
-      border-radius: var(--radius-sm); padding: .65rem 1.5rem;
-      font-size: .88rem; font-weight: 600; cursor: pointer; font-family: var(--font-body);
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 1.5rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
     }
+    .btn-save:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin-right: 0.4rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* Responsive */
     @media (max-width: 768px) {
       .sidebar { display: none; }
       .main { margin-left: 0; }
       .stats-row { grid-template-columns: 1fr; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+      .toolbar-left { flex-direction: column; }
+      .search-box input { width: 100%; }
+      .topbar { padding: 1rem; }
+      .content { padding: 1rem; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="sidebar-brand">
-      <div class="logo">
-        <div class="logo-box">
-          <svg viewBox="0 0 24 24"><path d="M7 14c0 1.1.9 2 2 2h2v-4H9c-1.1 0-2 .9-2 2zm10-9h-1V3h-2v2H10V3H8v2H7C5.9 5 5 5.9 5 7v12c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 14H7V9h10v10z"/></svg>
-        </div>
-        <span class="logo-text">PeinturePro <span>TN</span></span>
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+  <div class="nav-brand">
+    <img src="../images/logo.png" alt="PeinturePro TN" class="logo-image">
+   
+  </div>
+  </div>
+  <nav class="sidebar-menu">
+    <div class="menu-label">Principal</div>
+    <a class="menu-item" href="/admin/dashboard.html">
+      <span class="material-icons">dashboard</span> Dashboard
+    </a>
+    <a class="menu-item" href="/admin/produits.html">
+      <span class="material-icons">palette</span> Produits
+    </a>
+    <a class="menu-item" href="/admin/utilisateurs.html">
+      <span class="material-icons">people</span> Utilisateurs
+    </a>
+    <div class="menu-label">Production</div>
+    <a class="menu-item" href="/admin/matieres-premieres.html">
+      <span class="material-icons">science</span> Matières premières
+    </a>
+    <a class="menu-item active" href="/admin/lots-production.html">
+      <span class="material-icons">factory</span> Lots production
+    </a>
+    <div class="menu-label">Analytique</div>
+    <a class="menu-item" href="/admin/analytics.html">
+      <span class="material-icons">analytics</span> Analytics
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="user-avatar" id="userAvatar">A</div>
+      <div>
+        <div class="user-name" id="userName">Admin</div>
+        <div class="user-role">Administrateur</div>
       </div>
     </div>
-    <nav class="sidebar-menu">
-      <div class="menu-label">Principal</div>
-      <a class="menu-item" href="/admin/dashboard.html"><span class="icon">📊</span> Dashboard</a>
-      <a class="menu-item" href="/admin/produits.html"><span class="icon">🎨</span> Produits</a>
-      <a class="menu-item" href="/admin/utilisateurs.html"><span class="icon">👥</span> Utilisateurs</a>
-      <div class="menu-label">Production</div>
-      <a class="menu-item" href="/admin/matieres-premieres.html"><span class="icon">🧪</span> Matières premières</a>
-      <a class="menu-item active" href="/admin/lots-production.html"><span class="icon">🏭</span> Lots production</a>
-      <div class="menu-label">Analytique</div>
-      <a class="menu-item" href="/admin/analytics.html"><span class="icon">📈</span> Analytics</a>
-    </nav>
-    <div class="sidebar-footer">
-      <div class="user-info">
-        <div class="user-avatar" id="userAvatar">A</div>
-        <div>
-          <div class="user-name" id="userName">Admin</div>
-          <div class="user-role">Administrateur</div>
-        </div>
-      </div>
-      <button class="menu-item" onclick="logout()"><span class="icon">🚪</span> Déconnexion</button>
+    <button class="menu-item" onclick="logout()">
+      <span class="material-icons">logout</span> Déconnexion
+    </button>
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">
+      <span class="material-icons">factory</span> Lots de production
     </div>
-  </aside>
-
-  <!-- Main -->
-  <div class="main">
-    <div class="topbar">
-      <div class="topbar-title">🏭 Lots de production</div>
-      <span id="lotCount" style="font-size:.85rem; color:var(--text-muted);"></span>
-    </div>
-
-    <div class="content">
-
-      <!-- Stats -->
-      <div class="stats-row">
-        <div class="stat-card">
-          <div class="stat-icon" style="background:rgba(200,68,26,.1)">🏭</div>
-          <div><div class="stat-value" id="statTotal">0</div><div class="stat-label">Lots totaux</div></div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon" style="background:rgba(16,185,129,.1)">✅</div>
-          <div><div class="stat-value" id="statValides">0</div><div class="stat-label">Lots valides</div></div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon" style="background:rgba(239,68,68,.1)">⚠️</div>
-          <div><div class="stat-value" id="statExpires">0</div><div class="stat-label">Expirés / bientôt</div></div>
-        </div>
-      </div>
-
-      <!-- Toolbar -->
-      <div class="toolbar">
-        <div class="toolbar-left">
-          <div class="search-box">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-            </svg>
-            <input type="text" id="searchInput" placeholder="N° lot ou produit..." oninput="filterLots()"/>
-          </div>
-          <select class="filter-select" id="produitFilter" onchange="filterLots()">
-            <option value="">Tous les produits</option>
-          </select>
-        </div>
-        <button class="btn-add" onclick="openModal()">+ Nouveau lot</button>
-      </div>
-
-      <!-- Table -->
-      <div class="table-card">
-        <table>
-          <thead>
-            <tr>
-              <th>N° Lot</th>
-              <th>Produit</th>
-              <th>Quantité</th>
-              <th>Date production</th>
-              <th>Date expiration</th>
-              <th>Statut</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="lotsTable">
-            <tr class="empty-row"><td colspan="7">Chargement...</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-    </div>
+    <div class="topbar-right" id="lotCount"></div>
   </div>
 
-  <!-- Modal -->
-  <div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
-    <div class="modal">
-      <div class="modal-header">
-        <span class="modal-title">Nouveau lot de production</span>
-        <button class="modal-close" onclick="closeModal()">✕</button>
+  <div class="content">
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon orange"><span class="material-icons">inventory_2</span></div>
+        <div>
+          <div class="stat-value" id="statTotal">0</div>
+          <div class="stat-label">Lots totaux</div>
+        </div>
       </div>
-
-      <div class="alert alert-error" id="modalAlert">⚠️ <span id="modalAlertMsg"></span></div>
-
-      <div class="num-preview" id="numPreview">
-        N° : PEINT-<span id="datePart">AAAAMMJJ</span>-001
+      <div class="stat-card">
+        <div class="stat-icon green"><span class="material-icons">check_circle</span></div>
+        <div>
+          <div class="stat-value" id="statValides">0</div>
+          <div class="stat-label">Lots valides</div>
+        </div>
       </div>
+      <div class="stat-card">
+        <div class="stat-icon red"><span class="material-icons">warning</span></div>
+        <div>
+          <div class="stat-value" id="statExpires">0</div>
+          <div class="stat-label">Expirés / bientôt</div>
+        </div>
+      </div>
+    </div>
 
-      <div class="form-group">
-        <label>Produit *</label>
-        <select class="form-control" id="fProduit">
-          <option value="">Sélectionner un produit...</option>
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <div class="search-box">
+          <span class="material-icons">search</span>
+          <input type="text" id="searchInput" placeholder="N° lot ou produit..." oninput="filterLots()">
+        </div>
+        <select class="filter-select" id="produitFilter" onchange="filterLots()">
+          <option value="">Tous les produits</option>
         </select>
       </div>
+      <button class="btn-add" onclick="openModal()">
+        <span class="material-icons">add</span> Nouveau lot
+      </button>
+    </div>
 
-      <div class="row-2">
-        <div class="form-group">
-          <label>Quantité (litres) *</label>
-          <input type="number" class="form-control" id="fQuantite" placeholder="0" min="1" step="0.1"/>
-        </div>
-        <div class="form-group">
-          <label>Date d'expiration</label>
-          <input type="date" class="form-control" id="fExpiration"/>
-        </div>
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn-cancel" onclick="closeModal()">Annuler</button>
-        <button class="btn-save" id="saveBtn" onclick="saveLot()">🏭 Créer le lot</button>
-      </div>
+    <!-- Table -->
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>N° Lot</th>
+            <th>Produit</th>
+            <th>Quantité</th>
+            <th>Date production</th>
+            <th>Date expiration</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="lotsTable">
+          <tr class="empty-row"><td colspan="7">Chargement...</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
+</div>
 
-  <script src="/js/api.js"></script>
-  <script src="/js/auth.js"></script>
-  <script>
-    requireAuth(['admin']);
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Nouveau lot de production</span>
+      <button class="modal-close" onclick="closeModal()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <div class="alert" id="modalAlert">
+      <span class="material-icons" style="font-size: 16px;">error_outline</span>
+      <span id="modalAlertMsg"></span>
+    </div>
+    <div class="num-preview" id="numPreview">
+      N° : PEINT-<span id="datePart">AAAAMMJJ</span>-001
+    </div>
+    <div class="form-group">
+      <label>Produit *</label>
+      <select class="form-control" id="fProduit">
+        <option value="">Sélectionner un produit...</option>
+      </select>
+    </div>
+    <div class="row-2">
+      <div class="form-group">
+        <label>Quantité (litres) *</label>
+        <input type="number" class="form-control" id="fQuantite" placeholder="0" min="1" step="0.1">
+      </div>
+      <div class="form-group">
+        <label>Date d'expiration</label>
+        <input type="date" class="form-control" id="fExpiration">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+      <button class="btn-save" id="saveBtn" onclick="saveLot()">Créer le lot</button>
+    </div>
+  </div>
+</div>
 
-    const user = Auth.getUser();
-    if (user) {
-      document.getElementById('userName').textContent   = user.nom;
-      document.getElementById('userAvatar').textContent = user.nom.charAt(0).toUpperCase();
-    }
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+  requireAuth(['admin']);
 
-    let allLots    = [];
-    let allProduits = [];
+  const user = Auth.getUser();
+  if (user) {
+    document.getElementById('userName').textContent = user.nom;
+    document.getElementById('userAvatar').textContent = user.nom.charAt(0).toUpperCase();
+  }
 
-    // Date part preview
-    const today    = new Date();
-    const datePart = today.toISOString().slice(0,10).replace(/-/g,'');
-    document.getElementById('datePart').textContent = datePart;
+  let allLots = [];
+  let allProduits = [];
 
-    // Date min expiration = dans 1 mois
-    const minExp = new Date();
-    minExp.setMonth(minExp.getMonth() + 1);
-    document.getElementById('fExpiration').min   = minExp.toISOString().split('T')[0];
-    document.getElementById('fExpiration').value = minExp.toISOString().split('T')[0];
+  // Prévisualisation du numéro de lot
+  const today = new Date();
+  const datePart = today.toISOString().slice(0, 10).replace(/-/g, '');
+  document.getElementById('datePart').textContent = datePart;
 
-    async function loadAll() {
-      await Promise.all([loadProduits(), loadLots()]);
-    }
+  // Date min expiration = dans 1 mois
+  const minExp = new Date();
+  minExp.setMonth(minExp.getMonth() + 1);
+  document.getElementById('fExpiration').min = minExp.toISOString().split('T')[0];
+  document.getElementById('fExpiration').value = minExp.toISOString().split('T')[0];
 
-    async function loadProduits() {
-      try {
-        const res = await api.get('/produits');
-        allProduits = await res.json();
-        const sel1 = document.getElementById('fProduit');
-        const sel2 = document.getElementById('produitFilter');
-        allProduits.forEach(p => {
-          sel1.innerHTML += `<option value="${p.id}">${p.nom}</option>`;
-          sel2.innerHTML += `<option value="${p.id}">${p.nom}</option>`;
-        });
-      } catch {}
-    }
+  async function loadAll() {
+    await Promise.all([loadProduits(), loadLots()]);
+  }
 
-    async function loadLots() {
-      try {
-        const res  = await api.get('/lots');
-        allLots    = await res.json();
-        document.getElementById('lotCount').textContent = `${allLots.length} lot(s)`;
-        updateStats(allLots);
-        renderLots(allLots);
-      } catch { document.getElementById('lotsTable').innerHTML = '<tr class="empty-row"><td colspan="7">❌ Erreur</td></tr>'; }
-    }
-
-    function updateStats(lots) {
-      const now      = new Date();
-      const soon     = new Date(); soon.setDate(soon.getDate() + 30);
-      const expires  = lots.filter(l => {
-        if (!l.date_expiration) return false;
-        const d = new Date(l.date_expiration);
-        return d < soon;
+  async function loadProduits() {
+    try {
+      const res = await api.get('/produits');
+      allProduits = await res.json();
+      const fProduit = document.getElementById('fProduit');
+      const filterSelect = document.getElementById('produitFilter');
+      fProduit.innerHTML = '<option value="">Sélectionner un produit...</option>';
+      filterSelect.innerHTML = '<option value="">Tous les produits</option>';
+      allProduits.forEach(p => {
+        fProduit.innerHTML += `<option value="${p.id}">${p.nom}</option>`;
+        filterSelect.innerHTML += `<option value="${p.id}">${p.nom}</option>`;
       });
-      document.getElementById('statTotal').textContent   = lots.length;
-      document.getElementById('statValides').textContent = lots.length - expires.length;
-      document.getElementById('statExpires').textContent = expires.length;
-    }
+    } catch (err) { console.error(err); }
+  }
 
-    function getExpStatus(dateStr) {
-      if (!dateStr) return { cls: 'exp-ok', label: 'N/A' };
-      const d    = new Date(dateStr);
-      const now  = new Date();
-      const soon = new Date(); soon.setDate(soon.getDate() + 30);
-      if (d < now)  return { cls: 'exp-expired', label: '❌ Expiré' };
-      if (d < soon) return { cls: 'exp-soon',    label: '⚠️ Bientôt' };
-      return { cls: 'exp-ok', label: '✓ Valide' };
+  async function loadLots() {
+    try {
+      const res = await api.get('/lots');
+      allLots = await res.json();
+      document.getElementById('lotCount').textContent = `${allLots.length} lot(s)`;
+      updateStats(allLots);
+      renderLots(allLots);
+    } catch (err) {
+      document.getElementById('lotsTable').innerHTML = '<tr class="empty-row"><td colspan="7">❌ Erreur de chargement</td></tr>';
     }
+  }
 
-    function renderLots(lots) {
-      const tbody = document.getElementById('lotsTable');
-      if (!lots.length) {
-        tbody.innerHTML = '<tr class="empty-row"><td colspan="7">Aucun lot trouvé.</td></tr>';
-        return;
-      }
-      tbody.innerHTML = lots.map(l => {
-        const prod   = allProduits.find(p => p.id === l.produit_id);
-        const exp    = getExpStatus(l.date_expiration);
-        const datePr = new Date(l.created_at).toLocaleDateString('fr-TN', { day:'2-digit', month:'short', year:'numeric' });
-        const dateEx = l.date_expiration
-          ? new Date(l.date_expiration).toLocaleDateString('fr-TN', { day:'2-digit', month:'short', year:'numeric' })
-          : '—';
-        return `
-          <tr>
-            <td><span class="lot-num">${l.numero_lot}</span></td>
-            <td>
-              <div class="produit-cell">
-                <div class="prod-dot" style="background:${prod?.couleur_code || '#CCC'}"></div>
-                ${prod?.nom || '—'}
-              </div>
-            </td>
-            <td><strong>${parseFloat(l.quantite_litres).toFixed(1)}</strong> L</td>
-            <td style="color:var(--text-muted); font-size:.82rem">${datePr}</td>
-            <td style="font-size:.82rem">${dateEx}</td>
-            <td><span class="exp-badge ${exp.cls}">${exp.label}</span></td>
-            <td>
-              <button class="btn-icon danger" onclick="deleteLot(${l.id})" title="Supprimer">🗑️</button>
-            </td>
-          </tr>`;
-      }).join('');
+  function updateStats(lots) {
+    const now = new Date();
+    const soon = new Date();
+    soon.setDate(soon.getDate() + 30);
+    const expires = lots.filter(l => {
+      if (!l.date_expiration) return false;
+      const d = new Date(l.date_expiration);
+      return d < soon;
+    });
+    document.getElementById('statTotal').textContent = lots.length;
+    document.getElementById('statValides').textContent = lots.length - expires.length;
+    document.getElementById('statExpires').textContent = expires.length;
+  }
+
+  function getExpStatus(dateStr) {
+    if (!dateStr) return { cls: 'exp-ok', label: 'N/A' };
+    const d = new Date(dateStr);
+    const now = new Date();
+    const soon = new Date();
+    soon.setDate(soon.getDate() + 30);
+    if (d < now) return { cls: 'exp-expired', label: '❌ Expiré' };
+    if (d < soon) return { cls: 'exp-soon', label: '⚠️ Bientôt' };
+    return { cls: 'exp-ok', label: '✓ Valide' };
+  }
+
+  function renderLots(lots) {
+    const tbody = document.getElementById('lotsTable');
+    if (!lots.length) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="7">Aucun lot trouvé.</td></tr>';
+      return;
     }
+    tbody.innerHTML = lots.map(l => {
+      const prod = allProduits.find(p => p.id === l.produit_id);
+      const exp = getExpStatus(l.date_expiration);
+      const datePr = new Date(l.created_at).toLocaleDateString('fr-TN', { day: '2-digit', month: 'short', year: 'numeric' });
+      const dateEx = l.date_expiration
+        ? new Date(l.date_expiration).toLocaleDateString('fr-TN', { day: '2-digit', month: 'short', year: 'numeric' })
+        : '—';
+      return `
+        <tr>
+          <td><span class="lot-num">${l.numero_lot}</span></td>
+          <td>
+            <div class="produit-cell">
+              <div class="prod-dot" style="background:${prod?.couleur_code || '#CCC'}"></div>
+              ${prod?.nom || '—'}
+            </div>
+          </td>
+          <td><strong>${parseFloat(l.quantite_litres).toFixed(1)}</strong> L</td>
+          <td style="font-size:0.8rem">${datePr}</td>
+          <td style="font-size:0.8rem">${dateEx}</td>
+          <td><span class="exp-badge ${exp.cls}">${exp.label}</span></td>
+          <td>
+            <button class="btn-icon" onclick="deleteLot(${l.id})" title="Supprimer">
+              <span class="material-icons">delete</span>
+            </button>
+          </td>
+        </tr>`;
+    }).join('');
+  }
 
-    function filterLots() {
-      const search  = document.getElementById('searchInput').value.toLowerCase();
-      const produit = document.getElementById('produitFilter').value;
-      let filtered  = allLots;
-      if (produit) filtered = filtered.filter(l => String(l.produit_id) === produit);
-      if (search)  filtered = filtered.filter(l =>
+  function filterLots() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const produit = document.getElementById('produitFilter').value;
+    let filtered = allLots;
+    if (produit) filtered = filtered.filter(l => String(l.produit_id) === produit);
+    if (search) {
+      filtered = filtered.filter(l =>
         l.numero_lot.toLowerCase().includes(search) ||
         (allProduits.find(p => p.id === l.produit_id)?.nom || '').toLowerCase().includes(search)
       );
-      renderLots(filtered);
+    }
+    renderLots(filtered);
+  }
+
+  function openModal() {
+    document.getElementById('modalAlert').classList.remove('show');
+    document.getElementById('fProduit').value = '';
+    document.getElementById('fQuantite').value = '';
+    document.getElementById('modalOverlay').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+  }
+
+  function closeModalOutside(e) {
+    if (e.target === document.getElementById('modalOverlay')) closeModal();
+  }
+
+  function showAlert(msg) {
+    document.getElementById('modalAlertMsg').textContent = msg;
+    document.getElementById('modalAlert').classList.add('show');
+  }
+
+  async function saveLot() {
+    const produit_id = document.getElementById('fProduit').value;
+    const quantite_litres = parseFloat(document.getElementById('fQuantite').value);
+    const date_expiration = document.getElementById('fExpiration').value;
+    const btn = document.getElementById('saveBtn');
+
+    if (!produit_id || !quantite_litres) {
+      showAlert('Produit et quantité sont obligatoires.');
+      return;
     }
 
-    function openModal() {
-      document.getElementById('modalAlert').classList.remove('show');
-      document.getElementById('fProduit').value  = '';
-      document.getElementById('fQuantite').value = '';
-      document.getElementById('modalOverlay').classList.add('open');
-    }
+    btn.innerHTML = '<span class="spinner"></span> Création...';
+    btn.disabled = true;
 
-    async function saveLot() {
-      const produit_id       = document.getElementById('fProduit').value;
-      const quantite_litres  = parseFloat(document.getElementById('fQuantite').value);
-      const date_expiration  = document.getElementById('fExpiration').value;
-      const btn              = document.getElementById('saveBtn');
-
-      if (!produit_id || !quantite_litres) {
-        showAlert('Produit et quantité sont obligatoires.');
-        return;
-      }
-
-      btn.innerHTML = '<span class="spinner"></span>Création...';
-      btn.disabled  = true;
-
-      try {
-        const res = await api.post('/lots', { produit_id, quantite_litres, date_expiration });
-        if (res && res.ok) {
-          const data = await res.json();
-          closeModal();
-          await loadLots();
-          alert(`✅ Lot créé : ${data.numero_lot}`);
-        } else {
-          const d = await res.json();
-          showAlert(d.message || 'Erreur.');
-        }
-      } catch { showAlert('Erreur serveur.'); }
-      finally  { btn.innerHTML = '🏭 Créer le lot'; btn.disabled = false; }
-    }
-
-    async function deleteLot(id) {
-      if (!confirm('Supprimer ce lot ?')) return;
-      try {
-        await api.delete(`/lots/${id}`);
+    try {
+      const res = await api.post('/lots', { produit_id, quantite_litres, date_expiration });
+      if (res && res.ok) {
+        const data = await res.json();
+        closeModal();
         await loadLots();
-      } catch { alert('Erreur.'); }
+        alert(`✅ Lot créé : ${data.numero_lot}`);
+      } else {
+        const d = await res.json();
+        showAlert(d.message || 'Erreur lors de la création.');
+      }
+    } catch (err) {
+      showAlert('Erreur serveur.');
+    } finally {
+      btn.innerHTML = 'Créer le lot';
+      btn.disabled = false;
     }
+  }
 
-    function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
-    function closeModalOutside(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
-    function showAlert(msg) {
-      document.getElementById('modalAlertMsg').textContent = msg;
-      document.getElementById('modalAlert').classList.add('show');
+  async function deleteLot(id) {
+    if (!confirm('Supprimer ce lot ?')) return;
+    try {
+      await api.delete(`/lots/${id}`);
+      await loadLots();
+    } catch (err) {
+      alert('Erreur lors de la suppression.');
     }
+  }
 
-    loadAll();
-  </script>
+  function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+    window.location.href = '/login-admin.html';
+  }
+
+  loadAll();
+</script>
 </body>
 </html>

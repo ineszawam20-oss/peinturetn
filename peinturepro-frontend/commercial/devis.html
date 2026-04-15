@@ -4,594 +4,1002 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PeinturePro TN — Devis</title>
-  <link rel="stylesheet" href="/css/main.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
-    body { background: #F4F1EE; min-height: 100vh; display: flex; }
+    /* ===== THÈME MODERNE SOMBRE ===== */
+    :root {
+      --bg-dark: #0a0a1a;
+      --bg-surface: #0f0f1f;
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --primary-light: #818cf8;
+      --accent: #f59e0b;
+      --accent-glow: #fbbf24;
+      --success: #10b981;
+      --text-white: #ffffff;
+      --text-gray: #a1a1aa;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --border-glow: rgba(99, 102, 241, 0.3);
+      --gradient-hero: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+      --shadow-glow: 0 0 30px rgba(99, 102, 241, 0.3);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --font-display: 'Poppins', system-ui, -apple-system, sans-serif;
+      --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    }
 
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg-dark);
+      font-family: var(--font-body);
+      color: var(--text-white);
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+    }
+
+    /* ===== SIDEBAR ===== */
     .sidebar {
-      width: 240px; min-height: 100vh;
-      background: #1A2535; display: flex;
-      flex-direction: column; padding: 1.5rem 0;
-      position: fixed; top: 0; left: 0; z-index: 100;
-      box-shadow: 4px 0 20px rgba(0,0,0,.15);
+      width: 260px;
+      min-height: 100vh;
+      background: rgba(15, 15, 31, 0.95);
+      backdrop-filter: blur(12px);
+      border-right: 1px solid rgba(99, 102, 241, 0.3);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
     }
     .sidebar-brand {
-      padding: 0 1.5rem 1.5rem;
-      border-bottom: 1px solid rgba(255,255,255,.08);
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(99, 102, 241, 0.3);
       margin-bottom: 1rem;
     }
-    .logo { display: flex; align-items: center; gap: .65rem; }
-    .logo-box {
-      width: 36px; height: 36px; background: #3B82F6;
-      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
     }
-    .logo-box svg { width: 20px; height: 20px; fill: white; }
-    .logo-text { font-family: var(--font-display); font-size: 1rem; color: white; }
-    .logo-text span { color: #60A5FA; }
-    .sidebar-menu { flex: 1; padding: 0 .75rem; }
+    .logo-image {
+      height: 40px;
+      width: auto;
+      filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.5));
+    }
+    .logo-text {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--text-white), var(--primary-light));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .logo-text span {
+      background: linear-gradient(135deg, var(--accent), var(--accent-glow));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .sidebar-menu {
+      flex: 1;
+      padding: 0 1rem;
+    }
     .menu-label {
-      font-size: .65rem; font-weight: 600; letter-spacing: .12em;
-      text-transform: uppercase; color: rgba(255,255,255,.3);
-      padding: .75rem .75rem .35rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-gray);
+      padding: 0.75rem 0.75rem 0.35rem;
     }
     .menu-item {
-      display: flex; align-items: center; gap: .75rem;
-      padding: .65rem .75rem; border-radius: 8px;
-      text-decoration: none; color: rgba(255,255,255,.55);
-      font-size: .88rem; font-weight: 500; transition: all .2s;
-      margin-bottom: .15rem; cursor: pointer; border: none;
-      background: none; width: 100%; text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0.75rem;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      color: var(--text-gray);
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      margin-bottom: 0.15rem;
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
     }
-    .menu-item:hover { background: rgba(255,255,255,.07); color: rgba(255,255,255,.85); }
-    .menu-item.active { background: #3B82F6; color: white; box-shadow: 0 4px 12px rgba(59,130,246,.3); }
-    .menu-item .icon { font-size: 1.1rem; width: 20px; text-align: center; }
-    .sidebar-footer { padding: 1rem .75rem 0; border-top: 1px solid rgba(255,255,255,.08); }
-    .user-info { display: flex; align-items: center; gap: .65rem; padding: .65rem .75rem; margin-bottom: .5rem; }
+    .menu-item .material-icons {
+      font-size: 20px;
+    }
+    .menu-item:hover {
+      background: rgba(99, 102, 241, 0.2);
+      color: var(--primary-light);
+    }
+    .menu-item.active {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(79, 70, 229, 0.4));
+      color: var(--primary-light);
+      border-left: 3px solid var(--primary);
+    }
+    .sidebar-footer {
+      padding: 1rem;
+      border-top: 1px solid rgba(99, 102, 241, 0.3);
+      margin-top: auto;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0.75rem;
+      margin-bottom: 0.5rem;
+    }
     .user-avatar {
-      width: 34px; height: 34px; background: #3B82F6; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: .85rem; color: white; font-weight: 600;
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: white;
     }
-    .user-name { font-size: .83rem; color: white; font-weight: 500; }
-    .user-role { font-size: .7rem; color: rgba(255,255,255,.4); }
+    .user-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-white);
+    }
+    .user-role {
+      font-size: 0.7rem;
+      color: var(--text-gray);
+    }
 
-    .main { margin-left: 240px; flex: 1; min-height: 100vh; }
+    /* ===== MAIN ===== */
+    .main {
+      margin-left: 260px;
+      flex: 1;
+      min-height: 100vh;
+      background: var(--bg-dark);
+    }
     .topbar {
-      background: white; padding: 1rem 2rem;
-      display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid var(--border);
-      box-shadow: 0 1px 4px rgba(0,0,0,.04);
+      background: rgba(15, 15, 31, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(99, 102, 241, 0.3);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
     }
-    .topbar-title { font-family: var(--font-display); font-size: 1.3rem; color: var(--dark); }
-    .topbar-right { display: flex; gap: .75rem; }
+    .topbar-title {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      background: linear-gradient(135deg, var(--text-white), var(--primary-light));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
     .btn-new {
-      background: #3B82F6; color: white; border: none;
-      border-radius: var(--radius-sm); padding: .55rem 1.1rem;
-      font-size: .88rem; font-weight: 600; cursor: pointer;
-      font-family: var(--font-body); transition: all .2s;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 0.55rem 1.2rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.3s ease;
     }
-    .btn-new:hover { background: #2563EB; }
+    .btn-new:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+    }
+    .content {
+      padding: 2rem;
+    }
 
-    .content { padding: 2rem; }
-
-    /* Stats */
+    /* ===== STATS ===== */
     .stats-row {
-      display: grid; grid-template-columns: repeat(5, 1fr);
-      gap: 1rem; margin-bottom: 2rem;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
     }
     .stat-card {
-      background: white; border-radius: var(--radius-md);
-      padding: 1.1rem; text-align: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,.05);
-      transition: transform .2s;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-md);
+      padding: 1.1rem;
+      text-align: center;
+      transition: all 0.3s ease;
     }
-    .stat-card:hover { transform: translateY(-2px); }
-    .stat-value { font-family: var(--font-display); font-size: 1.6rem; color: var(--dark); }
-    .stat-label { font-size: .72rem; color: var(--text-muted); margin-top: .2rem; }
-    .stat-card.active-blue .stat-value { color: #3B82F6; }
-    .stat-card.active-green .stat-value { color: #10B981; }
-    .stat-card.active-red .stat-value   { color: #EF4444; }
+    .stat-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-glow);
+    }
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      color: var(--accent);
+    }
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--text-gray);
+      margin-top: 0.2rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
 
-    /* Toolbar */
+    /* ===== TOOLBAR ===== */
     .toolbar {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      gap: 1rem;
+      flex-wrap: wrap;
     }
-    .toolbar-left { display: flex; gap: .75rem; flex-wrap: wrap; }
+    .toolbar-left {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
     .search-box {
-      display: flex; align-items: center; gap: .5rem;
-      background: white; border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm); padding: .5rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1.5px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 0.5rem 1rem;
+    }
+    .search-box .material-icons {
+      font-size: 18px;
+      color: var(--text-gray);
     }
     .search-box input {
-      border: none; outline: none; font-family: var(--font-body);
-      font-size: .88rem; color: var(--text); width: 200px; background: transparent;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--text-white);
+      width: 200px;
+    }
+    .search-box input::placeholder {
+      color: var(--text-gray);
     }
     .filter-select {
-      border: 1.5px solid var(--border); border-radius: var(--radius-sm);
-      padding: .5rem .9rem; font-family: var(--font-body);
-      font-size: .85rem; color: var(--text); background: white;
-      cursor: pointer; outline: none;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1.5px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 0.5rem 0.9rem;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--text-white);
+      cursor: pointer;
+      outline: none;
+    }
+    .filter-select option {
+      background: var(--bg-surface);
     }
 
-    /* Grid devis */
+    /* ===== DEVIS GRID ===== */
     .devis-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
       gap: 1.25rem;
     }
     .devis-card {
-      background: white; border-radius: var(--radius-md);
-      padding: 1.4rem; box-shadow: 0 2px 8px rgba(0,0,0,.05);
-      transition: transform .2s, box-shadow .2s;
-      border-top: 3px solid transparent;
-      position: relative; overflow: hidden;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-md);
+      padding: 1.4rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
-    .devis-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.1); }
-    .devis-card.brouillon { border-top-color: #94A3B8; }
-    .devis-card.envoye    { border-top-color: #3B82F6; }
-    .devis-card.accepte   { border-top-color: #10B981; }
-    .devis-card.refuse    { border-top-color: #EF4444; }
-    .devis-card.expire    { border-top-color: #9CA3AF; opacity: .7; }
+    .devis-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-glow);
+    }
+    .devis-card.brouillon { border-top: 3px solid #94a3b8; }
+    .devis-card.envoye    { border-top: 3px solid var(--primary); }
+    .devis-card.accepte   { border-top: 3px solid var(--success); }
+    .devis-card.refuse    { border-top: 3px solid #ef4444; }
+    .devis-card.expire    { border-top: 3px solid #9ca3af; opacity: 0.8; }
 
     .devis-header {
-      display: flex; align-items: center;
-      justify-content: space-between; margin-bottom: 1rem;
-    }
-    .devis-num {
-      font-family: monospace; font-size: .8rem;
-      background: #EFF6FF; color: #1E40AF;
-      padding: .2rem .6rem; border-radius: 4px; font-weight: 600;
-    }
-    .devis-badge {
-      font-size: .72rem; font-weight: 600;
-      padding: .25rem .7rem; border-radius: 30px;
-    }
-    .b-brouillon { background: #F1F5F9; color: #475569; }
-    .b-envoye    { background: #DBEAFE; color: #1E40AF; }
-    .b-accepte   { background: #D1FAE5; color: #065F46; }
-    .b-refuse    { background: #FEE2E2; color: #991B1B; }
-    .b-expire    { background: #F1F5F9; color: #9CA3AF; }
-
-    .devis-client {
-      font-family: var(--font-display); font-size: 1.05rem;
-      color: var(--dark); margin-bottom: .3rem;
-    }
-    .devis-sub { font-size: .78rem; color: var(--text-muted); margin-bottom: 1rem; }
-
-    .devis-montant {
-      font-family: var(--font-display); font-size: 1.4rem;
-      color: #3B82F6; margin-bottom: .4rem;
-    }
-    .devis-montant small { font-size: .75rem; color: var(--text-muted); font-family: var(--font-body); }
-
-    .devis-expiry {
-      font-size: .75rem; color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       margin-bottom: 1rem;
     }
-    .devis-expiry.soon { color: #F59E0B; font-weight: 600; }
-    .devis-expiry.expired { color: #EF4444; font-weight: 600; }
+    .devis-num {
+      font-family: monospace;
+      font-size: 0.8rem;
+      background: rgba(99, 102, 241, 0.2);
+      color: var(--primary-light);
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+    .devis-badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.25rem 0.7rem;
+      border-radius: 40px;
+    }
+    .b-brouillon { background: rgba(161, 161, 170, 0.15); color: var(--text-gray); }
+    .b-envoye    { background: rgba(99, 102, 241, 0.15); color: var(--primary-light); }
+    .b-accepte   { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; }
+    .b-refuse    { background: rgba(239, 68, 68, 0.15); color: #fca5a5; }
+    .b-expire    { background: rgba(161, 161, 170, 0.15); color: var(--text-gray); }
 
+    .devis-client {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      color: var(--text-white);
+      margin-bottom: 0.3rem;
+    }
+    .devis-sub {
+      font-size: 0.75rem;
+      color: var(--text-gray);
+      margin-bottom: 1rem;
+    }
+    .devis-montant {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      color: var(--accent);
+      margin-bottom: 0.4rem;
+    }
+    .devis-montant small {
+      font-size: 0.7rem;
+      color: var(--text-gray);
+    }
+    .devis-expiry {
+      font-size: 0.7rem;
+      color: var(--text-gray);
+      margin-bottom: 1rem;
+    }
+    .devis-expiry.soon {
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .devis-expiry.expired {
+      color: #ef4444;
+      font-weight: 600;
+    }
     .devis-footer {
-      display: flex; gap: .5rem; flex-wrap: wrap;
-      padding-top: .85rem; border-top: 1px solid var(--border);
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      padding-top: 0.8rem;
+      border-top: 1px solid rgba(99, 102, 241, 0.3);
     }
     .btn-action {
-      flex: 1; padding: .4rem .6rem;
-      border: 1.5px solid var(--border); border-radius: 6px;
-      background: white; font-size: .75rem; cursor: pointer;
-      font-family: var(--font-body); font-weight: 500;
-      color: var(--text-muted); transition: all .2s;
-      text-align: center;
+      flex: 1;
+      padding: 0.4rem 0.5rem;
+      background: transparent;
+      border: 1.5px solid rgba(99, 102, 241, 0.5);
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text-gray);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
     }
-    .btn-action:hover       { border-color: #3B82F6; color: #3B82F6; background: #EFF6FF; }
-    .btn-action.success:hover { border-color: #10B981; color: #10B981; background: #D1FAE5; }
-    .btn-action.danger:hover  { border-color: #EF4444; color: #EF4444; background: #FEE2E2; }
-
+    .btn-action .material-icons {
+      font-size: 14px;
+    }
+    .btn-action:hover {
+      border-color: var(--primary);
+      color: var(--primary-light);
+      background: rgba(99, 102, 241, 0.1);
+    }
+    .btn-action.success:hover {
+      border-color: var(--success);
+      color: #6ee7b7;
+      background: rgba(16, 185, 129, 0.1);
+    }
+    .btn-action.danger:hover {
+      border-color: #ef4444;
+      color: #fca5a5;
+      background: rgba(239, 68, 68, 0.1);
+    }
     .empty-state {
-      text-align: center; padding: 4rem; color: var(--text-muted);
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-gray);
       grid-column: 1/-1;
     }
+    .empty-state .material-icons {
+      font-size: 48px;
+      margin-bottom: 0.5rem;
+      opacity: 0.5;
+    }
 
-    /* Modal */
+    /* ===== MODAL ===== */
     .modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,.5);
-      display: none; align-items: center; justify-content: center;
-      z-index: 200; backdrop-filter: blur(4px);
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
     }
-    .modal-overlay.open { display: flex; }
+    .modal-overlay.open {
+      display: flex;
+    }
     .modal {
-      background: white; border-radius: var(--radius-lg);
-      padding: 2rem; width: 100%; max-width: 520px;
-      box-shadow: var(--shadow-lg);
-      animation: slideUp .3s cubic-bezier(.16,1,.3,1);
-      max-height: 90vh; overflow-y: auto;
+      background: var(--bg-surface);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      width: 100%;
+      max-width: 520px;
+      box-shadow: var(--shadow-glow);
+      animation: slideUp 0.3s ease;
+      max-height: 90vh;
+      overflow-y: auto;
     }
-    @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
     .modal-header {
-      display: flex; align-items: center;
-      justify-content: space-between; margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
     }
-    .modal-title { font-family: var(--font-display); font-size: 1.3rem; color: var(--dark); }
-    .modal-close { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted); }
-    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      background: linear-gradient(135deg, var(--text-white), var(--primary-light));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-gray);
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+    .modal-close:hover {
+      color: var(--primary-light);
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.75rem;
+      margin-bottom: 0.3rem;
+      color: var(--text-gray);
+    }
+    .form-control {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1.5px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 0.7rem;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--text-white);
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    select.form-control {
+      cursor: pointer;
+    }
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+    }
     .calc-result {
-      background: #EFF6FF; border: 1px solid #BFDBFE;
-      border-radius: var(--radius-sm); padding: .85rem 1rem;
-      margin: .75rem 0; font-size: .88rem; color: #1E40AF;
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 0.8rem;
+      margin: 0.8rem 0;
+      font-size: 0.85rem;
+      color: var(--primary-light);
+      display: none;
     }
-    .calc-result strong { font-family: var(--font-display); font-size: 1.1rem; }
-    .modal-footer { display: flex; gap: .75rem; justify-content: flex-end; margin-top: 1.5rem; }
+    .calc-result.show {
+      display: block;
+    }
+    .alert {
+      background: rgba(239, 68, 68, 0.15);
+      border-left: 3px solid #ef4444;
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 1rem;
+      font-size: 0.8rem;
+      color: #fca5a5;
+      display: none;
+      margin-bottom: 1rem;
+    }
+    .alert.show {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .modal-footer {
+      display: flex;
+      gap: 0.8rem;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
+    }
     .btn-cancel {
-      background: var(--surface); border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm); padding: .65rem 1.25rem;
-      font-size: .88rem; cursor: pointer; font-family: var(--font-body);
+      background: transparent;
+      border: 1.5px solid rgba(99, 102, 241, 0.5);
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 1.2rem;
+      font-size: 0.8rem;
+      color: var(--text-gray);
+      cursor: pointer;
+    }
+    .btn-cancel:hover {
+      border-color: var(--primary);
+      color: var(--primary-light);
     }
     .btn-save {
-      background: #3B82F6; color: white; border: none;
-      border-radius: var(--radius-sm); padding: .65rem 1.5rem;
-      font-size: .88rem; font-weight: 600; cursor: pointer; font-family: var(--font-body);
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 1.5rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
     }
+    .btn-save:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin-right: 0.4rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    @media (max-width: 1024px) { .stats-row { grid-template-columns: repeat(3, 1fr); } }
+    /* Responsive */
+    @media (max-width: 1000px) {
+      .stats-row { grid-template-columns: repeat(3, 1fr); }
+    }
     @media (max-width: 768px) {
       .sidebar { display: none; }
       .main { margin-left: 0; }
       .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .topbar { padding: 1rem; }
+      .content { padding: 1rem; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="sidebar-brand">
-      <div class="logo">
-        <div class="logo-box">
-          <svg viewBox="0 0 24 24"><path d="M7 14c0 1.1.9 2 2 2h2v-4H9c-1.1 0-2 .9-2 2zm10-9h-1V3h-2v2H10V3H8v2H7C5.9 5 5 5.9 5 7v12c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 14H7V9h10v10z"/></svg>
-        </div>
-        <span class="logo-text">PeinturePro <span>TN</span></span>
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+  <div class="nav-brand">
+    <img src="../images/logo.png" alt="PeinturePro TN" class="logo-image">
+   
+  </div>
+  </div>
+  <nav class="sidebar-menu">
+    <div class="menu-label">Commercial</div>
+    <a class="menu-item" href="/commercial/dashboard.html">
+      <span class="material-icons">dashboard</span> Dashboard
+    </a>
+    <a class="menu-item active" href="/commercial/devis.html">
+      <span class="material-icons">description</span> Devis
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="user-avatar" id="userAvatar">C</div>
+      <div>
+        <div class="user-name" id="userName">Commercial</div>
+        <div class="user-role">Commercial</div>
       </div>
     </div>
-    <nav class="sidebar-menu">
-      <div class="menu-label">Commercial</div>
-      <a class="menu-item" href="/commercial/dashboard.html"><span class="icon">📊</span> Dashboard</a>
-      <a class="menu-item active" href="/commercial/devis.html"><span class="icon">📄</span> Devis</a>
-    </nav>
-    <div class="sidebar-footer">
-      <div class="user-info">
-        <div class="user-avatar" id="userAvatar">C</div>
-        <div>
-          <div class="user-name" id="userName">Commercial</div>
-          <div class="user-role">Commercial</div>
-        </div>
-      </div>
-      <button class="menu-item" onclick="logout()"><span class="icon">🚪</span> Déconnexion</button>
+    <button class="menu-item" onclick="logout()">
+      <span class="material-icons">logout</span> Déconnexion
+    </button>
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">
+      <span class="material-icons">description</span> Gestion des devis
     </div>
-  </aside>
+    <div class="topbar-right">
+      <button class="btn-new" onclick="openModal()">
+        <span class="material-icons">add</span> Nouveau devis
+      </button>
+    </div>
+  </div>
 
-  <!-- Main -->
-  <div class="main">
-    <div class="topbar">
-      <div class="topbar-title">📄 Gestion des devis</div>
-      <div class="topbar-right">
-        <button class="btn-new" onclick="openModal()">+ Nouveau devis</button>
+  <div class="content">
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value" id="sTotal">—</div>
+        <div class="stat-label">Total devis</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="sBrouillon">—</div>
+        <div class="stat-label">Brouillons</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="sEnvoye">—</div>
+        <div class="stat-label">Envoyés</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="sAccepte">—</div>
+        <div class="stat-label">Acceptés</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="sRefuse">—</div>
+        <div class="stat-label">Refusés</div>
       </div>
     </div>
 
-    <div class="content">
-
-      <!-- Stats -->
-      <div class="stats-row">
-        <div class="stat-card">
-          <div class="stat-value" id="sTotal">—</div>
-          <div class="stat-label">Total devis</div>
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <div class="search-box">
+          <span class="material-icons">search</span>
+          <input type="text" id="searchInput" placeholder="Rechercher client..." oninput="filterDevis()">
         </div>
-        <div class="stat-card">
-          <div class="stat-value" id="sBrouillon">—</div>
-          <div class="stat-label">Brouillons</div>
-        </div>
-        <div class="stat-card active-blue">
-          <div class="stat-value" id="sEnvoye">—</div>
-          <div class="stat-label">Envoyés</div>
-        </div>
-        <div class="stat-card active-green">
-          <div class="stat-value" id="sAccepte">—</div>
-          <div class="stat-label">Acceptés</div>
-        </div>
-        <div class="stat-card active-red">
-          <div class="stat-value" id="sRefuse">—</div>
-          <div class="stat-label">Refusés</div>
-        </div>
+        <select class="filter-select" id="statutFilter" onchange="filterDevis()">
+          <option value="">Tous les statuts</option>
+          <option value="brouillon">Brouillon</option>
+          <option value="envoye">Envoyé</option>
+          <option value="accepte">Accepté</option>
+          <option value="refuse">Refusé</option>
+          <option value="expire">Expiré</option>
+        </select>
       </div>
+    </div>
 
-      <!-- Toolbar -->
-      <div class="toolbar">
-        <div class="toolbar-left">
-          <div class="search-box">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-            </svg>
-            <input type="text" id="searchInput" placeholder="Rechercher client..." oninput="filterDevis()"/>
+    <!-- Devis Grid -->
+    <div class="devis-grid" id="devisGrid">
+      <div class="empty-state">
+        <span class="material-icons">hourglass_empty</span>
+        <p>Chargement...</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Devis -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Nouveau devis</span>
+      <button class="modal-close" onclick="closeModal()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <div class="alert" id="modalAlert">
+      <span class="material-icons" style="font-size: 16px;">error_outline</span>
+      <span id="modalAlertMsg"></span>
+    </div>
+    <div class="form-group">
+      <label>Client *</label>
+      <select class="form-control" id="dClient">
+        <option value="">Sélectionner un client...</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Produit *</label>
+      <select class="form-control" id="dProduit" onchange="calcDevis()">
+        <option value="">Sélectionner un produit...</option>
+      </select>
+    </div>
+    <div class="row-2">
+      <div class="form-group">
+        <label>Surface (m²) *</label>
+        <input type="number" class="form-control" id="dSurface" placeholder="50" min="1" oninput="calcDevis()">
+      </div>
+      <div class="form-group">
+        <label>Nombre de couches</label>
+        <select class="form-control" id="dCouches" onchange="calcDevis()">
+          <option value="1">1 couche</option>
+          <option value="2" selected>2 couches</option>
+          <option value="3">3 couches</option>
+        </select>
+      </div>
+    </div>
+    <div class="calc-result" id="calcResult">
+      Litres : <strong id="calcLitres">0</strong> L
+      &nbsp;|&nbsp; Montant : <strong id="calcMontant">0</strong> DT
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+      <button class="btn-save" id="saveBtn" onclick="saveDevis()">Créer</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+  requireAuth(['commercial', 'admin']);
+
+  const user = Auth.getUser();
+  if (user) {
+    document.getElementById('userName').textContent = user.nom;
+    document.getElementById('userAvatar').textContent = user.nom.charAt(0).toUpperCase();
+  }
+
+  let allDevis = [];
+  let allClients = [];
+  let allProduits = [];
+
+  const badgeCls = {
+    brouillon: 'b-brouillon', envoye: 'b-envoye',
+    accepte: 'b-accepte', refuse: 'b-refuse', expire: 'b-expire'
+  };
+  const badgeLabel = {
+    brouillon: 'Brouillon', envoye: 'Envoyé',
+    accepte: 'Accepté', refuse: 'Refusé', expire: 'Expiré'
+  };
+
+  async function loadAll() {
+    try {
+      const [devRes, usrRes, prodRes] = await Promise.all([
+        api.get('/devis'),
+        api.get('/utilisateurs'),
+        api.get('/produits')
+      ]);
+      allDevis = await devRes.json();
+      const users = await usrRes.json();
+      allClients = users.filter(u => u.role === 'client' && u.actif);
+      allProduits = await prodRes.json();
+
+      updateStats();
+      renderDevis(allDevis);
+      fillSelects();
+    } catch (err) { console.error(err); }
+  }
+
+  function updateStats() {
+    document.getElementById('sTotal').textContent = allDevis.length;
+    document.getElementById('sBrouillon').textContent = allDevis.filter(d => d.statut === 'brouillon').length;
+    document.getElementById('sEnvoye').textContent = allDevis.filter(d => d.statut === 'envoye').length;
+    document.getElementById('sAccepte').textContent = allDevis.filter(d => d.statut === 'accepte').length;
+    document.getElementById('sRefuse').textContent = allDevis.filter(d => d.statut === 'refuse').length;
+  }
+
+  function getExpiryInfo(expiresAt) {
+    if (!expiresAt) return { text: '', cls: '' };
+    const d = new Date(expiresAt);
+    const now = new Date();
+    const days = Math.ceil((d - now) / (1000 * 60 * 60 * 24));
+    if (days < 0) return { text: '❌ Expiré', cls: 'expired' };
+    if (days <= 5) return { text: `⚠️ Expire dans ${days} jour(s)`, cls: 'soon' };
+    return { text: `Valable jusqu'au ${d.toLocaleDateString('fr-TN')}`, cls: '' };
+  }
+
+  function renderDevis(items) {
+    const grid = document.getElementById('devisGrid');
+    if (!items.length) {
+      grid.innerHTML = '<div class="empty-state"><span class="material-icons">receipt_long</span><p>Aucun devis trouvé.</p></div>';
+      return;
+    }
+    grid.innerHTML = items.map(d => {
+      const expiry = getExpiryInfo(d.expires_at);
+      return `
+        <div class="devis-card ${d.statut}">
+          <div class="devis-header">
+            <span class="devis-num">DEVIS #${d.id}</span>
+            <span class="devis-badge ${badgeCls[d.statut] || ''}">${badgeLabel[d.statut] || d.statut}</span>
           </div>
-          <select class="filter-select" id="statutFilter" onchange="filterDevis()">
-            <option value="">Tous les statuts</option>
-            <option value="brouillon">Brouillon</option>
-            <option value="envoye">Envoyé</option>
-            <option value="accepte">Accepté</option>
-            <option value="refuse">Refusé</option>
-            <option value="expire">Expiré</option>
-          </select>
-        </div>
-      </div>
+          <div class="devis-client">${d.client_nom || 'Client #' + d.client_id}</div>
+          <div class="devis-sub">
+            ${d.surface_m2 ? d.surface_m2 + ' m²' : ''}
+            ${d.surface_m2 && d.montant_total ? ' — ' : ''}
+            Créé le ${new Date(d.created_at).toLocaleDateString('fr-TN')}
+          </div>
+          <div class="devis-montant">
+            ${parseFloat(d.montant_total).toFixed(3)} <small>DT TTC</small>
+          </div>
+          ${expiry.text ? `<div class="devis-expiry ${expiry.cls}">${expiry.text}</div>` : ''}
+          <div class="devis-footer">
+            ${d.statut === 'brouillon' ? `<button class="btn-action" onclick="updateStatut(${d.id},'envoye')"><span class="material-icons">send</span> Envoyer</button>` : ''}
+            ${d.statut === 'envoye' ? `<button class="btn-action success" onclick="updateStatut(${d.id},'accepte')"><span class="material-icons">check_circle</span> Accepté</button>` : ''}
+            ${d.statut === 'envoye' ? `<button class="btn-action danger" onclick="updateStatut(${d.id},'refuse')"><span class="material-icons">cancel</span> Refusé</button>` : ''}
+            ${d.statut === 'accepte' ? `<button class="btn-action success" onclick="transformerEnCommande(${d.id})"><span class="material-icons">shopping_cart</span> → Commande</button>` : ''}
+            <button class="btn-action danger" onclick="supprimerDevis(${d.id})"><span class="material-icons">delete</span> Supprimer</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
 
-      <!-- Grid -->
-      <div class="devis-grid" id="devisGrid">
-        <div class="empty-state">Chargement...</div>
-      </div>
+  function filterDevis() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const statut = document.getElementById('statutFilter').value;
+    let filtered = allDevis;
+    if (statut) filtered = filtered.filter(d => d.statut === statut);
+    if (search) filtered = filtered.filter(d =>
+      (d.client_nom || '').toLowerCase().includes(search) ||
+      String(d.id).includes(search)
+    );
+    renderDevis(filtered);
+  }
 
-    </div>
-  </div>
+  async function updateStatut(id, statut) {
+    try {
+      const res = await api.put(`/devis/${id}/statut`, { statut });
+      if (res && res.ok) await loadAll();
+    } catch { alert('Erreur.'); }
+  }
 
-  <!-- Modal Devis -->
-  <div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
-    <div class="modal">
-      <div class="modal-header">
-        <span class="modal-title">Nouveau devis</span>
-        <button class="modal-close" onclick="closeModal()">✕</button>
-      </div>
-
-      <div class="alert alert-error" id="modalAlert">⚠️ <span id="modalAlertMsg"></span></div>
-
-      <div class="form-group">
-        <label>Client *</label>
-        <select class="form-control" id="dClient">
-          <option value="">Sélectionner un client...</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Produit *</label>
-        <select class="form-control" id="dProduit" onchange="calcDevis()">
-          <option value="">Sélectionner un produit...</option>
-        </select>
-      </div>
-      <div class="row-2">
-        <div class="form-group">
-          <label>Surface (m²) *</label>
-          <input type="number" class="form-control" id="dSurface"
-                 placeholder="50" min="1" oninput="calcDevis()"/>
-        </div>
-        <div class="form-group">
-          <label>Nombre de couches</label>
-          <select class="form-control" id="dCouches" onchange="calcDevis()">
-            <option value="1">1 couche</option>
-            <option value="2" selected>2 couches</option>
-            <option value="3">3 couches</option>
-          </select>
-        </div>
-      </div>
-      <div class="calc-result" id="calcResult" style="display:none">
-        Litres : <strong id="calcLitres">0</strong> L
-        &nbsp;|&nbsp; Montant : <strong id="calcMontant">0</strong> DT
-      </div>
-      <div class="modal-footer">
-        <button class="btn-cancel" onclick="closeModal()">Annuler</button>
-        <button class="btn-save" id="saveBtn" onclick="saveDevis()">📄 Créer</button>
-      </div>
-    </div>
-  </div>
-
-  <script src="/js/api.js"></script>
-  <script src="/js/auth.js"></script>
-  <script>
-    requireAuth(['commercial', 'admin']);
-
-    const user = Auth.getUser();
-    if (user) {
-      document.getElementById('userName').textContent   = user.nom;
-      document.getElementById('userAvatar').textContent = user.nom.charAt(0).toUpperCase();
-    }
-
-    let allDevis   = [];
-    let allClients = [];
-    let allProduits = [];
-
-    const badgeCls = {
-      brouillon: 'b-brouillon', envoye: 'b-envoye',
-      accepte: 'b-accepte', refuse: 'b-refuse', expire: 'b-expire'
-    };
-    const badgeLabel = {
-      brouillon: 'Brouillon', envoye: 'Envoyé',
-      accepte: 'Accepté', refuse: 'Refusé', expire: 'Expiré'
-    };
-
-    async function loadAll() {
-      try {
-        const [devRes, usrRes, prodRes] = await Promise.all([
-          api.get('/devis'),
-          api.get('/utilisateurs'),
-          api.get('/produits')
-        ]);
-        allDevis    = await devRes.json();
-        const users = await usrRes.json();
-        allClients  = users.filter(u => u.role === 'client' && u.actif);
-        allProduits = await prodRes.json();
-
-        updateStats();
-        renderDevis(allDevis);
-        fillSelects();
-      } catch (err) { console.error(err); }
-    }
-
-    function updateStats() {
-      document.getElementById('sTotal').textContent    = allDevis.length;
-      document.getElementById('sBrouillon').textContent = allDevis.filter(d => d.statut === 'brouillon').length;
-      document.getElementById('sEnvoye').textContent   = allDevis.filter(d => d.statut === 'envoye').length;
-      document.getElementById('sAccepte').textContent  = allDevis.filter(d => d.statut === 'accepte').length;
-      document.getElementById('sRefuse').textContent   = allDevis.filter(d => d.statut === 'refuse').length;
-    }
-
-    function getExpiryInfo(expiresAt) {
-      if (!expiresAt) return { text: '', cls: '' };
-      const d    = new Date(expiresAt);
-      const now  = new Date();
-      const days = Math.ceil((d - now) / (1000 * 60 * 60 * 24));
-      if (days < 0)  return { text: '❌ Expiré', cls: 'expired' };
-      if (days <= 5) return { text: `⚠️ Expire dans ${days} jour(s)`, cls: 'soon' };
-      return { text: `Valable jusqu'au ${d.toLocaleDateString('fr-TN')}`, cls: '' };
-    }
-
-    function renderDevis(items) {
-      const grid = document.getElementById('devisGrid');
-      if (!items.length) {
-        grid.innerHTML = '<div class="empty-state">Aucun devis trouvé.</div>';
-        return;
+  async function transformerEnCommande(devisId) {
+    if (!confirm('Transformer ce devis en commande ?')) return;
+    const devis = allDevis.find(d => d.id === devisId);
+    if (!devis) return;
+    try {
+      const res = await api.post('/commandes', {
+        produit_id: devis.produit_id || 1,
+        surface_m2: devis.surface_m2,
+        litres_calcules: Math.max(5, devis.surface_m2 / 10),
+        chantier_id: null
+      });
+      if (res && res.ok) {
+        await updateStatut(devisId, 'accepte');
+        alert('✅ Commande créée avec succès !');
       }
-      grid.innerHTML = items.map(d => {
-        const expiry = getExpiryInfo(d.expires_at);
-        return `
-          <div class="devis-card ${d.statut}">
-            <div class="devis-header">
-              <span class="devis-num">DEVIS #${d.id}</span>
-              <span class="devis-badge ${badgeCls[d.statut] || ''}">${badgeLabel[d.statut] || d.statut}</span>
-            </div>
-            <div class="devis-client">${d.client_nom || 'Client #' + d.client_id}</div>
-            <div class="devis-sub">
-              ${d.surface_m2 ? d.surface_m2 + ' m²' : ''}
-              ${d.surface_m2 && d.montant_total ? ' — ' : ''}
-              Créé le ${new Date(d.created_at).toLocaleDateString('fr-TN')}
-            </div>
-            <div class="devis-montant">
-              ${parseFloat(d.montant_total).toFixed(3)}
-              <small>DT TTC</small>
-            </div>
-            ${expiry.text ? `<div class="devis-expiry ${expiry.cls}">${expiry.text}</div>` : ''}
-            <div class="devis-footer">
-              ${d.statut === 'brouillon' ? `<button class="btn-action" onclick="updateStatut(${d.id},'envoye')">📤 Envoyer</button>` : ''}
-              ${d.statut === 'envoye'    ? `<button class="btn-action success" onclick="updateStatut(${d.id},'accepte')">✅ Accepté</button>` : ''}
-              ${d.statut === 'envoye'    ? `<button class="btn-action danger" onclick="updateStatut(${d.id},'refuse')">❌ Refusé</button>` : ''}
-              ${d.statut === 'accepte'   ? `<button class="btn-action success" onclick="transformerEnCommande(${d.id})">🛒 → Commande</button>` : ''}
-              <button class="btn-action danger" onclick="supprimerDevis(${d.id})">🗑️</button>
-            </div>
-          </div>`;
-      }).join('');
+    } catch { alert('Erreur lors de la transformation.'); }
+  }
+
+  async function supprimerDevis(id) {
+    if (!confirm('Supprimer ce devis ?')) return;
+    try {
+      await api.delete(`/devis/${id}`);
+      await loadAll();
+    } catch { alert('Erreur.'); }
+  }
+
+  function fillSelects() {
+    const clientSelect = document.getElementById('dClient');
+    const produitSelect = document.getElementById('dProduit');
+    clientSelect.innerHTML = '<option value="">Sélectionner un client...</option>' +
+      allClients.map(c => `<option value="${c.id}">${c.nom}</option>`).join('');
+    produitSelect.innerHTML = '<option value="">Sélectionner un produit...</option>' +
+      allProduits.map(p => `<option value="${p.id}" data-prix="${p.prix_litre}" data-rend="${p.rendement_m2_L}">${p.nom} — ${parseFloat(p.prix_litre).toFixed(3)} DT/L</option>`).join('');
+  }
+
+  function calcDevis() {
+    const surface = parseFloat(document.getElementById('dSurface').value) || 0;
+    const couches = parseInt(document.getElementById('dCouches').value);
+    const sel = document.getElementById('dProduit');
+    const opt = sel.options[sel.selectedIndex];
+    if (!opt || !opt.dataset.prix || !surface) {
+      document.getElementById('calcResult').classList.remove('show');
+      return;
+    }
+    const litres = Math.max(5, (surface * couches) / parseFloat(opt.dataset.rend));
+    const montant = litres * parseFloat(opt.dataset.prix);
+    document.getElementById('calcLitres').textContent = litres.toFixed(2);
+    document.getElementById('calcMontant').textContent = montant.toFixed(3);
+    document.getElementById('calcResult').classList.add('show');
+  }
+
+  async function saveDevis() {
+    const client_id = document.getElementById('dClient').value;
+    const produit_id = document.getElementById('dProduit').value;
+    const surface_m2 = parseFloat(document.getElementById('dSurface').value);
+    const couches = parseInt(document.getElementById('dCouches').value);
+    const btn = document.getElementById('saveBtn');
+    const alertBox = document.getElementById('modalAlert');
+
+    alertBox.classList.remove('show');
+
+    if (!client_id || !produit_id || !surface_m2) {
+      document.getElementById('modalAlertMsg').textContent = 'Tous les champs sont obligatoires.';
+      alertBox.classList.add('show');
+      return;
     }
 
-    function filterDevis() {
-      const search = document.getElementById('searchInput').value.toLowerCase();
-      const statut = document.getElementById('statutFilter').value;
-      let filtered = allDevis;
-      if (statut)  filtered = filtered.filter(d => d.statut === statut);
-      if (search)  filtered = filtered.filter(d =>
-        (d.client_nom || '').toLowerCase().includes(search) ||
-        String(d.id).includes(search)
-      );
-      renderDevis(filtered);
-    }
+    const sel = document.getElementById('dProduit');
+    const opt = sel.options[sel.selectedIndex];
+    const litres = Math.max(5, (surface_m2 * couches) / parseFloat(opt.dataset.rend));
+    const prix = parseFloat(opt.dataset.prix);
 
-    async function updateStatut(id, statut) {
-      try {
-        const res = await api.put(`/devis/${id}/statut`, { statut });
-        if (res && res.ok) await loadAll();
-      } catch { alert('Erreur.'); }
-    }
+    btn.innerHTML = '<span class="spinner"></span> Création...';
+    btn.disabled = true;
 
-    async function transformerEnCommande(devisId) {
-      if (!confirm('Transformer ce devis en commande ?')) return;
-      const devis = allDevis.find(d => d.id === devisId);
-      if (!devis) return;
-      try {
-        const res = await api.post('/commandes', {
-          produit_id:      devis.produit_id || 1,
-          surface_m2:      devis.surface_m2,
-          litres_calcules: Math.max(5, devis.surface_m2 / 10),
-          chantier_id:     null
-        });
-        if (res && res.ok) {
-          await updateStatut(devisId, 'accepte');
-          alert('✅ Commande créée avec succès !');
-        }
-      } catch { alert('Erreur lors de la transformation.'); }
-    }
-
-    async function supprimerDevis(id) {
-      if (!confirm('Supprimer ce devis ?')) return;
-      try {
-        await api.delete(`/devis/${id}`);
+    try {
+      const res = await api.post('/devis', {
+        client_id, surface_m2, produit_id,
+        prix_litre: prix, litres_calcules: litres
+      });
+      if (res && res.ok) {
+        closeModal();
         await loadAll();
-      } catch { alert('Erreur.'); }
-    }
-
-    function fillSelects() {
-      document.getElementById('dClient').innerHTML =
-        '<option value="">Sélectionner un client...</option>' +
-        allClients.map(c => `<option value="${c.id}">${c.nom}</option>`).join('');
-      document.getElementById('dProduit').innerHTML =
-        '<option value="">Sélectionner un produit...</option>' +
-        allProduits.map(p => `<option value="${p.id}" data-prix="${p.prix_litre}" data-rend="${p.rendement_m2_L}">${p.nom} — ${parseFloat(p.prix_litre).toFixed(3)} DT/L</option>`).join('');
-    }
-
-    function calcDevis() {
-      const surface = parseFloat(document.getElementById('dSurface').value) || 0;
-      const couches = parseInt(document.getElementById('dCouches').value);
-      const sel     = document.getElementById('dProduit');
-      const opt     = sel.options[sel.selectedIndex];
-      if (!opt || !opt.dataset.prix || !surface) {
-        document.getElementById('calcResult').style.display = 'none'; return;
+      } else {
+        const d = await res.json();
+        document.getElementById('modalAlertMsg').textContent = d.message || 'Erreur.';
+        alertBox.classList.add('show');
       }
-      const litres  = Math.max(5, (surface * couches) / parseFloat(opt.dataset.rend));
-      const montant = litres * parseFloat(opt.dataset.prix);
-      document.getElementById('calcLitres').textContent  = litres.toFixed(2);
-      document.getElementById('calcMontant').textContent = montant.toFixed(3);
-      document.getElementById('calcResult').style.display = 'block';
+    } catch {
+      document.getElementById('modalAlertMsg').textContent = 'Erreur serveur.';
+      alertBox.classList.add('show');
+    } finally {
+      btn.innerHTML = 'Créer';
+      btn.disabled = false;
     }
+  }
 
-    async function saveDevis() {
-      const client_id  = document.getElementById('dClient').value;
-      const produit_id = document.getElementById('dProduit').value;
-      const surface_m2 = parseFloat(document.getElementById('dSurface').value);
-      const couches    = parseInt(document.getElementById('dCouches').value);
-      const btn        = document.getElementById('saveBtn');
+  function openModal() {
+    document.getElementById('modalAlert').classList.remove('show');
+    document.getElementById('dClient').value = '';
+    document.getElementById('dProduit').value = '';
+    document.getElementById('dSurface').value = '';
+    document.getElementById('calcResult').classList.remove('show');
+    document.getElementById('modalOverlay').classList.add('open');
+  }
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+  }
+  function closeModalOutside(e) {
+    if (e.target === document.getElementById('modalOverlay')) closeModal();
+  }
 
-      if (!client_id || !produit_id || !surface_m2) {
-        showAlert('Tous les champs sont obligatoires.');  return;
-      }
+  function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+    window.location.href = '/login-admin.html';
+  }
 
-      const sel       = document.getElementById('dProduit');
-      const opt       = sel.options[sel.selectedIndex];
-      const litres    = Math.max(5, (surface_m2 * couches) / parseFloat(opt.dataset.rend));
-      const prix      = parseFloat(opt.dataset.prix);
-
-      btn.innerHTML = '<span class="spinner"></span>Création...';
-      btn.disabled  = true;
-
-      try {
-        const res = await api.post('/devis', {
-          client_id, surface_m2, produit_id,
-          prix_litre: prix, litres_calcules: litres
-        });
-        if (res && res.ok) { closeModal(); await loadAll(); }
-        else { const d = await res.json(); showAlert(d.message || 'Erreur.'); }
-      } catch { showAlert('Erreur serveur.'); }
-      finally  { btn.innerHTML = '📄 Créer'; btn.disabled = false; }
-    }
-
-    function openModal() {
-      document.getElementById('modalAlert').classList.remove('show');
-      document.getElementById('dClient').value  = '';
-      document.getElementById('dProduit').value = '';
-      document.getElementById('dSurface').value = '';
-      document.getElementById('calcResult').style.display = 'none';
-      document.getElementById('modalOverlay').classList.add('open');
-    }
-    function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
-    function closeModalOutside(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
-    function showAlert(msg) {
-      document.getElementById('modalAlertMsg').textContent = msg;
-      document.getElementById('modalAlert').classList.add('show');
-    }
-
-    loadAll();
-  </script>
+  loadAll();
+</script>
 </body>
 </html>

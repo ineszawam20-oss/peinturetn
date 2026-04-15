@@ -4,467 +4,741 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PeinturePro TN — Simulateur</title>
-  <link rel="stylesheet" href="../css/main.css"/>
+  <!-- Google Fonts + Material Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
-    body { background: var(--surface); min-height: 100vh; }
+    /* ===== THÈME MODERNE ===== */
+    :root {
+      --bg-dark: #0a0a1a;
+      --bg-surface: #0f0f1f;
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --primary-light: #818cf8;
+      --accent: #f59e0b;
+      --accent-glow: #fbbf24;
+      --success: #10b981;
+      --text-white: #ffffff;
+      --text-gray: #a1a1aa;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --border-glow: rgba(99, 102, 241, 0.3);
+      --gradient-hero: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+      --shadow-glow: 0 0 30px rgba(99, 102, 241, 0.3);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --font-display: 'Poppins', system-ui, -apple-system, sans-serif;
+      --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    }
 
-    /* ===== Navbar ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg-dark);
+      font-family: var(--font-body);
+      color: var(--text-white);
+      overflow-x: hidden;
+    }
+
+    /* Décors de fond */
+    .deco-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .deco-bg svg {
+      width: 100%;
+      height: 100%;
+      animation: rotateSlow 30s linear infinite;
+    }
+    @keyframes rotateSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* ===== NAVBAR ===== */
     .navbar {
-      background: var(--white);
-      border-bottom: 1.5px solid var(--border);
-      padding: 0 2rem;
-      height: 64px;
+      background: rgba(10, 10, 26, 0.8);
+      backdrop-filter: blur(12px);
+      padding: 0.8rem 3rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
       position: sticky;
       top: 0;
       z-index: 100;
-      box-shadow: var(--shadow-sm);
+      border-bottom: 1px solid rgba(99, 102, 241, 0.2);
     }
-    .nav-brand { font-family: var(--font-display); font-size: 1.2rem; color: var(--dark); }
-    .nav-brand span { color: var(--primary); }
-    .nav-links { display: flex; gap: 1rem; align-items: center; }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .logo-image {
+      height: 45px;
+      width: auto;
+      filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.5));
+      transition: all 0.3s ease;
+    }
+    .logo-image:hover {
+      filter: drop-shadow(0 0 20px var(--primary));
+      transform: scale(1.05);
+    }
+    .brand-text {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--text-white), var(--primary-light));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .brand-text span {
+      background: linear-gradient(135deg, var(--accent), var(--accent-glow));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
     .nav-link {
-      font-size: .88rem;
-      color: var(--text-muted);
+      font-size: 0.85rem;
+      color: var(--text-gray);
       text-decoration: none;
-      padding: .4rem .75rem;
+      padding: 0.4rem 0.75rem;
       border-radius: var(--radius-sm);
-      transition: all .2s;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .nav-link .material-icons {
+      font-size: 18px;
     }
     .nav-link:hover, .nav-link.active {
-      background: var(--primary-light);
-      color: var(--primary);
-      font-weight: 600;
+      background: rgba(99, 102, 241, 0.2);
+      color: var(--primary-light);
     }
     .btn-logout {
-      background: none;
-      border: 1.5px solid var(--border);
+      background: transparent;
+      border: 1.5px solid rgba(99, 102, 241, 0.5);
       border-radius: var(--radius-sm);
-      padding: .45rem .9rem;
-      font-size: .82rem;
-      color: var(--text-muted);
+      padding: 0.45rem 0.9rem;
+      font-size: 0.82rem;
+      color: var(--text-gray);
       cursor: pointer;
+      transition: all 0.2s;
     }
-    .btn-logout:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-logout:hover {
+      border-color: var(--primary);
+      color: var(--primary-light);
+      transform: translateY(-2px);
+    }
 
-    /* ===== Page layout ===== */
+    /* ===== PAGE LAYOUT ===== */
     .page {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 2.5rem 2rem;
+      padding: 2rem;
       display: grid;
-      grid-template-columns: 1fr 400px;
+      grid-template-columns: 1fr 380px;
       gap: 2rem;
       align-items: start;
+      position: relative;
+      z-index: 2;
     }
 
-    /* ===== Panneau gauche ===== */
+    /* ===== CARTE SIMULATEUR ===== */
     .sim-card {
-      background: var(--white);
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(99, 102, 241, 0.3);
       border-radius: var(--radius-lg);
       padding: 2rem;
-      box-shadow: var(--shadow-sm);
+      transition: transform 0.3s ease;
+    }
+    .sim-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-glow);
     }
     .sim-title {
       font-family: var(--font-display);
       font-size: 1.6rem;
-      color: var(--dark);
-      margin-bottom: .4rem;
+      background: linear-gradient(135deg, var(--text-white), var(--primary-light));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 0.4rem;
     }
     .sim-subtitle {
-      color: var(--text-muted);
-      font-size: .9rem;
+      color: var(--text-gray);
+      font-size: 0.9rem;
       margin-bottom: 2rem;
     }
 
     /* Steps */
     .steps {
       display: flex;
-      gap: .5rem;
+      gap: 0.5rem;
       margin-bottom: 2rem;
     }
     .step {
       flex: 1;
       height: 4px;
-      background: var(--border);
+      background: rgba(255, 255, 255, 0.1);
       border-radius: 2px;
-      transition: background .3s;
+      transition: background 0.3s;
     }
-    .step.done { background: var(--primary); }
+    .step.done {
+      background: var(--primary);
+      box-shadow: 0 0 6px var(--primary);
+    }
 
     /* Sélecteur produit */
     .product-selector {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: .75rem;
+      gap: 0.75rem;
       margin-bottom: 1.5rem;
     }
     .product-option {
-      border: 1.5px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1.5px solid rgba(99, 102, 241, 0.3);
       border-radius: var(--radius-sm);
-      padding: .75rem;
+      padding: 0.75rem;
       cursor: pointer;
-      transition: all .2s;
+      transition: all 0.2s;
       display: flex;
       align-items: center;
-      gap: .75rem;
+      gap: 0.75rem;
     }
-    .product-option:hover { border-color: var(--primary); }
+    .product-option:hover {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.1);
+    }
     .product-option.selected {
       border-color: var(--primary);
-      background: var(--primary-light);
+      background: rgba(99, 102, 241, 0.2);
+      box-shadow: 0 0 8px rgba(99, 102, 241, 0.3);
     }
     .product-swatch {
-      width: 36px; height: 36px;
+      width: 40px;
+      height: 40px;
       border-radius: var(--radius-sm);
       flex-shrink: 0;
-      border: 1px solid rgba(0,0,0,.1);
+      border: 1px solid rgba(255,255,255,0.2);
     }
-    .product-info { overflow: hidden; }
+    .product-info {
+      overflow: hidden;
+    }
     .product-opt-name {
       font-weight: 600;
-      font-size: .85rem;
-      color: var(--dark);
+      font-size: 0.85rem;
+      color: var(--text-white);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
     .product-opt-price {
-      font-size: .75rem;
-      color: var(--text-muted);
+      font-size: 0.75rem;
+      color: var(--accent);
     }
 
-    /* Inputs simulation */
-    .sim-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    /* Type de surface */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-bottom: 0.6rem;
+      color: var(--text-gray);
+      letter-spacing: 0.03em;
+    }
+    .surface-types {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .surface-type {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1.5px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 0.3rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.78rem;
+      color: var(--text-gray);
+    }
+    .surface-type .material-icons {
+      font-size: 20px;
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+    .surface-type:hover, .surface-type.selected {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.2);
+      color: var(--primary-light);
+    }
 
     /* Slider surface */
-    .slider-wrap { grid-column: 1 / -1; }
+    .slider-wrap {
+      margin-bottom: 1rem;
+    }
     .slider-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: .5rem;
+      margin-bottom: 0.5rem;
     }
     .slider-value {
       font-family: var(--font-display);
-      font-size: 1.4rem;
-      color: var(--primary);
+      font-size: 1.3rem;
+      color: var(--accent);
     }
     input[type="range"] {
       width: 100%;
-      accent-color: var(--primary);
       height: 6px;
+      -webkit-appearance: none;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      background: var(--primary);
+      border-radius: 50%;
       cursor: pointer;
+      box-shadow: 0 0 6px var(--primary);
     }
     .slider-marks {
       display: flex;
       justify-content: space-between;
-      font-size: .72rem;
-      color: var(--text-muted);
-      margin-top: .25rem;
+      font-size: 0.7rem;
+      color: var(--text-gray);
+      margin-top: 0.25rem;
     }
-
-    /* Type de surface */
-    .surface-types {
+    .sim-inputs {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: .5rem;
-      margin-bottom: 1.5rem;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
     }
-    .surface-type {
-      border: 1.5px solid var(--border);
+    .form-control {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1.5px solid rgba(99, 102, 241, 0.3);
       border-radius: var(--radius-sm);
-      padding: .6rem .5rem;
-      text-align: center;
-      cursor: pointer;
-      transition: all .2s;
-      font-size: .78rem;
+      padding: 0.7rem 1rem;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      color: var(--text-white);
+      transition: all 0.3s ease;
     }
-    .surface-type .icon { font-size: 1.3rem; display: block; margin-bottom: .2rem; }
-    .surface-type:hover, .surface-type.selected {
+    .form-control:focus {
+      outline: none;
       border-color: var(--primary);
-      background: var(--primary-light);
-      color: var(--primary);
-      font-weight: 600;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+    select.form-control {
+      cursor: pointer;
     }
 
     .btn-calculate {
       width: 100%;
-      padding: .9rem;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 0.9rem;
       font-size: 1rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
       margin-top: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .btn-calculate:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.5);
     }
 
-    /* ===== Panneau droit — Résultats ===== */
+    /* ===== PANEL RÉSULTATS ===== */
     .results-panel {
       position: sticky;
-      top: 80px;
+      top: 90px;
     }
     .result-card {
-      background: var(--white);
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(99, 102, 241, 0.3);
       border-radius: var(--radius-lg);
-      padding: 1.75rem;
-      box-shadow: var(--shadow-sm);
+      padding: 1.5rem;
       margin-bottom: 1rem;
     }
     .result-header {
       font-family: var(--font-display);
       font-size: 1.1rem;
-      color: var(--dark);
-      margin-bottom: 1.25rem;
-      padding-bottom: .75rem;
-      border-bottom: 1px solid var(--border);
+      color: var(--primary-light);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(99, 102, 241, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
     }
-
-    /* Résultat principal */
+    .result-placeholder {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-gray);
+    }
+    .result-placeholder .material-icons {
+      font-size: 48px;
+      margin-bottom: 0.75rem;
+      opacity: 0.5;
+    }
     .result-main {
       text-align: center;
-      padding: 1.5rem;
-      background: var(--primary-light);
+      padding: 1rem;
+      background: rgba(99, 102, 241, 0.1);
       border-radius: var(--radius-md);
-      margin-bottom: 1.25rem;
+      margin-bottom: 1rem;
     }
     .result-big {
       font-family: var(--font-display);
-      font-size: 3rem;
-      color: var(--primary);
+      font-size: 2.8rem;
+      color: var(--accent);
       line-height: 1;
     }
-    .result-unit { font-size: .9rem; color: var(--text-muted); margin-top: .25rem; }
-
-    /* Détails */
-    .result-details { display: flex; flex-direction: column; gap: .6rem; }
+    .result-unit {
+      font-size: 0.8rem;
+      color: var(--text-gray);
+    }
+    .result-details {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
     .result-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: .88rem;
+      font-size: 0.85rem;
     }
-    .result-row .label { color: var(--text-muted); }
-    .result-row .value { font-weight: 600; color: var(--dark); }
+    .result-row .label {
+      color: var(--text-gray);
+    }
+    .result-row .value {
+      font-weight: 600;
+      color: var(--text-white);
+    }
     .result-row.total .value {
       font-family: var(--font-display);
       font-size: 1.2rem;
-      color: var(--primary);
+      color: var(--accent);
     }
     .result-divider {
       height: 1px;
-      background: var(--border);
-      margin: .25rem 0;
+      background: rgba(99, 102, 241, 0.3);
+      margin: 0.25rem 0;
     }
-
-    /* Alerte minimum */
     .alert-min {
-      background: #FEF9E7;
-      border: 1px solid #F39C12;
+      background: rgba(245, 158, 11, 0.15);
+      border-left: 3px solid var(--accent);
       border-radius: var(--radius-sm);
-      padding: .6rem .9rem;
-      font-size: .82rem;
-      color: #7D6608;
+      padding: 0.6rem 0.9rem;
+      font-size: 0.8rem;
+      color: #fbbf24;
       margin-bottom: 1rem;
       display: none;
     }
-    .alert-min.show { display: block; }
-
-    /* Placeholder résultats */
-    .result-placeholder {
-      text-align: center;
-      padding: 2rem;
-      color: var(--text-muted);
+    .alert-min.show {
+      display: block;
     }
-    .result-placeholder svg { opacity: .25; margin-bottom: .75rem; }
-
-    .btn-order { width: 100%; padding: .85rem; font-size: .95rem; }
+    .btn-order {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 0.8rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .btn-order:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+    }
     .btn-catalogue {
       width: 100%;
-      padding: .75rem;
-      margin-top: .5rem;
+      background: transparent;
+      border: 1.5px solid rgba(99, 102, 241, 0.5);
+      border-radius: var(--radius-sm);
+      padding: 0.7rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--primary-light);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 0.5rem;
+    }
+    .btn-catalogue:hover {
+      background: rgba(99, 102, 241, 0.1);
+      border-color: var(--primary);
+      transform: translateY(-2px);
     }
 
-    @media (max-width: 900px) {
-      .page { grid-template-columns: 1fr; }
-      .results-panel { position: static; }
-      .product-selector { grid-template-columns: 1fr; }
+    /* Spinner */
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border: 2px solid rgba(99, 102, 241, 0.3);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto;
     }
-    @media (max-width: 600px) {
-      .page { padding: 1rem; }
-      .sim-inputs { grid-template-columns: 1fr; }
-      .surface-types { grid-template-columns: repeat(2, 1fr); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .page {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+      }
+      .results-panel {
+        position: static;
+      }
+      .navbar {
+        padding: 0.8rem 1.5rem;
+      }
+      .nav-links {
+        gap: 0.5rem;
+      }
+      .product-selector {
+        grid-template-columns: 1fr;
+      }
+      .surface-types {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .sim-inputs {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
 
-<!-- ===== Navbar ===== -->
-  <nav class="navbar">
-    <div class="nav-brand">PeinturePro <span>TN</span></div>
-    <div class="nav-links">
-      <a href="catalogue.html" class="nav-link">🎨 Catalogue</a>
-      <a href="simulateur.html" class="nav-link active">🧮 Simulateur</a>
-      <a href="mes-commandes.html" class="nav-link">📦 Mes commandes</a>
-      <span style="font-size:.85rem; color:var(--text-muted);">|</span>
-      <span id="userName" style="font-size:.85rem; color:var(--text-muted);"></span>
-      <button class="btn-logout" onclick="logout()">Déconnexion</button>
+<!-- Décors de fond -->
+<div class="deco-bg">
+  <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+    <circle cx="200" cy="200" r="400" fill="none" stroke="rgba(255,255,255,.02)" stroke-width="1"/>
+    <circle cx="1000" cy="600" r="350" fill="none" stroke="rgba(255,255,255,.02)" stroke-width="1"/>
+    <circle cx="600" cy="400" r="550" fill="none" stroke="rgba(255,255,255,.01)" stroke-width="1"/>
+    <ellipse cx="150" cy="650" rx="200" ry="80" fill="rgba(99,102,241,.05)" transform="rotate(-15,150,650)"/>
+    <ellipse cx="1050" cy="150" rx="180" ry="70" fill="rgba(168,85,247,.05)" transform="rotate(20,1050,150)"/>
+  </svg>
+</div>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="nav-brand">
+    <img src="../images/logo.png" alt="PeinturePro TN" class="logo-image">
+   
+  </div>
+  <div class="nav-links">
+    <a href="catalogue.html" class="nav-link">
+      <span class="material-icons">palette</span> Catalogue
+    </a>
+    <a href="simulateur.html" class="nav-link active">
+      <span class="material-icons">calculate</span> Simulateur
+    </a>
+    <a href="mes-commandes.html" class="nav-link">
+      <span class="material-icons">receipt</span> Mes commandes
+    </a>
+    <span style="font-size:0.85rem; color:var(--text-gray);">|</span>
+    <span id="userName" style="font-size:0.85rem; color:var(--text-gray);"></span>
+    <button class="btn-logout" onclick="logout()">Déconnexion</button>
+  </div>
+</nav>
+
+<!-- Page -->
+<div class="page">
+
+  <!-- Formulaire -->
+  <div class="sim-card">
+    <h1 class="sim-title">Simulateur de peinture</h1>
+    <p class="sim-subtitle">Calculez exactement la quantité de peinture nécessaire pour votre chantier.</p>
+
+    <div class="steps">
+      <div class="step done" id="step1"></div>
+      <div class="step" id="step2"></div>
+      <div class="step" id="step3"></div>
     </div>
-  </nav>
 
-  <!-- ===== Page ===== -->
-  <div class="page">
+    <!-- Étape 1 : Produit -->
+    <div class="form-group">
+      <label>1. Choisissez votre peinture</label>
+      <div class="product-selector" id="productSelector">
+        <div style="grid-column:1/-1; text-align:center; padding:1rem;">
+          <div class="spinner"></div>
+          <p style="margin-top:0.5rem; color:var(--text-gray);">Chargement...</p>
+        </div>
+      </div>
+    </div>
 
-    <!-- ===== Formulaire ===== -->
-    <div class="sim-card">
-      <h1 class="sim-title">Simulateur de peinture</h1>
-      <p class="sim-subtitle">Calculez exactement la quantité de peinture nécessaire pour votre chantier.</p>
+    <!-- Étape 2 : Type de surface -->
+    <div class="form-group">
+      <label>2. Type de surface</label>
+      <div class="surface-types">
+        <div class="surface-type selected" onclick="selectSurface(this, 1)" data-factor="1">
+          <span class="material-icons">wallpaper</span>Mur lisse
+        </div>
+        <div class="surface-type" onclick="selectSurface(this, 1.1)" data-factor="1.1">
+          <span class="material-icons">texture</span>Mur rugueux
+        </div>
+        <div class="surface-type" onclick="selectSurface(this, 1.2)" data-factor="1.2">
+          <span class="material-icons">cabin</span>Béton brut
+        </div>
+        <div class="surface-type" onclick="selectSurface(this, 0.8)" data-factor="0.8">
+          <span class="material-icons">door_front</span>Boiserie
+        </div>
+        <div class="surface-type" onclick="selectSurface(this, 1.15)" data-factor="1.15">
+          <span class="material-icons">apartment</span>Façade
+        </div>
+        <div class="surface-type" onclick="selectSurface(this, 0.9)" data-factor="0.9">
+          <span class="material-icons">roofing</span>Plafond
+        </div>
+      </div>
+    </div>
 
-      <div class="steps">
-        <div class="step done" id="step1"></div>
-        <div class="step" id="step2"></div>
-        <div class="step" id="step3"></div>
+    <!-- Étape 3 : Dimensions -->
+    <div class="sim-inputs">
+      <div class="slider-wrap">
+        <label>3. Surface totale</label>
+        <div class="slider-header">
+          <span style="font-size:0.8rem; color:var(--text-gray);">Déplacez le curseur</span>
+          <span class="slider-value"><span id="surfaceDisplay">50</span> m²</span>
+        </div>
+        <input type="range" id="surfaceSlider" min="5" max="500" value="50" step="5" oninput="updateSurface(this.value)">
+        <div class="slider-marks">
+          <span>5 m²</span><span>125 m²</span><span>250 m²</span><span>375 m²</span><span>500 m²</span>
+        </div>
       </div>
 
-      <!-- Étape 1 : Choisir le produit -->
       <div class="form-group">
-        <label>1. Choisissez votre peinture</label>
-        <div class="product-selector" id="productSelector">
-          <div style="grid-column:1/-1; text-align:center; color:var(--text-muted); padding:1rem;">
-            <div class="spinner" style="margin:0 auto .5rem;"></div>
-            Chargement...
-          </div>
-        </div>
+        <label>Ou saisir directement (m²)</label>
+        <input type="number" class="form-control" id="surfaceManual" placeholder="ex: 75" min="1" oninput="manualSurface(this.value)">
       </div>
 
-      <!-- Étape 2 : Type de surface -->
       <div class="form-group">
-        <label>2. Type de surface</label>
-        <div class="surface-types">
-          <div class="surface-type selected" onclick="selectSurface(this, 1)" data-factor="1">
-            <span class="icon">🧱</span>Mur lisse
+        <label>Nombre de couches</label>
+        <select class="form-control" id="couchesSelect">
+          <option value="1">1 couche</option>
+          <option value="2" selected>2 couches (recommandé)</option>
+          <option value="3">3 couches</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn-calculate" onclick="calculate()">
+      <span class="material-icons">calculate</span> Calculer la quantité
+    </button>
+  </div>
+
+  <!-- Résultats -->
+  <div class="results-panel">
+    <div class="result-card">
+      <div class="result-header">
+        <span class="material-icons">insights</span> Résultat du calcul
+      </div>
+
+      <!-- Placeholder -->
+      <div class="result-placeholder" id="resultPlaceholder">
+        <span class="material-icons">construction</span>
+        <p>Remplissez le formulaire<br>pour voir le résultat</p>
+      </div>
+
+      <!-- Contenu résultats -->
+      <div id="resultContent" style="display:none">
+        <div class="alert-min" id="alertMin">
+          <span class="material-icons" style="font-size:16px;">info</span>
+          Minimum de commande : <strong>5 litres</strong>. Quantité ajustée automatiquement.
+        </div>
+        <div class="result-main">
+          <div class="result-big" id="resLitres">0</div>
+          <div class="result-unit">litres nécessaires</div>
+        </div>
+        <div class="result-details">
+          <div class="result-row">
+            <span class="label">Produit</span>
+            <span class="value" id="resProduit">—</span>
           </div>
-          <div class="surface-type" onclick="selectSurface(this, 1.1)" data-factor="1.1">
-            <span class="icon">🏚️</span>Mur rugueux
+          <div class="result-row">
+            <span class="label">Surface</span>
+            <span class="value" id="resSurface">—</span>
           </div>
-          <div class="surface-type" onclick="selectSurface(this, 1.2)" data-factor="1.2">
-            <span class="icon">🪨</span>Béton brut
+          <div class="result-row">
+            <span class="label">Couches</span>
+            <span class="value" id="resCouches">—</span>
           </div>
-          <div class="surface-type" onclick="selectSurface(this, 0.8)" data-factor="0.8">
-            <span class="icon">🚪</span>Boiserie
+          <div class="result-row">
+            <span class="label">Rendement</span>
+            <span class="value" id="resRendement">—</span>
           </div>
-          <div class="surface-type" onclick="selectSurface(this, 1.15)" data-factor="1.15">
-            <span class="icon">🏗️</span>Façade
+          <div class="result-divider"></div>
+          <div class="result-row">
+            <span class="label">Prix unitaire</span>
+            <span class="value" id="resPrix">—</span>
           </div>
-          <div class="surface-type" onclick="selectSurface(this, 0.9)" data-factor="0.9">
-            <span class="icon">🪟</span>Plafond
+          <div class="result-row total">
+            <span class="label">Total estimé</span>
+            <span class="value" id="resTotal">—</span>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Étape 3 : Dimensions -->
-      <div class="sim-inputs">
-        <div class="slider-wrap">
-          <label>3. Surface totale</label>
-          <div class="slider-header">
-            <span style="font-size:.85rem; color:var(--text-muted)">Déplacez le curseur</span>
-            <span class="slider-value"><span id="surfaceDisplay">50</span> m²</span>
-          </div>
-          <input type="range" id="surfaceSlider" min="5" max="500" value="50" step="5"
-                 oninput="updateSurface(this.value)"/>
-          <div class="slider-marks">
-            <span>5 m²</span><span>125 m²</span><span>250 m²</span><span>375 m²</span><span>500 m²</span>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Ou saisir directement (m²)</label>
-          <input type="number" class="form-control" id="surfaceManual"
-                 placeholder="ex: 75" min="1" oninput="manualSurface(this.value)"/>
-        </div>
-
-        <div class="form-group">
-          <label>Nombre de couches</label>
-          <select class="form-control" id="couchesSelect" >
-            <option value="1">1 couche</option>
-            <option value="2" selected>2 couches (recommandé)</option>
-            <option value="3">3 couches</option>
-          </select>
-        </div>
-      </div>
-
-      <button class="btn-primary btn-calculate" onclick="calculate()">
-        🧮 Calculer la quantité
+    <!-- Boutons d'action -->
+    <div id="actionButtons" style="display:none">
+      <button class="btn-order" onclick="commanderDirectement()">
+        <span class="material-icons">shopping_cart</span> Commander maintenant
+      </button>
+      <button class="btn-catalogue" onclick="window.location.href='catalogue.html'">
+        ← Retour au catalogue
       </button>
     </div>
-
-    <!-- ===== Résultats ===== -->
-    <div class="results-panel">
-      <div class="result-card">
-        <div class="result-header">📊 Résultat du calcul</div>
-
-        <!-- Placeholder -->
-        <div class="result-placeholder" id="resultPlaceholder">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/>
-          </svg>
-          <p>Remplissez le formulaire<br/>pour voir le résultat</p>
-        </div>
-
-        <!-- Résultats -->
-        <div id="resultContent" style="display:none">
-          <div class="alert-min" id="alertMin">
-            ⚠️ Minimum de commande : <strong>5 litres</strong>. Quantité ajustée automatiquement.
-          </div>
-          <div class="result-main">
-            <div class="result-big" id="resLitres">0</div>
-            <div class="result-unit">litres nécessaires</div>
-          </div>
-          <div class="result-details">
-            <div class="result-row">
-              <span class="label">Produit</span>
-              <span class="value" id="resProduit">—</span>
-            </div>
-            <div class="result-row">
-              <span class="label">Surface</span>
-              <span class="value" id="resSurface">—</span>
-            </div>
-            <div class="result-row">
-              <span class="label">Couches</span>
-              <span class="value" id="resCouches">—</span>
-            </div>
-            <div class="result-row">
-              <span class="label">Rendement</span>
-              <span class="value" id="resRendement">—</span>
-            </div>
-            <div class="result-divider"></div>
-            <div class="result-row">
-              <span class="label">Prix unitaire</span>
-              <span class="value" id="resPrix">—</span>
-            </div>
-            <div class="result-row total">
-              <span class="label">Total estimé</span>
-              <span class="value" id="resTotal">—</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Boutons action -->
-      <div id="actionButtons" style="display:none">
-        <button class="btn-primary btn-order" onclick="commanderDirectement()">
-          🛒 Commander maintenant
-        </button>
-        <button class="btn-outline btn-catalogue" onclick="window.location.href='catalogue.html'">
-          ← Retour au catalogue
-        </button>
-      </div>
-    </div>
-
   </div>
+
+</div>
 
 <script src="../js/api.js"></script>
 <script src="../js/auth.js"></script>
 <script>
   requireAuth(['client']);
+  displayUserInfo();
 
   let products        = [];
   let selectedProduct = null;
@@ -477,29 +751,28 @@
       products  = await res.json();
       renderProductSelector();
 
-      // Si un produit a été sélectionné depuis le catalogue
+      // Si un produit a été sélectionné depuis catalogue.html
       const saved = localStorage.getItem('selectedProduct');
       if (saved) {
         const p = JSON.parse(saved);
-        // Chercher le produit par id dans la liste chargée
         const found = products.find(x => x.id === p.id);
         if (found) selectProduct(found.id);
         localStorage.removeItem('selectedProduct');
       }
-
-    } catch {
+    } catch (err) {
       document.getElementById('productSelector').innerHTML =
-        '<p style="color:var(--primary)">❌ Erreur de chargement</p>';
+        '<p style="color:var(--accent);">❌ Erreur de chargement</p>';
     }
   }
 
   function renderProductSelector() {
-    const sel = document.getElementById('productSelector');
-    sel.innerHTML = products.map(p => `
+    const container = document.getElementById('productSelector');
+    if (!products.length) return;
+    container.innerHTML = products.map(p => `
       <div class="product-option" onclick="selectProduct(${p.id})" id="opt-${p.id}">
         <div class="product-swatch" style="background:${p.couleur_code || '#CCC'}"></div>
         <div class="product-info">
-          <div class="product-opt-name">${p.nom}</div>
+          <div class="product-opt-name">${escapeHtml(p.nom)}</div>
           <div class="product-opt-price">${parseFloat(p.prix_litre).toFixed(3)} DT/L</div>
         </div>
       </div>
@@ -510,27 +783,35 @@
   function selectProduct(id) {
     selectedProduct = products.find(p => p.id === id);
     document.querySelectorAll('.product-option').forEach(el => el.classList.remove('selected'));
-    document.getElementById(`opt-${id}`)?.classList.add('selected');
+    const opt = document.getElementById(`opt-${id}`);
+    if (opt) opt.classList.add('selected');
     document.getElementById('step2').classList.add('done');
+    // Recalcul automatique si déjà affiché
+    if (document.getElementById('resultContent').style.display === 'block') calculate();
   }
 
   function selectSurface(el, factor) {
     surfaceFactor = factor;
     document.querySelectorAll('.surface-type').forEach(e => e.classList.remove('selected'));
     el.classList.add('selected');
+    if (document.getElementById('resultContent').style.display === 'block') calculate();
   }
 
   function updateSurface(val) {
     currentSurface = parseFloat(val);
     document.getElementById('surfaceDisplay').textContent = val;
-    document.getElementById('surfaceManual').value        = val;
+    document.getElementById('surfaceManual').value = val;
     document.getElementById('step3').classList.add('done');
+    if (document.getElementById('resultContent').style.display === 'block') calculate();
   }
 
   function manualSurface(val) {
-    currentSurface = parseFloat(val) || 0;
-    document.getElementById('surfaceSlider').value        = Math.min(val, 500);
-    document.getElementById('surfaceDisplay').textContent = val;
+    let v = parseFloat(val);
+    if (isNaN(v)) v = 0;
+    currentSurface = v;
+    document.getElementById('surfaceSlider').value = Math.min(v, 500);
+    document.getElementById('surfaceDisplay').textContent = v;
+    if (document.getElementById('resultContent').style.display === 'block') calculate();
   }
 
   function calculate() {
@@ -543,10 +824,10 @@
       return;
     }
 
-    const couches    = parseInt(document.getElementById('couchesSelect').value);
-    const rendement  = parseFloat(selectedProduct.rendement_m2_L);
+    const couches = parseInt(document.getElementById('couchesSelect').value);
+    const rendement = parseFloat(selectedProduct.rendement_m2_L);
     const litresBrut = (currentSurface * surfaceFactor * couches) / rendement;
-    const alertMin   = document.getElementById('alertMin');
+    const alertMin = document.getElementById('alertMin');
 
     let litresFinal;
     if (litresBrut < 5) {
@@ -560,40 +841,57 @@
     const total = litresFinal * parseFloat(selectedProduct.prix_litre);
 
     document.getElementById('resultPlaceholder').style.display = 'none';
-    document.getElementById('resultContent').style.display     = 'block';
-    document.getElementById('actionButtons').style.display     = 'block';
+    document.getElementById('resultContent').style.display = 'block';
+    document.getElementById('actionButtons').style.display = 'block';
 
-    document.getElementById('resLitres').textContent    = litresFinal.toFixed(2);
-    document.getElementById('resProduit').textContent   = selectedProduct.nom;
-    document.getElementById('resSurface').textContent   = `${currentSurface} m²`;
-    document.getElementById('resCouches').textContent   = `${couches} couche${couches > 1 ? 's' : ''}`;
+    document.getElementById('resLitres').textContent = litresFinal.toFixed(2);
+    document.getElementById('resProduit').textContent = selectedProduct.nom;
+    document.getElementById('resSurface').textContent = `${currentSurface} m²`;
+    document.getElementById('resCouches').textContent = `${couches} couche${couches > 1 ? 's' : ''}`;
     document.getElementById('resRendement').textContent = `${rendement} m²/L`;
-    document.getElementById('resPrix').textContent      = `${parseFloat(selectedProduct.prix_litre).toFixed(3)} DT/L`;
-    document.getElementById('resTotal').textContent     = `${total.toFixed(3)} DT`;
+    document.getElementById('resPrix').textContent = `${parseFloat(selectedProduct.prix_litre).toFixed(3)} DT/L`;
+    document.getElementById('resTotal').textContent = `${total.toFixed(3)} DT`;
   }
 
   function commanderDirectement() {
     if (!selectedProduct) return;
-    const couches     = parseInt(document.getElementById('couchesSelect').value);
-    const rendement   = parseFloat(selectedProduct.rendement_m2_L);
-    const litresBrut  = (currentSurface * surfaceFactor * couches) / rendement;
+    const couches = parseInt(document.getElementById('couchesSelect').value);
+    const rendement = parseFloat(selectedProduct.rendement_m2_L);
+    const litresBrut = (currentSurface * surfaceFactor * couches) / rendement;
     const litresFinal = Math.max(5, litresBrut);
 
     const item = {
-      produit_id:      selectedProduct.id,
-      nom:             selectedProduct.nom,
-      couleur_code:    selectedProduct.couleur_code,
-      surface_m2:      currentSurface,
+      produit_id: selectedProduct.id,
+      nom: selectedProduct.nom,
+      couleur_code: selectedProduct.couleur_code,
+      surface_m2: currentSurface,
       couches,
       litres_calcules: parseFloat(litresFinal.toFixed(2)),
-      prix_litre:      parseFloat(selectedProduct.prix_litre),
-      montant:         parseFloat((litresFinal * selectedProduct.prix_litre).toFixed(3))
+      prix_litre: parseFloat(selectedProduct.prix_litre),
+      montant: parseFloat((litresFinal * selectedProduct.prix_litre).toFixed(3))
     };
 
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
     cart.push(item);
     localStorage.setItem('cart', JSON.stringify(cart));
     window.location.href = 'commande.html';
+  }
+
+  function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+    window.location.href = '/login-client.html';
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
   }
 
   loadProducts();

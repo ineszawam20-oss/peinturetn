@@ -3,445 +3,899 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PeinturePro TN — Commande</title>
-  <link rel="stylesheet" href="../css/main.css"/>
+  <title>PeinturePro TN — Simulateur</title>
+  <!-- Google Fonts + Material Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
-    body { background: var(--surface); min-height: 100vh; }
+    /* ===== THÈME MODERNE ===== */
+    :root {
+      --bg-dark: #0a0a1a;
+      --bg-surface: #0f0f1f;
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --primary-light: #818cf8;
+      --accent: #f59e0b;
+      --accent-glow: #fbbf24;
+      --success: #10b981;
+      --text-white: #ffffff;
+      --text-gray: #a1a1aa;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --border-glow: rgba(99, 102, 241, 0.3);
+      --gradient-hero: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+      --shadow-glow: 0 0 30px rgba(99, 102, 241, 0.3);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --font-display: 'Poppins', system-ui, -apple-system, sans-serif;
+      --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    }
 
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg-dark);
+      font-family: var(--font-body);
+      color: var(--text-white);
+      overflow-x: hidden;
+    }
+
+    /* Décors de fond */
+    .deco-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .deco-bg svg {
+      width: 100%;
+      height: 100%;
+      animation: rotateSlow 30s linear infinite;
+    }
+    @keyframes rotateSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* ===== NAVBAR ===== */
     .navbar {
-      background: var(--white);
-      border-bottom: 1.5px solid var(--border);
-      padding: 0 2rem;
-      height: 64px;
+      background: rgba(10, 10, 26, 0.8);
+      backdrop-filter: blur(12px);
+      padding: 0.8rem 3rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
       position: sticky;
       top: 0;
       z-index: 100;
-      box-shadow: var(--shadow-sm);
+      border-bottom: 1px solid rgba(99, 102, 241, 0.2);
     }
-    .nav-brand { font-family: var(--font-display); font-size: 1.2rem; color: var(--dark); }
-    .nav-brand span { color: var(--primary); }
-    .nav-links { display: flex; gap: 1rem; align-items: center; }
-    .nav-link {
-      font-size: .88rem; color: var(--text-muted);
-      text-decoration: none; padding: .4rem .75rem;
-      border-radius: var(--radius-sm); transition: all .2s;
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
     }
-    .nav-link:hover { background: var(--primary-light); color: var(--primary); font-weight: 600; }
-    .btn-logout {
-      background: none; border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm); padding: .45rem .9rem;
-      font-size: .82rem; color: var(--text-muted); cursor: pointer;
+    .logo-image {
+      height: 45px;
+      width: auto;
+      filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.5));
+      transition: all 0.3s ease;
     }
-    .btn-logout:hover { border-color: var(--primary); color: var(--primary); }
-
-    .page {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 2.5rem 2rem;
-      display: grid;
-      grid-template-columns: 1fr 360px;
-      gap: 2rem;
-      align-items: start;
+    .logo-image:hover {
+      filter: drop-shadow(0 0 20px var(--primary));
+      transform: scale(1.05);
     }
-
-    .card {
-      background: var(--white);
-      border-radius: var(--radius-lg);
-      padding: 1.75rem;
-      box-shadow: var(--shadow-sm);
-      margin-bottom: 1.25rem;
-    }
-    .card-title {
+    .brand-text {
       font-family: var(--font-display);
       font-size: 1.2rem;
-      color: var(--dark);
-      margin-bottom: 1.25rem;
-      padding-bottom: .75rem;
-      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--text-white), var(--primary-light));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
-
-    .cart-empty {
-      text-align: center;
-      padding: 3rem;
-      color: var(--text-muted);
+    .brand-text span {
+      background: linear-gradient(135deg, var(--accent), var(--accent-glow));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
-    .cart-empty svg { opacity: .25; margin-bottom: 1rem; }
-
-    .cart-item {
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .nav-link {
+      font-size: 0.85rem;
+      color: var(--text-gray);
+      text-decoration: none;
+      padding: 0.4rem 0.75rem;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s;
       display: flex;
       align-items: center;
-      gap: 1rem;
-      padding: 1rem 0;
-      border-bottom: 1px solid var(--border);
+      gap: 0.3rem;
     }
-    .cart-item:last-child { border-bottom: none; }
-    .item-swatch {
-      width: 48px; height: 48px;
+    .nav-link .material-icons {
+      font-size: 18px;
+    }
+    .nav-link:hover, .nav-link.active {
+      background: rgba(99, 102, 241, 0.2);
+      color: var(--primary-light);
+    }
+    .btn-logout {
+      background: transparent;
+      border: 1.5px solid rgba(99, 102, 241, 0.5);
+      border-radius: var(--radius-sm);
+      padding: 0.45rem 0.9rem;
+      font-size: 0.82rem;
+      color: var(--text-gray);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-logout:hover {
+      border-color: var(--primary);
+      color: var(--primary-light);
+      transform: translateY(-2px);
+    }
+
+    /* ===== PAGE LAYOUT ===== */
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 2rem;
+      align-items: start;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ===== CARTE SIMULATEUR ===== */
+    .sim-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      transition: transform 0.3s ease;
+    }
+    .sim-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-glow);
+    }
+    .sim-title {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      background: linear-gradient(135deg, var(--text-white), var(--primary-light));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 0.4rem;
+    }
+    .sim-subtitle {
+      color: var(--text-gray);
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Steps */
+    .steps {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+    .step {
+      flex: 1;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      transition: background 0.3s;
+    }
+    .step.done {
+      background: var(--primary);
+      box-shadow: 0 0 6px var(--primary);
+    }
+
+    /* Sélecteur produit */
+    .product-selector {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .product-option {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1.5px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .product-option:hover {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.1);
+    }
+    .product-option.selected {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.2);
+      box-shadow: 0 0 8px rgba(99, 102, 241, 0.3);
+    }
+    .product-swatch {
+      width: 40px;
+      height: 40px;
       border-radius: var(--radius-sm);
       flex-shrink: 0;
-      border: 1px solid rgba(0,0,0,.1);
+      border: 1px solid rgba(255,255,255,0.2);
     }
-    .item-info { flex: 1; }
-    .item-name { font-weight: 600; font-size: .92rem; color: var(--dark); margin-bottom: .2rem; }
-    .item-meta { font-size: .78rem; color: var(--text-muted); }
-    .item-price { font-family: var(--font-display); font-size: 1.05rem; color: var(--primary); white-space: nowrap; }
-    .item-remove {
-      background: none; border: none; color: var(--text-muted);
-      cursor: pointer; font-size: 1rem; padding: .25rem;
-      border-radius: 4px; transition: color .2s;
+    .product-info {
+      overflow: hidden;
     }
-    .item-remove:hover { color: #E53E3E; }
-
-    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
-
-    /* Input avec icône */
-    .input-icon { position: relative; }
-    .input-icon .icon {
-      position: absolute; left: .95rem; top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-muted); pointer-events: none;
+    .product-opt-name {
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--text-white);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    .input-icon .form-control { padding-left: 2.6rem; }
+    .product-opt-price {
+      font-size: 0.75rem;
+      color: var(--accent);
+    }
 
-    /* Info date automatique */
-    .date-auto-info {
-      background: var(--primary-light);
-      border: 1.5px solid rgba(200,68,26,.2);
+    /* Type de surface */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-bottom: 0.6rem;
+      color: var(--text-gray);
+      letter-spacing: 0.03em;
+    }
+    .surface-types {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .surface-type {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1.5px solid rgba(99, 102, 241, 0.3);
       border-radius: var(--radius-sm);
-      padding: .85rem 1rem;
-      font-size: .88rem;
-      color: var(--text-muted);
+      padding: 0.6rem 0.3rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.78rem;
+      color: var(--text-gray);
+    }
+    .surface-type .material-icons {
+      font-size: 20px;
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+    .surface-type:hover, .surface-type.selected {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.2);
+      color: var(--primary-light);
+    }
+
+    /* Slider surface */
+    .slider-wrap {
       margin-bottom: 1rem;
+    }
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .slider-value {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      color: var(--accent);
+    }
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      -webkit-appearance: none;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      background: var(--primary);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 6px var(--primary);
+    }
+    .slider-marks {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      color: var(--text-gray);
+      margin-top: 0.25rem;
+    }
+    .sim-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .form-control {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1.5px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 0.7rem 1rem;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      color: var(--text-white);
+      transition: all 0.3s ease;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+    select.form-control {
+      cursor: pointer;
+    }
+
+    .btn-calculate {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 0.9rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 1rem;
       display: flex;
       align-items: center;
-      gap: .5rem;
+      justify-content: center;
+      gap: 0.5rem;
     }
-    .date-auto-info strong { color: var(--primary); }
-
-    .summary-panel { position: sticky; top: 80px; }
-    .summary-rows { display: flex; flex-direction: column; gap: .6rem; margin-bottom: 1.25rem; }
-    .summary-row { display: flex; justify-content: space-between; font-size: .88rem; }
-    .summary-row .label { color: var(--text-muted); }
-    .summary-row .value { font-weight: 600; color: var(--dark); }
-    .summary-divider { height: 1px; background: var(--border); margin: .5rem 0; }
-    .summary-total { display: flex; justify-content: space-between; align-items: center; }
-    .summary-total .label { font-weight: 600; font-size: .95rem; color: var(--dark); }
-    .summary-total .value { font-family: var(--font-display); font-size: 1.5rem; color: var(--primary); }
-
-    .btn-order { width: 100%; padding: .95rem; font-size: 1rem; margin-top: 1rem; }
-    .btn-continue { width: 100%; padding: .75rem; margin-top: .5rem; }
-
-    .success-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.5);
-      display: none; align-items: center;
-      justify-content: center; z-index: 200;
+    .btn-calculate:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.5);
     }
-    .success-overlay.open { display: flex; }
-    .success-modal {
-      background: var(--white);
+
+    /* ===== PANEL RÉSULTATS ===== */
+    .results-panel {
+      position: sticky;
+      top: 90px;
+    }
+    .result-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(99, 102, 241, 0.3);
       border-radius: var(--radius-lg);
-      padding: 2.5rem;
-      max-width: 440px;
-      width: 90%;
-      text-align: center;
-      animation: slideUp .4s cubic-bezier(.16,1,.3,1);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
     }
-    .success-icon {
-      width: 72px; height: 72px;
-      background: #E6F6EE;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 1.25rem;
-      font-size: 2rem;
-    }
-    .success-title {
+    .result-header {
       font-family: var(--font-display);
-      font-size: 1.6rem; color: var(--dark); margin-bottom: .5rem;
+      font-size: 1.1rem;
+      color: var(--primary-light);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(99, 102, 241, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
     }
-    .success-msg { color: var(--text-muted); font-size: .9rem; line-height: 1.8; margin-bottom: 1.5rem; }
-    .success-num { font-family: var(--font-display); font-size: 1.1rem; color: var(--primary); }
-    .success-date { font-family: var(--font-display); font-size: 1rem; color: var(--primary); }
-
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to   { opacity: 1; transform: translateY(0); }
+    .result-placeholder {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-gray);
+    }
+    .result-placeholder .material-icons {
+      font-size: 48px;
+      margin-bottom: 0.75rem;
+      opacity: 0.5;
+    }
+    .result-main {
+      text-align: center;
+      padding: 1rem;
+      background: rgba(99, 102, 241, 0.1);
+      border-radius: var(--radius-md);
+      margin-bottom: 1rem;
+    }
+    .result-big {
+      font-family: var(--font-display);
+      font-size: 2.8rem;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .result-unit {
+      font-size: 0.8rem;
+      color: var(--text-gray);
+    }
+    .result-details {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+    }
+    .result-row .label {
+      color: var(--text-gray);
+    }
+    .result-row .value {
+      font-weight: 600;
+      color: var(--text-white);
+    }
+    .result-row.total .value {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      color: var(--accent);
+    }
+    .result-divider {
+      height: 1px;
+      background: rgba(99, 102, 241, 0.3);
+      margin: 0.25rem 0;
+    }
+    .alert-min {
+      background: rgba(245, 158, 11, 0.15);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 0.9rem;
+      font-size: 0.8rem;
+      color: #fbbf24;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    .alert-min.show {
+      display: block;
+    }
+    .btn-order {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 0.8rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .btn-order:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+    }
+    .btn-catalogue {
+      width: 100%;
+      background: transparent;
+      border: 1.5px solid rgba(99, 102, 241, 0.5);
+      border-radius: var(--radius-sm);
+      padding: 0.7rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--primary-light);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 0.5rem;
+    }
+    .btn-catalogue:hover {
+      background: rgba(99, 102, 241, 0.1);
+      border-color: var(--primary);
+      transform: translateY(-2px);
     }
 
-    @media (max-width: 768px) {
-      .page { grid-template-columns: 1fr; }
-      .summary-panel { position: static; }
-      .row-2 { grid-template-columns: 1fr; }
+    /* Spinner */
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border: 2px solid rgba(99, 102, 241, 0.3);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .page {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+      }
+      .results-panel {
+        position: static;
+      }
+      .navbar {
+        padding: 0.8rem 1.5rem;
+      }
+      .nav-links {
+        gap: 0.5rem;
+      }
+      .product-selector {
+        grid-template-columns: 1fr;
+      }
+      .surface-types {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .sim-inputs {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="nav-brand">PeinturePro <span>TN</span></div>
-    <div class="nav-links">
-      <a href="catalogue.html" class="nav-link">Catalogue</a>
-      <a href="simulateur.html" class="nav-link">Simulateur</a>
-      <a href="mes-commandes.html" class="nav-link">Mes commandes</a>
-      <button class="btn-logout" onclick="logout()">Déconnexion</button>
+<!-- Décors de fond -->
+<div class="deco-bg">
+  <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+    <circle cx="200" cy="200" r="400" fill="none" stroke="rgba(255,255,255,.02)" stroke-width="1"/>
+    <circle cx="1000" cy="600" r="350" fill="none" stroke="rgba(255,255,255,.02)" stroke-width="1"/>
+    <circle cx="600" cy="400" r="550" fill="none" stroke="rgba(255,255,255,.01)" stroke-width="1"/>
+    <ellipse cx="150" cy="650" rx="200" ry="80" fill="rgba(99,102,241,.05)" transform="rotate(-15,150,650)"/>
+    <ellipse cx="1050" cy="150" rx="180" ry="70" fill="rgba(168,85,247,.05)" transform="rotate(20,1050,150)"/>
+  </svg>
+</div>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="nav-brand">
+    <img src="../images/logo.png" alt="PeinturePro TN" class="logo-image">
+   
+  </div>
+  <div class="nav-links">
+    <a href="catalogue.html" class="nav-link">
+      <span class="material-icons">palette</span> Catalogue
+    </a>
+    <a href="simulateur.html" class="nav-link active">
+      <span class="material-icons">calculate</span> Simulateur
+    </a>
+    <a href="mes-commandes.html" class="nav-link">
+      <span class="material-icons">receipt</span> Mes commandes
+    </a>
+    <span style="font-size:0.85rem; color:var(--text-gray);">|</span>
+    <span id="userName" style="font-size:0.85rem; color:var(--text-gray);"></span>
+    <button class="btn-logout" onclick="logout()">Déconnexion</button>
+  </div>
+</nav>
+
+<!-- Page -->
+<div class="page">
+
+  <!-- Formulaire -->
+  <div class="sim-card">
+    <h1 class="sim-title">Simulateur de peinture</h1>
+    <p class="sim-subtitle">Calculez exactement la quantité de peinture nécessaire pour votre chantier.</p>
+
+    <div class="steps">
+      <div class="step done" id="step1"></div>
+      <div class="step" id="step2"></div>
+      <div class="step" id="step3"></div>
     </div>
-  </nav>
 
-  <div class="page">
-
-    <!-- Gauche -->
-    <div>
-      <!-- Panier -->
-      <div class="card">
-        <div class="card-title">🛒 Mon panier</div>
-        <div id="cartContent"></div>
-      </div>
-
-      <!-- Infos livraison -->
-      <div class="card">
-        <div class="card-title">📍 Informations de livraison</div>
-
-        <div class="row-2">
-          <div class="form-group">
-            <label>Adresse chantier</label>
-            <input type="text" class="form-control" id="adresse" placeholder="Rue, N°"/>
-          </div>
-          <div class="form-group">
-            <label>Ville</label>
-            <input type="text" class="form-control" id="ville" placeholder="Tunis"/>
-          </div>
+    <!-- Étape 1 : Produit -->
+    <div class="form-group">
+      <label>1. Choisissez votre peinture</label>
+      <div class="product-selector" id="productSelector">
+        <div style="grid-column:1/-1; text-align:center; padding:1rem;">
+          <div class="spinner"></div>
+          <p style="margin-top:0.5rem; color:var(--text-gray);">Chargement...</p>
         </div>
-
-        <div class="row-2">
-          <div class="form-group">
-            <label>Gouvernorat</label>
-            <select class="form-control" id="gouvernorat">
-              <option value="">Sélectionner...</option>
-              <option>Tunis</option><option>Ariana</option><option>Ben Arous</option>
-              <option>Manouba</option><option>Nabeul</option><option>Zaghouan</option>
-              <option>Bizerte</option><option>Béja</option><option>Jendouba</option>
-              <option>Kef</option><option>Siliana</option><option>Sousse</option>
-              <option>Monastir</option><option>Mahdia</option><option>Sfax</option>
-              <option>Kairouan</option><option>Kasserine</option><option>Sidi Bouzid</option>
-              <option>Gabès</option><option>Médenine</option><option>Tataouine</option>
-              <option>Gafsa</option><option>Tozeur</option><option>Kébili</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Numéro de téléphone</label>
-            <div class="input-icon">
-              <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
-              </svg>
-              <input type="tel" class="form-control" id="telephone" placeholder="+216 XX XXX XXX"/>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Notes pour le livreur (optionnel)</label>
-          <input type="text" class="form-control" id="notes"
-                 placeholder="Ex: Sonner au gardien, 2ème étage..."/>
-        </div>
-
-        <!-- Date automatique -->
-        <div class="date-auto-info">
-          📅 Date de livraison estimée après confirmation :
-          <strong>sous 3 à 5 jours ouvrables</strong>
-        </div>
-
       </div>
     </div>
 
-    <!-- Droite : Récapitulatif -->
-    <div class="summary-panel">
-      <div class="card">
-        <div class="card-title">📋 Récapitulatif</div>
-        <div class="summary-rows" id="summaryRows"></div>
-        <div class="summary-divider"></div>
-        <div class="summary-total">
-          <span class="label">Total TTC</span>
-          <span class="value" id="summaryTotal">0.000 DT</span>
+    <!-- Étape 2 : Type de surface -->
+    <div class="form-group">
+      <label>2. Type de surface</label>
+      <div class="surface-types">
+        <div class="surface-type selected" onclick="selectSurface(this, 1)" data-factor="1">
+          <span class="material-icons">wallpaper</span>Mur lisse
         </div>
-        <div class="alert alert-error mt-2" id="alertError">
-          ⚠️ <span id="alertMsg"></span>
+        <div class="surface-type" onclick="selectSurface(this, 1.1)" data-factor="1.1">
+          <span class="material-icons">texture</span>Mur rugueux
         </div>
-        <button class="btn-primary btn-order" id="orderBtn" onclick="passerCommande()">
-          ✅ Confirmer la commande
-        </button>
-        <button class="btn-outline btn-continue" onclick="window.location.href='catalogue.html'">
-          + Ajouter des produits
-        </button>
+        <div class="surface-type" onclick="selectSurface(this, 1.2)" data-factor="1.2">
+          <span class="material-icons">cabin</span>Béton brut
+        </div>
+        <div class="surface-type" onclick="selectSurface(this, 0.8)" data-factor="0.8">
+          <span class="material-icons">door_front</span>Boiserie
+        </div>
+        <div class="surface-type" onclick="selectSurface(this, 1.15)" data-factor="1.15">
+          <span class="material-icons">apartment</span>Façade
+        </div>
+        <div class="surface-type" onclick="selectSurface(this, 0.9)" data-factor="0.9">
+          <span class="material-icons">roofing</span>Plafond
+        </div>
       </div>
     </div>
+
+    <!-- Étape 3 : Dimensions -->
+    <div class="sim-inputs">
+      <div class="slider-wrap">
+        <label>3. Surface totale</label>
+        <div class="slider-header">
+          <span style="font-size:0.8rem; color:var(--text-gray);">Déplacez le curseur</span>
+          <span class="slider-value"><span id="surfaceDisplay">50</span> m²</span>
+        </div>
+        <input type="range" id="surfaceSlider" min="5" max="500" value="50" step="5" oninput="updateSurface(this.value)">
+        <div class="slider-marks">
+          <span>5 m²</span><span>125 m²</span><span>250 m²</span><span>375 m²</span><span>500 m²</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Ou saisir directement (m²)</label>
+        <input type="number" class="form-control" id="surfaceManual" placeholder="ex: 75" min="1" oninput="manualSurface(this.value)">
+      </div>
+
+      <div class="form-group">
+        <label>Nombre de couches</label>
+        <select class="form-control" id="couchesSelect">
+          <option value="1">1 couche</option>
+          <option value="2" selected>2 couches (recommandé)</option>
+          <option value="3">3 couches</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn-calculate" onclick="calculate()">
+      <span class="material-icons">calculate</span> Calculer la quantité
+    </button>
   </div>
 
-  <!-- Modal Succès -->
-  <div class="success-overlay" id="successOverlay">
-    <div class="success-modal">
-      <div class="success-icon">✅</div>
-      <div class="success-title">Commande confirmée !</div>
-      <p class="success-msg">
-        Votre commande a été enregistrée avec succès.<br/>
-        Numéro de commande : <span class="success-num" id="cmdNumero"></span><br/><br/>
-        📅 Date de livraison estimée :<br/>
-        <span class="success-date" id="dateLivraisonEstimee"></span>
-      </p>
-      <button class="btn-primary w-100" onclick="window.location.href='mes-commandes.html'">
-        Suivre ma commande →
+  <!-- Résultats -->
+  <div class="results-panel">
+    <div class="result-card">
+      <div class="result-header">
+        <span class="material-icons">insights</span> Résultat du calcul
+      </div>
+
+      <!-- Placeholder -->
+      <div class="result-placeholder" id="resultPlaceholder">
+        <span class="material-icons">construction</span>
+        <p>Remplissez le formulaire<br>pour voir le résultat</p>
+      </div>
+
+      <!-- Contenu résultats -->
+      <div id="resultContent" style="display:none">
+        <div class="alert-min" id="alertMin">
+          <span class="material-icons" style="font-size:16px;">info</span>
+          Minimum de commande : <strong>5 litres</strong>. Quantité ajustée automatiquement.
+        </div>
+        <div class="result-main">
+          <div class="result-big" id="resLitres">0</div>
+          <div class="result-unit">litres nécessaires</div>
+        </div>
+        <div class="result-details">
+          <div class="result-row">
+            <span class="label">Produit</span>
+            <span class="value" id="resProduit">—</span>
+          </div>
+          <div class="result-row">
+            <span class="label">Surface</span>
+            <span class="value" id="resSurface">—</span>
+          </div>
+          <div class="result-row">
+            <span class="label">Couches</span>
+            <span class="value" id="resCouches">—</span>
+          </div>
+          <div class="result-row">
+            <span class="label">Rendement</span>
+            <span class="value" id="resRendement">—</span>
+          </div>
+          <div class="result-divider"></div>
+          <div class="result-row">
+            <span class="label">Prix unitaire</span>
+            <span class="value" id="resPrix">—</span>
+          </div>
+          <div class="result-row total">
+            <span class="label">Total estimé</span>
+            <span class="value" id="resTotal">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Boutons d'action -->
+    <div id="actionButtons" style="display:none">
+      <button class="btn-order" onclick="commanderDirectement()">
+        <span class="material-icons">shopping_cart</span> Commander maintenant
+      </button>
+      <button class="btn-catalogue" onclick="window.location.href='catalogue.html'">
+        ← Retour au catalogue
       </button>
     </div>
   </div>
 
-  <script src="../js/api.js"></script>
-  <script src="../js/auth.js"></script>
-  <script>
-    requireAuth(['client']);
+</div>
 
-    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+  requireAuth(['client']);
 
-    function renderCart() {
-      const container = document.getElementById('cartContent');
-      if (!cart.length) {
-        container.innerHTML = `
-          <div class="cart-empty">
-            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-            </svg>
-            <p>Votre panier est vide.</p>
-            <a href="catalogue.html" style="color:var(--primary); font-weight:600;">
-              Voir le catalogue →
-            </a>
-          </div>`;
-        updateSummary();
-        return;
+  let products        = [];
+  let selectedProduct = null;
+  let surfaceFactor   = 1;
+  let currentSurface  = 50;
+
+  async function loadProducts() {
+    try {
+      const res = await api.get('/produits');
+      products  = await res.json();
+      renderProductSelector();
+
+      // Récupérer le produit sélectionné depuis catalogue.html
+      const saved = localStorage.getItem('selectedProduct');
+      if (saved) {
+        const p = JSON.parse(saved);
+        const found = products.find(x => x.id === p.id);
+        if (found) selectProduct(found.id);
+        localStorage.removeItem('selectedProduct');
       }
-      container.innerHTML = cart.map((item, i) => `
-        <div class="cart-item">
-          <div class="item-swatch" style="background:${item.couleur_code || '#CCC'}"></div>
-          <div class="item-info">
-            <div class="item-name">${item.nom}</div>
-            <div class="item-meta">
-              ${item.litres_calcules} L · ${item.surface_m2} m² · ${item.couches} couche${item.couches > 1 ? 's' : ''}
-            </div>
-          </div>
-          <div class="item-price">${item.montant.toFixed(3)} DT</div>
-          <button class="item-remove" onclick="removeItem(${i})" title="Supprimer">✕</button>
+    } catch (err) {
+      document.getElementById('productSelector').innerHTML =
+        '<p style="color:var(--accent);">❌ Erreur de chargement</p>';
+    }
+  }
+
+  function renderProductSelector() {
+    const container = document.getElementById('productSelector');
+    if (!products.length) return;
+    container.innerHTML = products.map(p => `
+      <div class="product-option" onclick="selectProduct(${p.id})" id="opt-${p.id}">
+        <div class="product-swatch" style="background:${p.couleur_code || '#CCC'}"></div>
+        <div class="product-info">
+          <div class="product-opt-name">${escapeHtml(p.nom)}</div>
+          <div class="product-opt-price">${parseFloat(p.prix_litre).toFixed(3)} DT/L</div>
         </div>
-      `).join('');
-      updateSummary();
+      </div>
+    `).join('');
+    if (products.length) selectProduct(products[0].id);
+  }
+
+  function selectProduct(id) {
+    selectedProduct = products.find(p => p.id === id);
+    document.querySelectorAll('.product-option').forEach(el => el.classList.remove('selected'));
+    const opt = document.getElementById(`opt-${id}`);
+    if (opt) opt.classList.add('selected');
+    document.getElementById('step2').classList.add('done');
+    // Recalcul automatique si des valeurs existent déjà
+    if (document.getElementById('resultContent').style.display === 'block') calculate();
+  }
+
+  function selectSurface(el, factor) {
+    surfaceFactor = factor;
+    document.querySelectorAll('.surface-type').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    if (document.getElementById('resultContent').style.display === 'block') calculate();
+  }
+
+  function updateSurface(val) {
+    currentSurface = parseFloat(val);
+    document.getElementById('surfaceDisplay').textContent = val;
+    document.getElementById('surfaceManual').value = val;
+    document.getElementById('step3').classList.add('done');
+    if (document.getElementById('resultContent').style.display === 'block') calculate();
+  }
+
+  function manualSurface(val) {
+    let v = parseFloat(val);
+    if (isNaN(v)) v = 0;
+    currentSurface = v;
+    document.getElementById('surfaceSlider').value = Math.min(v, 500);
+    document.getElementById('surfaceDisplay').textContent = v;
+    if (document.getElementById('resultContent').style.display === 'block') calculate();
+  }
+
+  function calculate() {
+    if (!selectedProduct) {
+      alert('Veuillez choisir un produit.');
+      return;
+    }
+    if (!currentSurface || currentSurface <= 0) {
+      alert('Veuillez saisir une surface valide.');
+      return;
     }
 
-    function removeItem(index) {
-      cart.splice(index, 1);
-      localStorage.setItem('cart', JSON.stringify(cart));
-      renderCart();
+    const couches = parseInt(document.getElementById('couchesSelect').value);
+    const rendement = parseFloat(selectedProduct.rendement_m2_L);
+    const litresBrut = (currentSurface * surfaceFactor * couches) / rendement;
+    const alertMin = document.getElementById('alertMin');
+
+    let litresFinal;
+    if (litresBrut < 5) {
+      alertMin.classList.add('show');
+      litresFinal = 5;
+    } else {
+      alertMin.classList.remove('show');
+      litresFinal = litresBrut;
     }
 
-    function updateSummary() {
-      const rows   = document.getElementById('summaryRows');
-      const total  = cart.reduce((sum, item) => sum + item.montant, 0);
-      const litres = cart.reduce((sum, item) => sum + item.litres_calcules, 0);
-      rows.innerHTML = cart.map(item => `
-        <div class="summary-row">
-          <span class="label">${item.nom} (${item.litres_calcules}L)</span>
-          <span class="value">${item.montant.toFixed(3)} DT</span>
-        </div>
-      `).join('') + `
-        <div class="summary-row">
-          <span class="label">Total litres</span>
-          <span class="value">${litres.toFixed(2)} L</span>
-        </div>`;
-      document.getElementById('summaryTotal').textContent = `${total.toFixed(3)} DT`;
-    }
+    const total = litresFinal * parseFloat(selectedProduct.prix_litre);
 
-    async function passerCommande() {
-      if (!cart.length) { showError('Votre panier est vide.'); return; }
+    document.getElementById('resultPlaceholder').style.display = 'none';
+    document.getElementById('resultContent').style.display = 'block';
+    document.getElementById('actionButtons').style.display = 'block';
 
-      const adresse     = document.getElementById('adresse').value.trim();
-      const ville       = document.getElementById('ville').value.trim();
-      const gouvernorat = document.getElementById('gouvernorat').value;
-      const telephone   = document.getElementById('telephone').value.trim();
-      const notes       = document.getElementById('notes').value.trim();
+    document.getElementById('resLitres').textContent = litresFinal.toFixed(2);
+    document.getElementById('resProduit').textContent = selectedProduct.nom;
+    document.getElementById('resSurface').textContent = `${currentSurface} m²`;
+    document.getElementById('resCouches').textContent = `${couches} couche${couches > 1 ? 's' : ''}`;
+    document.getElementById('resRendement').textContent = `${rendement} m²/L`;
+    document.getElementById('resPrix').textContent = `${parseFloat(selectedProduct.prix_litre).toFixed(3)} DT/L`;
+    document.getElementById('resTotal').textContent = `${total.toFixed(3)} DT`;
+  }
 
-      if (!adresse || !ville || !gouvernorat) {
-        showError('Veuillez remplir adresse, ville et gouvernorat.');
-        return;
-      }
-      if (!telephone) {
-        showError('Veuillez saisir votre numéro de téléphone.');
-        return;
-      }
+  function commanderDirectement() {
+    if (!selectedProduct) return;
+    const couches = parseInt(document.getElementById('couchesSelect').value);
+    const rendement = parseFloat(selectedProduct.rendement_m2_L);
+    const litresBrut = (currentSurface * surfaceFactor * couches) / rendement;
+    const litresFinal = Math.max(5, litresBrut);
 
-      const btn = document.getElementById('orderBtn');
-      btn.innerHTML = '<span class="spinner"></span>Traitement...';
-      btn.disabled  = true;
+    const item = {
+      produit_id: selectedProduct.id,
+      nom: selectedProduct.nom,
+      couleur_code: selectedProduct.couleur_code,
+      surface_m2: currentSurface,
+      couches,
+      litres_calcules: parseFloat(litresFinal.toFixed(2)),
+      prix_litre: parseFloat(selectedProduct.prix_litre),
+      montant: parseFloat((litresFinal * selectedProduct.prix_litre).toFixed(3))
+    };
 
-      try {
-        // Créer le chantier
-        const chantierRes = await api.post('/chantiers', { adresse, ville, gouvernorat });
-        let chantier_id   = null;
-        if (chantierRes && chantierRes.ok) {
-          const chantierData = await chantierRes.json();
-          chantier_id = chantierData.id;
-        }
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    cart.push(item);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    window.location.href = 'commande.html';
+  }
 
-        // Calculer date estimée (3-5 jours ouvrables)
-        const dateEstimee = new Date();
-        dateEstimee.setDate(dateEstimee.getDate() + 4);
-        // Sauter weekend
-        if (dateEstimee.getDay() === 6) dateEstimee.setDate(dateEstimee.getDate() + 2);
-        if (dateEstimee.getDay() === 0) dateEstimee.setDate(dateEstimee.getDate() + 1);
+  function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+    window.location.href = '/login-client.html';
+  }
 
-        // Créer commandes
-        const results = [];
-        for (const item of cart) {
-          const res = await api.post('/commandes', {
-            produit_id:               item.produit_id,
-            surface_m2:               item.surface_m2,
-            litres_calcules:          item.litres_calcules,
-            date_livraison_souhaitee: dateEstimee.toISOString().split('T')[0],
-            chantier_id
-          });
-          if (res && res.ok) {
-            const data = await res.json();
-            results.push(data);
-          }
-        }
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
 
-        if (results.length) {
-          localStorage.removeItem('cart');
-          cart = [];
-
-          // Afficher date estimée dans modal
-          const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-          document.getElementById('cmdNumero').textContent         = `#${results[0].id}`;
-          document.getElementById('dateLivraisonEstimee').textContent =
-            dateEstimee.toLocaleDateString('fr-TN', options);
-          document.getElementById('successOverlay').classList.add('open');
-        } else {
-          showError('Erreur lors de la création de la commande.');
-        }
-
-      } catch (err) {
-        showError('Erreur serveur. Réessayez.');
-      } finally {
-        btn.innerHTML = '✅ Confirmer la commande';
-        btn.disabled  = false;
-      }
-    }
-
-    function showError(msg) {
-      document.getElementById('alertMsg').textContent = msg;
-      document.getElementById('alertError').classList.add('show');
-    }
-
-    renderCart();
-  </script>
+  // Initialisation
+  displayUserInfo('#userName');
+  loadProducts();
+</script>
 </body>
 </html>
