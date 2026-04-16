@@ -2,17 +2,14 @@ const pool = require('../config/db');
 
 async function getAll(req, res, next) {
   try {
-    let query  = `SELECT c.*, u.nom AS client_nom FROM commandes c
-                  JOIN utilisateurs u ON c.client_id = u.id`;
+    let query = `SELECT c.*, u.nom AS client_nom FROM commandes c
+                 JOIN utilisateurs u ON c.client_id = u.id`;
     const params = [];
-
-    // Client voit seulement ses commandes
     if (req.user.role === 'client') {
       query += ' WHERE c.client_id = ?';
       params.push(req.user.id);
     }
     query += ' ORDER BY c.created_at DESC';
-
     const [rows] = await pool.query(query, params);
     res.json(rows);
   } catch (err) { next(err); }
@@ -26,8 +23,6 @@ async function getById(req, res, next) {
       [req.params.id]
     );
     if (!rows.length) return res.status(404).json({ message: 'Commande introuvable.' });
-
-    // Récupérer les détails de la commande
     const [details] = await pool.query(
       `SELECT cd.*, p.nom AS produit_nom FROM commande_details cd
        JOIN produits p ON cd.produit_id = p.id WHERE cd.commande_id = ?`,
@@ -42,24 +37,27 @@ async function create(req, res, next) {
   try {
     await conn.beginTransaction();
 
-    const { produit_id, surface_m2, litres_calcules, date_livraison_souhaitee, chantier_id } = req.body;
+    const { produit_id, surface_m2, litres_calcules,
+            date_livraison_souhaitee, chantier_id } = req.body;
+
     if (litres_calcules < 5)
       return res.status(400).json({ message: 'Minimum 5 litres requis.' });
 
-    // Récupérer le prix du produit
     const [produit] = await conn.query('SELECT * FROM produits WHERE id = ?', [produit_id]);
-    if (!produit.length) return res.status(404).json({ message: 'Produit introuvable.' });
+    if (!produit.length)
+      return res.status(404).json({ message: 'Produit introuvable.' });
 
     const montant_total = produit[0].prix_litre * litres_calcules;
 
-    // Créer la commande
+    // ✅ chantier_id bien enregistré
     const [result] = await conn.query(
-      `INSERT INTO commandes (client_id, surface_m2, litres_calcules, montant_total, statut, date_livraison_souhaitee)
-       VALUES (?, ?, ?, ?, 'en_attente', ?)`,
-      [req.user.id, surface_m2, litres_calcules, montant_total, date_livraison_souhaitee]
+      `INSERT INTO commandes
+         (client_id, chantier_id, surface_m2, litres_calcules, montant_total, statut, date_livraison_souhaitee)
+       VALUES (?, ?, ?, ?, ?, 'en_attente', ?)`,
+      [req.user.id, chantier_id || null, surface_m2,
+       litres_calcules, montant_total, date_livraison_souhaitee]
     );
 
-    // Créer le détail
     await conn.query(
       'INSERT INTO commande_details (commande_id, produit_id, quantite_litres, prix_litre) VALUES (?, ?, ?, ?)',
       [result.insertId, produit_id, litres_calcules, produit[0].prix_litre]
@@ -82,17 +80,31 @@ async function updateStatut(req, res, next) {
     if (!validStatuts.includes(statut))
       return res.status(400).json({ message: 'Statut invalide.' });
 
-    await conn.query('UPDATE commandes SET statut = ? WHERE id = ?', [statut, req.params.id]);
+    await conn.query('UPDATE commandes SET statut = ? WHERE id = ?',
+      [statut, req.params.id]);
 
-    // Si confirmée → créer automatiquement une livraison
     if (statut === 'confirmee') {
-      const [commande] = await conn.query('SELECT * FROM commandes WHERE id = ?', [req.params.id]);
+      const [commande] = await conn.query(
+        'SELECT * FROM commandes WHERE id = ?', [req.params.id]
+      );
       if (commande.length) {
+        // ✅ Créer la livraison
         await conn.query(
           `INSERT INTO livraisons (commande_id, chantier_id, statut)
            VALUES (?, ?, 'planifiee')`,
           [req.params.id, commande[0].chantier_id || null]
         );
+
+        // ✅ Décrémenter le stock
+        const [details] = await conn.query(
+          'SELECT * FROM commande_details WHERE commande_id = ?', [req.params.id]
+        );
+        for (const d of details) {
+          await conn.query(
+            'UPDATE produits SET stock_litres = stock_litres - ? WHERE id = ?',
+            [d.quantite_litres, d.produit_id]
+          );
+        }
       }
     }
 

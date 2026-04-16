@@ -569,7 +569,7 @@
 <script src="../js/auth.js"></script>
 <script>
   requireAuth(['client']);
-  displayUserInfo();
+  displayUserInfo('#userName');
 
   let allCommandes  = [];
   let currentFilter = 'tous';
@@ -711,6 +711,8 @@
   }
 
   loadCommandes();
+  // Auto-refresh toutes les 30 secondes
+setInterval(loadAll, 30000);
 </script>
 </body>
 </html>
