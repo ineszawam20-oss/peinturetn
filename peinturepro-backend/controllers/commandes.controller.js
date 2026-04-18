@@ -37,19 +37,30 @@ async function create(req, res, next) {
   try {
     await conn.beginTransaction();
 
-    const { produit_id, surface_m2, litres_calcules,
+    const { produit_id, produit_nom, prix_litre: prix_litre_body,
+            surface_m2, litres_calcules,
             date_livraison_souhaitee, chantier_id } = req.body;
 
     if (litres_calcules < 5)
       return res.status(400).json({ message: 'Minimum 5 litres requis.' });
 
-    const [produit] = await conn.query('SELECT * FROM produits WHERE id = ?', [produit_id]);
-    if (!produit.length)
-      return res.status(404).json({ message: 'Produit introuvable.' });
+    let prix_litre = 0;
+    let nomProduit = produit_nom || 'Produit personnalisé';
 
-    const montant_total = produit[0].prix_litre * litres_calcules;
+    if (produit_id) {
+      // Produit catalogue normal → prix depuis la BDD
+      const [produit] = await conn.query('SELECT * FROM produits WHERE id = ?', [produit_id]);
+      if (!produit.length)
+        return res.status(404).json({ message: 'Produit introuvable.' });
+      prix_litre = produit[0].prix_litre;
+      nomProduit = produit[0].nom;
+    } else {
+      // Produit prestige → prix envoyé depuis le frontend
+      prix_litre = parseFloat(prix_litre_body) || 0;
+    }
 
-    // ✅ chantier_id bien enregistré
+    const montant_total = prix_litre * litres_calcules;
+
     const [result] = await conn.query(
       `INSERT INTO commandes
          (client_id, chantier_id, surface_m2, litres_calcules, montant_total, statut, date_livraison_souhaitee)
@@ -58,10 +69,12 @@ async function create(req, res, next) {
        litres_calcules, montant_total, date_livraison_souhaitee]
     );
 
-    await conn.query(
-      'INSERT INTO commande_details (commande_id, produit_id, quantite_litres, prix_litre) VALUES (?, ?, ?, ?)',
-      [result.insertId, produit_id, litres_calcules, produit[0].prix_litre]
-    );
+    if (produit_id) {
+      await conn.query(
+        'INSERT INTO commande_details (commande_id, produit_id, quantite_litres, prix_litre) VALUES (?, ?, ?, ?)',
+        [result.insertId, produit_id, litres_calcules, prix_litre]
+      );
+    }
 
     await conn.commit();
     res.status(201).json({ message: 'Commande créée.', id: result.insertId, montant_total });
@@ -69,7 +82,6 @@ async function create(req, res, next) {
   } catch (err) { await conn.rollback(); next(err); }
   finally        { conn.release(); }
 }
-
 async function updateStatut(req, res, next) {
   const conn = await pool.getConnection();
   try {

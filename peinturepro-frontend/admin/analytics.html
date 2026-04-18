@@ -470,13 +470,6 @@
     <a class="menu-item" href="/admin/utilisateurs.html">
       <span class="material-icons">people</span> Utilisateurs
     </a>
-    <div class="menu-label">Production</div>
-    <a class="menu-item" href="/admin/matieres-premieres.html">
-      <span class="material-icons">science</span> Matières premières
-    </a>
-    <a class="menu-item" href="/admin/lots-production.html">
-      <span class="material-icons">factory</span> Lots production
-    </a>
     <div class="menu-label">Analytique</div>
     <a class="menu-item active" href="/admin/analytics.html">
       <span class="material-icons">analytics</span> Analytics
@@ -626,6 +619,21 @@
   };
 
   let charts = {};
+  // Ajouter en haut du <script>, avant loadAll()
+const prestigeProducts = [
+  { id: 'pp-001', nom: 'Prestige Velours Intérieur', couleur_code: '#F5F0E8'},
+  { id: 'pp-002', nom: 'Prestige Satiné Luxe', couleur_code: '#EAE4D8' },
+  { id: 'pp-003', nom: 'Prestige Effet Béton', couleur_code: '#B8B0A5' },
+  { id: 'pp-004', nom: 'Prestige Stuc Minéral', couleur_code: '#D4C5A9' },
+  { id: 'pp-005', nom: 'Prestige Effet Soie', couleur_code: '#F2E8D5'},
+  { id: 'pp-006', nom: 'Prestige Façade Elite', couleur_code: '#E8E0D0' },
+  { id: 'pp-007', nom: 'Prestige Silicone Façade', couleur_code: '#D6CFC3' },
+  { id: 'pp-008', nom: 'Prestige Décor Extérieur', couleur_code: '#C8B9A2' },
+  { id: 'pp-009', nom: 'Prestige Hydrofuge Toiture', couleur_code: '#8B7355'},
+  { id: 'pp-010', nom: 'Prestige Anti-Humidité', couleur_code: '#A0C4FF'},
+  { id: 'pp-011', nom: 'Prestige Piscine & Terrasse', couleur_code: '#00B4D8'},
+  { id: 'pp-012', nom: 'Prestige Multi-Couleurs', couleur_code: '#D4956A' }
+];
 
   async function loadAll() {
     try {
@@ -740,7 +748,8 @@
 
     document.getElementById('topProduits').innerHTML = top.length
       ? top.map(([id, val], i) => {
-          const prod = produits.find(p => String(p.id) === String(id));
+        const allProdsAnalytics = [...produits, ...prestigeProducts];
+const prod = allProdsAnalytics.find(p => String(p.id) === String(id));
           const pct = (val / maxVal) * 100;
           return `
             <div class="top-produit-item">
@@ -823,12 +832,18 @@
 
   function exportCSV() {
     api.get('/commandes').then(res => res.json()).then(data => {
-      const headers = ['ID', 'Client', 'Montant', 'Litres', 'Statut', 'Date'];
-      const rows = data.map(c => [
-        c.id, c.client_nom || '', parseFloat(c.montant_total).toFixed(3),
-        parseFloat(c.litres_calcules).toFixed(2), c.statut,
+    const headers = ['ID', 'Client', 'Produit', 'Montant', 'Litres', 'Statut', 'Date'];
+    const rows = data.map(c => {
+      const allProdsExport = [...[], ...prestigeProducts]; // + produits API si disponibles
+      const prod = allProdsExport.find(p => String(p.id) === String(c.produit_id));
+      return [
+        c.id, c.client_nom || '', prod?.nom || ('Produit #' + c.produit_id),
+        parseFloat(c.montant_total).toFixed(3),
+        parseFloat(c.litres_calcules || 0).toFixed(2),
+        c.statut,
         new Date(c.created_at).toLocaleDateString('fr-TN')
-      ]);
+      ];
+    });
       const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);

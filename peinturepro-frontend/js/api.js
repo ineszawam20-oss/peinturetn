@@ -54,16 +54,19 @@ async function refreshAccessToken() {
 
 // ===== Requête principale avec auto-refresh =====
 async function apiRequest(endpoint, options = {}) {
-  const makeRequest = async (token) => {
-    return fetch(`${API_URL}${endpoint}`, {
-      ...options,
-      headers: {
-        'Content-Type':  'application/json',
-        'Authorization': `Bearer ${token}`,
-        ...options.headers
-      }
-    });
-  };
+const makeRequest = async (token) => {
+  console.log('REQUEST:', options.method || 'GET', endpoint, 'TOKEN:', token?.substring(0, 20));
+  const res = await fetch(`${API_URL}${endpoint}`, {
+    ...options,
+    headers: {
+      'Content-Type':  'application/json',
+      'Authorization': `Bearer ${token}`,
+      ...options.headers
+    }
+  });
+  console.log('RESPONSE:', endpoint, res.status);
+  return res;
+};
 
   let token = Auth.getToken();
   let res   = await makeRequest(token);

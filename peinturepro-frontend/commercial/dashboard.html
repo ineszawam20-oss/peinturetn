@@ -601,6 +601,14 @@
     <a class="menu-item" href="#" onclick="scrollToCommandes()">
       <span class="material-icons">shopping_cart</span> Commandes
     </a>
+    
+    <div class="menu-label">Production</div>
+    <a class="menu-item" href="/commercial/matieres-premieres.html">
+      <span class="material-icons">science</span> Matières premières
+    </a>
+    <a class="menu-item" href="/commercial/lots-production.html">
+      <span class="material-icons">factory</span> Lots production
+    </a>
   </nav>
   <div class="sidebar-footer">
     <div class="user-info">
@@ -691,6 +699,30 @@
       </div>
       <canvas id="transformChart" height="80"></canvas>
     </div>
+    <!-- ===== MATIÈRES PREMIÈRES ET LOTS ===== -->
+<div class="two-col" style="margin-top: 2rem;">
+  <!-- Matières premières (comme dans l'admin) -->
+  <div class="card">
+    <div class="card-title">
+      <span class="material-icons">science</span> Matières premières
+      <a href="/commercial/matieres-premieres.html" class="card-link">Gérer →</a>
+    </div>
+    <div id="matieresAdminStyle">
+      <p style="text-align:center; color:var(--text-gray)">Chargement...</p>
+    </div>
+  </div>
+
+  <!-- Lots de production -->
+  <div class="card">
+    <div class="card-title">
+      <span class="material-icons">factory</span> Lots de production
+      <a href="/commercial/lots-production.html" class="card-link">Voir tout →</a>
+    </div>
+    <div id="lotsAdminStyle">
+      <p style="text-align:center; color:var(--text-gray)">Chargement...</p>
+    </div>
+  </div>
+</div>
   </div>
 </div>
 
@@ -743,7 +775,6 @@
     </div>
   </div>
 </div>
-
 <script src="/js/api.js"></script>
 <script src="/js/auth.js"></script>
 <script>
@@ -764,33 +795,149 @@
   const devisLabels = {
     brouillon: { label: 'Brouillon', cls: 'd-brouillon' },
     envoye:    { label: 'Envoyé',    cls: 'd-envoye' },
-    accepte:   { label: 'Accepté',  cls: 'd-accepte' },
-    refuse:    { label: 'Refusé',   cls: 'd-refuse' },
-    expire:    { label: 'Expiré',   cls: 'd-expire' }
+    accepte:   { label: 'Accepté',   cls: 'd-accepte' },
+    refuse:    { label: 'Refusé',    cls: 'd-refuse' },
+    expire:    { label: 'Expiré',    cls: 'd-expire' }
   };
+
+// ========== APERÇU MATIÈRES PREMIÈRES (STYLE ADMIN) ==========
+async function loadMatieresAdmin() {
+  const container = document.getElementById('matieresAdminStyle');
+  if (!container) return;
+  try {
+    const res = await api.get('/matieres-premieres');
+    if (!res.ok) throw new Error('Accès refusé');
+    const data = await res.json();
+    if (!data.length) {
+      container.innerHTML = '<p style="text-align:center; color:var(--text-gray)">Aucune matière première</p>';
+      return;
+    }
+    let html = `
+      <table style="width:100%">
+        <thead><tr><th>Matière</th><th>Stock</th><th>Statut</th></tr></thead>
+        <tbody>
+    `;
+    data.forEach(m => {
+      const stock = parseFloat(m.stock_actuel);
+      const min = parseFloat(m.stock_minimum);
+      const ok = stock > min;
+      html += `
+        <tr>
+          <td>${escapeHtml(m.nom)}</td>
+          <td style="font-weight:600">${stock} ${m.unite}</td>
+          <td><span style="background:${ok ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)'}; color:${ok ? '#6ee7b7' : '#fca5a5'}; padding:0.2rem 0.6rem; border-radius:30px;">${ok ? '✓ OK' : '⚠ Bas'}</span></td>
+        </tr>`;
+    });
+    html += `</tbody></table>`;
+    const lowStock = data.filter(m => parseFloat(m.stock_actuel) <= parseFloat(m.stock_minimum));
+    if (lowStock.length) {
+      html += `<div style="margin-top:1rem; padding:0.5rem; background:rgba(245,158,11,0.1); border-radius:8px;">
+                 <span class="material-icons" style="font-size:16px; vertical-align:middle">warning</span> 
+                 Alertes : ${lowStock.map(m => m.nom).join(', ')}
+               </div>`;
+    }
+    container.innerHTML = html;
+  } catch (err) {
+    console.warn(err);
+    container.innerHTML = '<p style="text-align:center; color:var(--text-gray)">Accès non autorisé</p>';
+  }
+}
+
+// ========== APERÇU LOTS DE PRODUCTION ==========
+async function loadLotsAdmin() {
+  const container = document.getElementById('lotsAdminStyle');
+  if (!container) return;
+  try {
+    const res = await api.get('/lots');
+    if (!res.ok) throw new Error('Accès refusé');
+    const data = await res.json();
+    if (!data.length) {
+      container.innerHTML = '<p style="text-align:center; color:var(--text-gray)">Aucun lot de production</p>';
+      return;
+    }
+    let html = `
+      <table style="width:100%">
+        <thead><tr><th>N° Lot</th><th>Quantité</th><th>Expiration</th><th>Statut</th></tr></thead>
+        <tbody>
+    `;
+    data.slice(0, 5).forEach(lot => {
+      const exp = lot.date_expiration ? new Date(lot.date_expiration) : null;
+      const now = new Date();
+      let statutHtml = '';
+      if (!exp) statutHtml = '<span style="color:#a1a1aa;">—</span>';
+      else if (exp < now) statutHtml = '<span style="color:#fca5a5;">Expiré</span>';
+      else if ((exp - now) < 30 * 24 * 3600 * 1000) statutHtml = '<span style="color:#fbbf24;">⚠ Bientôt</span>';
+      else statutHtml = '<span style="color:#6ee7b7;">✓ Valide</span>';
+      html += `
+        <tr>
+          <td><span style="font-family:monospace; background:rgba(99,102,241,0.2); padding:0.2rem 0.5rem; border-radius:6px;">${lot.numero_lot}</span></td>
+          <td>${parseFloat(lot.quantite_litres).toFixed(1)} L</td>
+          <td>${lot.date_expiration ? new Date(lot.date_expiration).toLocaleDateString() : '—'}</td>
+          <td>${statutHtml}</td>
+        </tr>`;
+    });
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+  } catch (err) {
+    console.warn(err);
+    container.innerHTML = '<p style="text-align:center; color:var(--text-gray)">Accès non autorisé</p>';
+  }
+}
 
   async function loadAll() {
     try {
-      const [cmdRes, devRes, usrRes, prodRes] = await Promise.all([
-        api.get('/commandes'),
-        api.get('/devis'),
-        api.get('/utilisateurs'),
-        api.get('/produits')
-      ]);
-      allCommandes = await cmdRes.json();
-      allDevis     = await devRes.json();
-      const users  = await usrRes.json();
-      allClients   = users.filter(u => u.role === 'client' && u.actif);
-      allProduits  = await prodRes.json();
+      // 1. Devis (indispensable)
+      const devRes = await api.get('/devis');
+      if (devRes.ok) allDevis = await devRes.json();
+      else console.warn('Erreur chargement devis', devRes.status);
 
+      // 2. Produits (indispensable pour le modal)
+      const prodRes = await api.get('/produits');
+      if (prodRes.ok) allProduits = await prodRes.json();
+      else console.warn('Erreur chargement produits', prodRes.status);
+
+      // 3. Commandes (optionnel – ne pas bloquer)
+      try {
+        const cmdRes = await api.get('/commandes');
+        if (cmdRes.ok) allCommandes = await cmdRes.json();
+      } catch (e) { console.warn('Commandes non chargées', e); }
+
+      // 4. Clients (pour le modal)
+      try {
+        const usrRes = await api.get('/utilisateurs/clients');
+        if (usrRes.ok) allClients = await usrRes.json();
+      } catch (e) { console.warn('Clients non chargés', e); }
+
+      // 5. Matières premières et lots (ne pas bloquer)
+      try {
+        await loadMatieresAdmin();
+      } catch (e) { console.warn('Erreur chargement matières', e); }
+      try {
+        await loadLotsAdmin();
+      } catch (e) { console.warn('Erreur chargement lots', e); }
+
+      // Mise à jour de l'interface
       updateKPIs();
       renderCommandes();
       renderDevis();
       renderTransformChart();
       fillModalSelects();
-    } catch (err) { console.error(err); }
-  }
 
+    } catch (err) {
+      console.error('Erreur globale loadAll', err);
+      document.getElementById('devisList').innerHTML = '<p style="text-align:center; color:var(--text-gray)">Erreur chargement devis</p>';
+    }
+  }
+// Petit utilitaire d'échappement (si pas déjà présent)
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/[&<>]/g, function(m) {
+    if (m === '&') return '&amp;';
+    if (m === '<') return '&lt;';
+    if (m === '>') return '&gt;';
+    return m;
+  });
+}
   function updateKPIs() {
     const acceptes   = allDevis.filter(d => d.statut === 'accepte').length;
     const enAttente  = allCommandes.filter(c => c.statut === 'en_attente').length;
@@ -808,7 +955,7 @@
     const tbody = document.getElementById('commandesTable');
     const data  = allCommandes.slice(0, 10);
     if (!data.length) {
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-gray)">Aucune commande</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center">Aucune commande</td></tr>';
       return;
     }
     tbody.innerHTML = data.map(c => `
@@ -817,11 +964,7 @@
         <td>${c.client_nom || '—'}</td>
         <td style="font-weight:600; color:var(--accent)">${parseFloat(c.montant_total).toFixed(3)} DT</td>
         <td><span class="status-badge s-${c.statut}">${c.statut.replace('_',' ')}</span></td>
-        <td>
-          ${c.statut === 'en_attente'
-            ? `<button class="btn-statut" onclick="confirmerCommande(${c.id})">✅ Confirmer</button>`
-            : '—'}
-        </td>
+        <td>${c.statut === 'en_attente' ? `<button class="btn-statut" onclick="confirmerCommande(${c.id})">✅ Confirmer</button>` : '—'}</td>
       </tr>
     `).join('');
   }
@@ -869,15 +1012,14 @@
             'rgba(245, 158, 11, 0.7)',
             'rgba(239, 68, 68, 0.7)'
           ],
-          borderRadius: 8,
-          borderWidth: 0
+          borderRadius: 8
         }]
       },
       options: {
         responsive: true,
         plugins: {
           legend: { display: false },
-          title: { display: true, text: `Taux de transformation : ${taux}%`, color: '#a1a1aa', font: { size: 12 } }
+          title: { display: true, text: `Taux de transformation : ${taux}%`, color: '#a1a1aa' }
         },
         scales: {
           y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#a1a1aa', stepSize: 1 } },
@@ -886,6 +1028,9 @@
       }
     });
   }
+
+  // Le reste des fonctions (confirmerCommande, fillModalSelects, calcDevis, saveDevis, openDevisModal, closeDevisModal, exportCommandes, scrollToCommandes, logout) 
+  // sont identiques à l'original – je les inclus ici pour que le script soit complet, mais tu peux les garder tels quels.
 
   async function confirmerCommande(id) {
     if (!confirm('Confirmer cette commande ?')) return;

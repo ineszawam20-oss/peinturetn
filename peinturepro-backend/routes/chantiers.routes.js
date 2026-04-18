@@ -19,4 +19,25 @@ router.get('/:id', verifyToken, async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+router.post('/', verifyToken, requireRole('client'), async (req, res, next) => {
+  try {
+    const { adresse, ville, gouvernorat } = req.body;
+
+    if (!adresse || !ville || !gouvernorat) {
+      return res.status(400).json({ message: 'Champs manquants.' });
+    }
+       const client_id = req.user.id; // ← récupéré depuis le token JWT
+    const [result] = await pool.query(
+      `INSERT INTO chantiers (adresse, ville, gouvernorat, client_id, created_at)
+       VALUES (?, ?, ?, ?, NOW())`,
+      [adresse, ville, gouvernorat, client_id]
+    );
+
+    res.status(201).json({ id: result.insertId });
+
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;

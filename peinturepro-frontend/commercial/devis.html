@@ -635,6 +635,13 @@
     <a class="menu-item active" href="/commercial/devis.html">
       <span class="material-icons">description</span> Devis
     </a>
+          <div class="menu-label">Production</div>
+      <a class="menu-item" href="/commercial/matieres-premieres.html">
+        <span class="material-icons">science</span> Matières premières
+      </a>
+      <a class="menu-item" href="/commercial/lots-production.html">
+        <span class="material-icons">factory</span> Lots production
+      </a>
   </nav>
   <div class="sidebar-footer">
     <div class="user-info">
@@ -642,7 +649,7 @@
       <div>
         <div class="user-name" id="userName">Commercial</div>
         <div class="user-role">Commercial</div>
-      </div>
+      </div>      
     </div>
     <button class="menu-item" onclick="logout()">
       <span class="material-icons">logout</span> Déconnexion
@@ -789,24 +796,46 @@
     brouillon: 'Brouillon', envoye: 'Envoyé',
     accepte: 'Accepté', refuse: 'Refusé', expire: 'Expiré'
   };
+  // Ajouter en haut du <script>, avant loadAll()
+const prestigeProducts = [
+  { id: 'pp-001', nom: 'Prestige Velours Intérieur',  prix_litre: 22.500, rendement_m2_L: 8 },
+  { id: 'pp-002', nom: 'Prestige Satiné Luxe',        prix_litre: 25.000, rendement_m2_L: 8 },
+  { id: 'pp-003', nom: 'Prestige Effet Béton',        prix_litre: 28.000, rendement_m2_L: 7 },
+  { id: 'pp-004', nom: 'Prestige Stuc Minéral',       prix_litre: 30.000, rendement_m2_L: 6 },
+  { id: 'pp-005', nom: 'Prestige Effet Soie',         prix_litre: 27.000, rendement_m2_L: 8 },
+  { id: 'pp-006', nom: 'Prestige Façade Elite',       prix_litre: 20.000, rendement_m2_L: 9 },
+  { id: 'pp-007', nom: 'Prestige Silicone Façade',    prix_litre: 24.000, rendement_m2_L: 8 },
+  { id: 'pp-008', nom: 'Prestige Décor Extérieur',    prix_litre: 21.000, rendement_m2_L: 8 },
+  { id: 'pp-009', nom: 'Prestige Hydrofuge Toiture',  prix_litre: 19.000, rendement_m2_L: 7 },
+  { id: 'pp-010', nom: 'Prestige Anti-Humidité',      prix_litre: 23.000, rendement_m2_L: 8 },
+  { id: 'pp-011', nom: 'Prestige Piscine & Terrasse', prix_litre: 26.000, rendement_m2_L: 7 },
+  { id: 'pp-012', nom: 'Prestige Multi-Couleurs',     prix_litre: 29.000, rendement_m2_L: 6 }
+];
 
-  async function loadAll() {
+async function loadAll() {
+  console.log('TOKEN:', Auth.getToken());
+  console.log('ROLE:', Auth.getRole());
+  try {
+    const [devRes, prodRes] = await Promise.all([
+      api.get('/devis'),
+      api.get('/produits')
+    ]);
+    allDevis    = await devRes.json();
+    allProduits = await prodRes.json();
+
+    // ✅ ICI — remplace l'ancien bloc
     try {
-      const [devRes, usrRes, prodRes] = await Promise.all([
-        api.get('/devis'),
-        api.get('/utilisateurs'),
-        api.get('/produits')
-      ]);
-      allDevis = await devRes.json();
-      const users = await usrRes.json();
-      allClients = users.filter(u => u.role === 'client' && u.actif);
-      allProduits = await prodRes.json();
+      const usrRes = await api.get('/utilisateurs/clients'); // ← changement ici
+      if (usrRes.ok) {
+        allClients = await usrRes.json();
+      }
+    } catch { allClients = []; }
 
-      updateStats();
-      renderDevis(allDevis);
-      fillSelects();
-    } catch (err) { console.error(err); }
-  }
+    updateStats();
+    renderDevis(allDevis);
+    fillSelects();
+  } catch (err) { console.error(err); }
+}
 
   function updateStats() {
     document.getElementById('sTotal').textContent = allDevis.length;
@@ -911,9 +940,14 @@
     const produitSelect = document.getElementById('dProduit');
     clientSelect.innerHTML = '<option value="">Sélectionner un client...</option>' +
       allClients.map(c => `<option value="${c.id}">${c.nom}</option>`).join('');
-    produitSelect.innerHTML = '<option value="">Sélectionner un produit...</option>' +
-      allProduits.map(p => `<option value="${p.id}" data-prix="${p.prix_litre}" data-rend="${p.rendement_m2_L}">${p.nom} — ${parseFloat(p.prix_litre).toFixed(3)} DT/L</option>`).join('');
-  }
+
+    const allProduitsDevis = [
+      ...allProduits,
+      ...prestigeProducts
+    ];
+  produitSelect.innerHTML = '<option value="">Sélectionner un produit...</option>' +
+    allProduitsDevis.map(p => `<option value="${p.id}" data-prix="${p.prix_litre}" data-rend="${p.rendement_m2_L}">${p.nom}${p.marque === 'prestige' ? ' ⭐' : ''} — ${parseFloat(p.prix_litre).toFixed(3)} DT/L</option>`).join('');
+    }
 
   function calcDevis() {
     const surface = parseFloat(document.getElementById('dSurface').value) || 0;

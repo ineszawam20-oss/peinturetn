@@ -543,8 +543,8 @@
 <!-- Navbar -->
 <nav class="navbar">
   <div class="nav-brand">
-    <img src="images/logo.png" alt="PeinturePro TN" class="logo-image">
-    <span class="brand-text">PeinturePro <span>TN</span></span>
+    <img src="../images/logo.png" alt="PeinturePro TN" class="logo-image">
+   
   </div>
   <div class="nav-links">
     <a href="catalogue.html" class="nav-link">
@@ -682,35 +682,46 @@
 
   let cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
-  function renderCart() {
-    const container = document.getElementById('cartContent');
-    if (!cart.length) {
-      container.innerHTML = `
-        <div class="cart-empty">
-          <span class="material-icons">shopping_cart</span>
-          <p>Votre panier est vide.</p>
-          <a href="catalogue.html" style="color: var(--primary-light); font-weight: 600;">Voir le catalogue →</a>
-        </div>`;
-      updateSummary();
-      return;
-    }
-    container.innerHTML = cart.map((item, i) => `
-      <div class="cart-item">
-        <div class="item-swatch" style="background: ${item.couleur_code || '#CCC'}"></div>
-        <div class="item-info">
-          <div class="item-name">${escapeHtml(item.nom)}</div>
-          <div class="item-meta">
-            ${item.litres_calcules} L · ${item.surface_m2} m² · ${item.couches} couche${item.couches > 1 ? 's' : ''}
-          </div>
-        </div>
-        <div class="item-price">${item.montant.toFixed(3)} DT</div>
-        <button class="item-remove" onclick="removeItem(${i})" title="Supprimer">
-          <span class="material-icons">close</span>
-        </button>
-      </div>
-    `).join('');
+function renderCart() {
+  const container = document.getElementById('cartContent');
+  if (!cart.length) {
+    container.innerHTML = `
+      <div class="cart-empty">
+        <span class="material-icons">shopping_cart</span>
+        <p>Votre panier est vide.</p>
+        <a href="catalogue.html" style="color: var(--primary-light); font-weight: 600;">Voir le catalogue →</a>
+      </div>`;
     updateSummary();
+    return;
   }
+
+  container.innerHTML = cart.map((item, i) => `
+    <div class="cart-item">
+      <div class="item-swatch" style="background: ${item.couleur_code || '#CCC'}"></div>
+      
+      <div class="item-info">
+        <div class="item-name">
+          ${escapeHtml(item.nom)}
+          ${String(item.produit_id).startsWith('pp-') 
+            ? ' <span style="font-size:0.65rem; background:rgba(201,168,76,0.2); color:#e4c36a; padding:0.1rem 0.4rem; border-radius:4px;">⭐ Prestige</span>' 
+            : ''}
+        </div>
+
+        <div class="item-meta">
+          ${item.litres_calcules} L · ${item.surface_m2} m² · ${item.couches} couche${item.couches > 1 ? 's' : ''}
+        </div>
+      </div>
+
+      <div class="item-price">${item.montant.toFixed(3)} DT</div>
+
+      <button class="item-remove" onclick="removeItem(${i})" title="Supprimer">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+  `).join('');
+
+  updateSummary();
+}
 
   function removeItem(index) {
     cart.splice(index, 1);
@@ -781,11 +792,14 @@
       // Création des commandes
       const results = [];
       for (const item of cart) {
+        const isPrestige = String(item.produit_id).startsWith('pp-');
         const res = await api.post('/commandes', {
-          produit_id: item.produit_id,
-          surface_m2: item.surface_m2,
-          litres_calcules: item.litres_calcules,
-          date_livraison_souhaitee: dateEstimee.toISOString().split('T')[0],
+          produit_id:                isPrestige ? null : item.produit_id,
+          produit_nom:               isPrestige ? item.nom : undefined,
+          prix_litre:                item.prix_litre,   // ← une seule fois, pour tous
+          surface_m2:                item.surface_m2,
+          litres_calcules:           item.litres_calcules,
+          date_livraison_souhaitee:  dateEstimee.toISOString().split('T')[0],
           chantier_id
         });
         if (res && res.ok) {

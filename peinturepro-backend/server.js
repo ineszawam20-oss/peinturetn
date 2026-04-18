@@ -7,6 +7,7 @@ const rateLimit  = require('express-rate-limit');
 const path       = require('path');
 
 // ===== Import des routes =====
+const matieresPremieresRoutes = require('./routes/matieres-premieres.routes');
 const authRoutes          = require('./routes/auth.routes');
 const produitsRoutes      = require('./routes/produits.routes');
 const commandesRoutes     = require('./routes/commandes.routes');
@@ -76,7 +77,7 @@ app.use('/api/devis',         devisRoutes);
 app.use('/api/utilisateurs',  utilisateursRoutes);
 app.use('/api/lots',          lotsRoutes);
 app.use('/api/chantiers',     chantiersRoutes);
-
+app.use('/api/matieres-premieres', matieresPremieresRoutes);
 // ===== Route santé =====
 app.get('/api/health', (req, res) => {
   res.json({

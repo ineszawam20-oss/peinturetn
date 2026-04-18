@@ -474,6 +474,49 @@
       background: rgba(99, 102, 241, 0.05);
     }
 
+    /* Style pour la carte devis */
+    .devis-item {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.7rem 0;
+      border-bottom: 1px solid rgba(99, 102, 241, 0.15);
+    }
+    .devis-item:last-child {
+      border-bottom: none;
+    }
+    .devis-num {
+      font-family: monospace;
+      font-size: 0.75rem;
+      background: rgba(99, 102, 241, 0.2);
+      color: var(--primary-light);
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+    .devis-client {
+      flex: 1;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-white);
+    }
+    .devis-montant {
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      color: var(--accent);
+    }
+    .devis-badge {
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 40px;
+    }
+    .d-brouillon { background: rgba(161, 161, 170, 0.15); color: var(--text-gray); }
+    .d-envoye    { background: rgba(99, 102, 241, 0.15); color: var(--primary-light); }
+    .d-accepte   { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; }
+    .d-refuse    { background: rgba(239, 68, 68, 0.15); color: #fca5a5; }
+    .d-expire    { background: rgba(161, 161, 170, 0.15); color: var(--text-gray); }
+
     /* Responsive */
     @media (max-width: 1200px) {
       .kpi-grid { grid-template-columns: repeat(2, 1fr); }
@@ -494,10 +537,9 @@
 <!-- Sidebar -->
 <aside class="sidebar">
   <div class="sidebar-brand">
-  <div class="nav-brand">
-    <img src="../images/logo.png" alt="PeinturePro TN" class="logo-image">
-   
-  </div>
+    <div class="nav-brand">
+      <img src="../images/logo.png" alt="PeinturePro TN" class="logo-image">
+    </div>
   </div>
   <nav class="sidebar-menu">
     <div class="menu-label">Principal</div>
@@ -509,13 +551,6 @@
     </a>
     <a class="menu-item" href="/admin/utilisateurs.html">
       <span class="material-icons">people</span> Utilisateurs
-    </a>
-    <div class="menu-label">Production</div>
-    <a class="menu-item" href="/admin/matieres-premieres.html">
-      <span class="material-icons">science</span> Matières premières
-    </a>
-    <a class="menu-item" href="/admin/lots-production.html">
-      <span class="material-icons">factory</span> Lots production
     </a>
     <div class="menu-label">Analytique</div>
     <a class="menu-item" href="/admin/analytics.html">
@@ -612,7 +647,7 @@
       </div>
     </div>
 
-    <!-- Tables -->
+    <!-- Tables (commandes + stock) -->
     <div class="tables-grid">
       <div class="table-card">
         <div class="table-title">
@@ -652,6 +687,18 @@
         </table>
       </div>
     </div>
+
+    <!-- Carte des devis récents (AJOUTÉE ICI) -->
+    <div class="table-card">
+      <div class="table-title">
+        <span class="material-icons">description</span>
+        Devis récents
+        <a href="/admin/devis.html" class="table-link">Voir tout →</a>
+      </div>
+      <div id="adminDevisList">
+        <p style="text-align:center; color:var(--text-gray)">Chargement des devis...</p>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -678,15 +725,59 @@
     annulee:    { label: 'Annulée',    color: '#EF4444' }
   };
 
+  let allDevis = [];
   let caChartInstance = null;
   let statusChartInstance = null;
 
-  async function loadAll() {
-    await Promise.all([
-      loadKPIs(),
-      loadCommandes(),
-      loadProduits(),
-    ]);
+  // Produits Prestige (pour alertes stock)
+  const prestigeProducts = [
+    { id: 'pp-001', nom: 'Prestige Velours Intérieur', couleur_code: '#F5F0E8', stock_litres: 850, stock_minimum: 100 },
+    { id: 'pp-002', nom: 'Prestige Satiné Luxe', couleur_code: '#EAE4D8', stock_litres: 620, stock_minimum: 80 },
+    { id: 'pp-003', nom: 'Prestige Effet Béton', couleur_code: '#B8B0A5', stock_litres: 390, stock_minimum: 50 },
+    { id: 'pp-004', nom: 'Prestige Stuc Minéral', couleur_code: '#D4C5A9', stock_litres: 280, stock_minimum: 40 },
+    { id: 'pp-005', nom: 'Prestige Effet Soie', couleur_code: '#F2E8D5', stock_litres: 450, stock_minimum: 60 },
+    { id: 'pp-006', nom: 'Prestige Façade Elite', couleur_code: '#E8E0D0', stock_litres: 1200, stock_minimum: 150 },
+    { id: 'pp-007', nom: 'Prestige Silicone Façade', couleur_code: '#D6CFC3', stock_litres: 750, stock_minimum: 100 },
+    { id: 'pp-008', nom: 'Prestige Décor Extérieur', couleur_code: '#C8B9A2', stock_litres: 580, stock_minimum: 80 },
+    { id: 'pp-009', nom: 'Prestige Hydrofuge Toiture', couleur_code: '#8B7355', stock_litres: 920, stock_minimum: 100 },
+    { id: 'pp-010', nom: 'Prestige Anti-Humidité', couleur_code: '#A0C4FF', stock_litres: 410, stock_minimum: 50 },
+    { id: 'pp-011', nom: 'Prestige Piscine & Terrasse', couleur_code: '#00B4D8', stock_litres: 310, stock_minimum: 40 },
+    { id: 'pp-012', nom: 'Prestige Multi-Couleurs', couleur_code: '#D4956A', stock_litres: 240, stock_minimum: 30 }
+  ];
+
+  // Chargement des devis
+  async function loadDevis() {
+    try {
+      const res = await api.get('/devis');
+      if (res.ok) {
+        allDevis = await res.json();
+        renderDevisList();
+      } else {
+        console.warn('Erreur chargement devis', res.status);
+        document.getElementById('adminDevisList').innerHTML = '<p style="text-align:center; color:var(--text-gray)">Erreur chargement devis</p>';
+      }
+    } catch (e) {
+      console.warn('Erreur réseau devis', e);
+      document.getElementById('adminDevisList').innerHTML = '<p style="text-align:center; color:var(--text-gray)">Erreur réseau</p>';
+    }
+  }
+
+  function renderDevisList() {
+    const container = document.getElementById('adminDevisList');
+    if (!container) return;
+    const data = allDevis.slice(0, 5); // 5 derniers devis
+    if (data.length === 0) {
+      container.innerHTML = '<p style="text-align:center; color:var(--text-gray)">Aucun devis trouvé</p>';
+      return;
+    }
+    container.innerHTML = data.map(d => `
+      <div class="devis-item">
+        <span class="devis-num">#${d.id}</span>
+        <div class="devis-client">${d.client_nom || 'Client #' + d.client_id}</div>
+        <div class="devis-montant">${parseFloat(d.montant_total).toFixed(2)} DT</div>
+        <span class="devis-badge d-${d.statut}">${d.statut}</span>
+      </div>
+    `).join('');
   }
 
   async function loadKPIs() {
@@ -765,7 +856,9 @@
           </tr>`;
       }).join('');
 
-      const lowStock = data.filter(p => parseFloat(p.stock_litres) <= parseFloat(p.stock_minimum));
+      // Fusionner API + Prestige pour les alertes stock
+      const allProds = [...data, ...prestigeProducts];
+      const lowStock = allProds.filter(p => parseFloat(p.stock_litres) <= parseFloat(p.stock_minimum));
       if (lowStock.length) {
         document.getElementById('alertsSection').style.display = 'block';
         document.getElementById('alertCount').textContent = lowStock.length;
@@ -836,6 +929,16 @@
     });
   }
 
+  // Chargement global
+  async function loadAll() {
+    await Promise.all([
+      loadKPIs(),
+      loadCommandes(),
+      loadProduits(),
+      loadDevis()   // ← AJOUT IMPORTANT
+    ]);
+  }
+
   function logoutAdmin() {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
@@ -845,7 +948,7 @@
 
   loadAll();
   // Auto-refresh toutes les 30 secondes
-setInterval(loadAll, 30000);
+  setInterval(loadAll, 30000);
 </script>
 </body>
 </html>

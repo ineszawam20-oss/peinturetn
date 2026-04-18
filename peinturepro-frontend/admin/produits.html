@@ -7,7 +7,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
-    /* ===== THÈME MODERNE SOMBRE ===== */
     :root {
       --bg-dark: #0a0a1a;
       --bg-surface: #0f0f1f;
@@ -17,12 +16,14 @@
       --accent: #f59e0b;
       --accent-glow: #fbbf24;
       --success: #10b981;
+      --prestige-gold: #c9a84c;
+      --prestige-gold-light: #e4c36a;
       --text-white: #ffffff;
       --text-gray: #a1a1aa;
       --card-bg: rgba(255, 255, 255, 0.03);
       --border-glow: rgba(99, 102, 241, 0.3);
-      --gradient-hero: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
       --shadow-glow: 0 0 30px rgba(99, 102, 241, 0.3);
+      --shadow-gold: 0 0 30px rgba(201, 168, 76, 0.3);
       --radius-lg: 24px;
       --radius-md: 16px;
       --radius-sm: 12px;
@@ -30,11 +31,7 @@
       --font-body: 'Inter', system-ui, -apple-system, sans-serif;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       background: var(--bg-dark);
@@ -55,8 +52,7 @@
       display: flex;
       flex-direction: column;
       position: fixed;
-      top: 0;
-      left: 0;
+      top: 0; left: 0;
       z-index: 100;
     }
     .sidebar-brand {
@@ -64,68 +60,35 @@
       border-bottom: 1px solid rgba(99, 102, 241, 0.3);
       margin-bottom: 1rem;
     }
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-    .logo-image {
-      height: 40px;
-      width: auto;
-      filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.5));
-    }
+    .logo { display: flex; align-items: center; gap: 0.75rem; }
+    .logo-image { height: 40px; width: auto; filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.5)); }
     .logo-text {
       font-family: var(--font-display);
-      font-size: 1.2rem;
-      font-weight: 600;
+      font-size: 1.2rem; font-weight: 600;
       background: linear-gradient(135deg, var(--text-white), var(--primary-light));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
+      -webkit-background-clip: text; background-clip: text; color: transparent;
     }
     .logo-text span {
       background: linear-gradient(135deg, var(--accent), var(--accent-glow));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
+      -webkit-background-clip: text; background-clip: text; color: transparent;
     }
-    .sidebar-menu {
-      flex: 1;
-      padding: 0 1rem;
-    }
+    .sidebar-menu { flex: 1; padding: 0 1rem; }
     .menu-label {
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text-gray);
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text-gray);
       padding: 0.75rem 0.75rem 0.35rem;
     }
     .menu-item {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.65rem 0.75rem;
-      border-radius: var(--radius-sm);
-      text-decoration: none;
-      color: var(--text-gray);
-      font-size: 0.85rem;
-      font-weight: 500;
-      transition: all 0.2s;
-      margin-bottom: 0.15rem;
-      cursor: pointer;
-      border: none;
-      background: none;
-      width: 100%;
-      text-align: left;
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.65rem 0.75rem; border-radius: var(--radius-sm);
+      text-decoration: none; color: var(--text-gray);
+      font-size: 0.85rem; font-weight: 500;
+      transition: all 0.2s; margin-bottom: 0.15rem;
+      cursor: pointer; border: none; background: none;
+      width: 100%; text-align: left;
     }
-    .menu-item .material-icons {
-      font-size: 20px;
-    }
-    .menu-item:hover {
-      background: rgba(99, 102, 241, 0.2);
-      color: var(--primary-light);
-    }
+    .menu-item .material-icons { font-size: 20px; }
+    .menu-item:hover { background: rgba(99, 102, 241, 0.2); color: var(--primary-light); }
     .menu-item.active {
       background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(79, 70, 229, 0.4));
       color: var(--primary-light);
@@ -136,454 +99,252 @@
       border-top: 1px solid rgba(99, 102, 241, 0.3);
       margin-top: auto;
     }
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.65rem 0.75rem;
-      margin-bottom: 0.5rem;
-    }
+    .user-info { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 0.75rem; margin-bottom: 0.5rem; }
     .user-avatar {
-      width: 38px;
-      height: 38px;
+      width: 38px; height: 38px;
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: white;
+      border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; font-size: 0.9rem; font-weight: 600; color: white;
     }
-    .user-name {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-white);
-    }
-    .user-role {
-      font-size: 0.7rem;
-      color: var(--text-gray);
-    }
+    .user-name { font-size: 0.85rem; font-weight: 600; color: var(--text-white); }
+    .user-role { font-size: 0.7rem; color: var(--text-gray); }
 
     /* ===== MAIN ===== */
-    .main {
-      margin-left: 260px;
-      flex: 1;
-      min-height: 100vh;
-      background: var(--bg-dark);
-    }
+    .main { margin-left: 260px; flex: 1; min-height: 100vh; background: var(--bg-dark); }
     .topbar {
-      background: rgba(15, 15, 31, 0.8);
-      backdrop-filter: blur(12px);
+      background: rgba(15, 15, 31, 0.8); backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(99, 102, 241, 0.3);
-      padding: 1rem 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 90;
+      padding: 1rem 2rem; display: flex; align-items: center;
+      justify-content: space-between; position: sticky; top: 0; z-index: 90;
     }
     .topbar-title {
-      font-family: var(--font-display);
-      font-size: 1.3rem;
+      font-family: var(--font-display); font-size: 1.3rem;
       background: linear-gradient(135deg, var(--text-white), var(--primary-light));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      display: flex; align-items: center; gap: 0.5rem;
     }
-    .topbar-right {
-      font-size: 0.8rem;
-      color: var(--text-gray);
-    }
-    .content {
-      padding: 2rem;
-    }
+    .topbar-right { font-size: 0.8rem; color: var(--text-gray); }
+    .content { padding: 2rem; }
 
     /* ===== TOOLBAR ===== */
     .toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1.5rem;
-      gap: 1rem;
-      flex-wrap: wrap;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap;
     }
-    .toolbar-left {
-      display: flex;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-    }
+    .toolbar-left { display: flex; gap: 0.75rem; flex-wrap: wrap; }
     .search-box {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      display: flex; align-items: center; gap: 0.5rem;
       background: rgba(255, 255, 255, 0.05);
       border: 1.5px solid rgba(99, 102, 241, 0.3);
-      border-radius: var(--radius-sm);
-      padding: 0.5rem 1rem;
+      border-radius: var(--radius-sm); padding: 0.5rem 1rem;
     }
-    .search-box .material-icons {
-      font-size: 18px;
-      color: var(--text-gray);
-    }
+    .search-box .material-icons { font-size: 18px; color: var(--text-gray); }
     .search-box input {
-      background: transparent;
-      border: none;
-      outline: none;
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      color: var(--text-white);
-      width: 220px;
+      background: transparent; border: none; outline: none;
+      font-family: var(--font-body); font-size: 0.85rem; color: var(--text-white); width: 220px;
     }
-    .search-box input::placeholder {
-      color: var(--text-gray);
-    }
+    .search-box input::placeholder { color: var(--text-gray); }
     .filter-select {
       background: rgba(255, 255, 255, 0.05);
       border: 1.5px solid rgba(99, 102, 241, 0.3);
-      border-radius: var(--radius-sm);
-      padding: 0.5rem 0.9rem;
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      color: var(--text-white);
-      cursor: pointer;
-      outline: none;
+      border-radius: var(--radius-sm); padding: 0.5rem 0.9rem;
+      font-family: var(--font-body); font-size: 0.85rem;
+      color: var(--text-white); cursor: pointer; outline: none;
     }
-    .filter-select option {
-      background: var(--bg-surface);
-    }
+    .filter-select option { background: var(--bg-surface); }
     .btn-add {
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      border: none;
-      border-radius: var(--radius-sm);
-      padding: 0.6rem 1.2rem;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: white;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      transition: all 0.3s ease;
+      border: none; border-radius: var(--radius-sm);
+      padding: 0.6rem 1.2rem; font-size: 0.85rem; font-weight: 600;
+      color: white; cursor: pointer; display: flex; align-items: center;
+      gap: 0.4rem; transition: all 0.3s ease;
     }
-    .btn-add .material-icons {
-      font-size: 18px;
-    }
-    .btn-add:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
-    }
+    .btn-add .material-icons { font-size: 18px; }
+    .btn-add:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4); }
 
-    /* ===== GRILLE PRODUITS ===== */
+    /* ===== GRILLE PRODUITS — STYLE CATALOGUE ===== */
     .products-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.8rem;
     }
+
+    /* Carte produit style catalogue */
     .product-card {
       background: var(--card-bg);
       backdrop-filter: blur(10px);
-      border: 1px solid rgba(99, 102, 241, 0.3);
+      border: 1px solid rgba(99, 102, 241, 0.2);
       border-radius: var(--radius-md);
       overflow: hidden;
       transition: all 0.3s ease;
     }
     .product-card:hover {
-      transform: translateY(-4px);
+      transform: translateY(-6px);
       border-color: var(--primary);
       box-shadow: var(--shadow-glow);
     }
-    .color-bar {
-      height: 110px;
+    .product-card.prestige { border-color: rgba(201, 168, 76, 0.25); }
+    .product-card.prestige:hover { border-color: var(--prestige-gold); box-shadow: var(--shadow-gold); }
+
+    /* Image/couleur en haut de la carte */
+    .color-preview {
+      height: 160px;
       position: relative;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      padding: 0.75rem;
+      background-size: cover; background-position: center;
+    }
+    .color-preview-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.55) 100%);
     }
     .color-hex {
-      position: absolute;
-      bottom: 0.6rem;
-      left: 0.75rem;
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(4px);
-      color: white;
-      font-size: 0.7rem;
-      font-family: monospace;
-      padding: 0.2rem 0.5rem;
-      border-radius: 6px;
+      position: relative; z-index: 1;
+      background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+      color: white; font-size: 0.7rem; font-family: monospace;
+      padding: 0.2rem 0.5rem; border-radius: 6px;
     }
     .stock-badge {
-      position: absolute;
-      top: 0.6rem;
-      right: 0.75rem;
-      font-size: 0.7rem;
-      font-weight: 600;
-      padding: 0.2rem 0.6rem;
-      border-radius: 30px;
-      backdrop-filter: blur(4px);
+      position: relative; z-index: 1;
+      font-size: 0.7rem; font-weight: 600;
+      padding: 0.2rem 0.6rem; border-radius: 40px; backdrop-filter: blur(4px);
     }
-    .stock-ok {
-      background: rgba(16, 185, 129, 0.2);
-      color: #6ee7b7;
-      border: 1px solid rgba(16, 185, 129, 0.4);
+    .stock-ok { background: rgba(16,185,129,0.2); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.4); }
+    .stock-low { background: rgba(239,68,68,0.2); color: #fca5a5; border: 1px solid rgba(239,68,68,0.4); }
+
+    /* Badge marque prestige (haut gauche absolu) */
+    .brand-badge {
+      position: absolute; top: 0.6rem; left: 0.6rem; z-index: 2;
+      background: linear-gradient(135deg, #c9a84c, #e4c36a);
+      color: #0a0a1a; font-size: 0.6rem; font-weight: 700;
+      padding: 0.15rem 0.5rem; border-radius: 4px;
+      text-transform: uppercase; letter-spacing: 0.05em;
     }
-    .stock-low {
-      background: rgba(239, 68, 68, 0.2);
-      color: #fca5a5;
-      border: 1px solid rgba(239, 68, 68, 0.4);
-    }
-    .card-body {
-      padding: 1.2rem;
-    }
+
+    /* Corps de la carte */
+    .card-body { padding: 1.2rem; }
     .card-type {
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--primary-light);
-      margin-bottom: 0.4rem;
+      font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--primary-light); margin-bottom: 0.4rem;
     }
+    .card-type.prestige-type { color: var(--prestige-gold-light); }
     .card-name {
-      font-family: var(--font-display);
-      font-size: 1rem;
-      color: var(--text-white);
-      margin-bottom: 0.5rem;
+      font-family: var(--font-display); font-size: 1.05rem;
+      color: var(--text-white); margin-bottom: 0.5rem;
     }
-    .card-meta {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      margin-bottom: 0.8rem;
+    .card-description {
+      font-size: 0.78rem; color: var(--text-gray);
+      line-height: 1.5; margin-bottom: 0.75rem;
     }
+    .card-meta { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.8rem; }
     .meta-tag {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 6px;
-      font-size: 0.7rem;
-      color: var(--text-gray);
-      padding: 0.2rem 0.6rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.2rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; font-size: 0.7rem; color: var(--text-gray);
+      padding: 0.2rem 0.6rem; display: inline-flex; align-items: center; gap: 4px;
     }
-    .meta-tag .material-icons {
-      font-size: 14px;
-    }
+    .meta-tag .material-icons { font-size: 14px; }
     .card-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-top: 0.8rem;
-      border-top: 1px solid rgba(99, 102, 241, 0.3);
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 0.8rem; border-top: 1px solid rgba(99, 102, 241, 0.2);
     }
-    .card-price {
-      font-family: var(--font-display);
-      font-size: 1.1rem;
-      color: var(--accent);
-    }
-    .card-price small {
-      font-size: 0.7rem;
-      color: var(--text-gray);
-    }
-    .card-actions {
-      display: flex;
-      gap: 0.5rem;
-    }
+    .product-card.prestige .card-footer { border-top-color: rgba(201,168,76,0.2); }
+    .card-price { font-family: var(--font-display); font-size: 1.15rem; color: var(--accent); }
+    .card-price small { font-size: 0.7rem; color: var(--text-gray); }
+
+    .card-actions { display: flex; gap: 0.5rem; align-items: center; }
     .btn-icon {
-      width: 32px;
-      height: 32px;
+      width: 32px; height: 32px;
       border: 1.5px solid rgba(99, 102, 241, 0.5);
-      border-radius: 6px;
-      background: transparent;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      color: var(--text-gray);
+      border-radius: 6px; background: transparent;
+      display: inline-flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.2s; color: var(--text-gray);
     }
-    .btn-icon .material-icons {
-      font-size: 16px;
-    }
-    .btn-icon:hover {
-      border-color: var(--primary);
-      color: var(--primary-light);
-      background: rgba(99, 102, 241, 0.1);
-    }
-    .btn-icon.danger:hover {
-      border-color: #ef4444;
-      color: #fca5a5;
-      background: rgba(239, 68, 68, 0.1);
-    }
+    .btn-icon .material-icons { font-size: 16px; }
+    .btn-icon:hover { border-color: var(--primary); color: var(--primary-light); background: rgba(99, 102, 241, 0.1); }
+    .btn-icon.danger:hover { border-color: #ef4444; color: #fca5a5; background: rgba(239, 68, 68, 0.1); }
+
+    .readonly-label { font-size: 0.7rem; color: var(--text-gray); }
+
     .empty-state {
-      text-align: center;
-      padding: 3rem;
-      color: var(--text-gray);
-      grid-column: 1/-1;
+      text-align: center; padding: 3rem; color: var(--text-gray); grid-column: 1/-1;
     }
-    .empty-state .material-icons {
-      font-size: 48px;
-      margin-bottom: 0.5rem;
-      opacity: 0.5;
-    }
+    .empty-state .material-icons { font-size: 48px; margin-bottom: 0.5rem; opacity: 0.5; }
 
     /* ===== MODAL ===== */
     .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(5px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 200;
+      position: fixed; inset: 0;
+      background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
+      display: none; align-items: center; justify-content: center; z-index: 200;
     }
-    .modal-overlay.open {
-      display: flex;
-    }
+    .modal-overlay.open { display: flex; }
     .modal {
       background: var(--bg-surface);
       border: 1px solid rgba(99, 102, 241, 0.3);
-      border-radius: var(--radius-lg);
-      padding: 2rem;
-      width: 100%;
-      max-width: 520px;
+      border-radius: var(--radius-lg); padding: 2rem;
+      width: 100%; max-width: 520px;
       box-shadow: var(--shadow-glow);
       animation: slideUp 0.3s ease;
-      max-height: 90vh;
-      overflow-y: auto;
+      max-height: 90vh; overflow-y: auto;
     }
     @keyframes slideUp {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1.5rem;
-    }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
     .modal-title {
-      font-family: var(--font-display);
-      font-size: 1.3rem;
+      font-family: var(--font-display); font-size: 1.3rem;
       background: linear-gradient(135deg, var(--text-white), var(--primary-light));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
+      -webkit-background-clip: text; background-clip: text; color: transparent;
     }
-    .modal-close {
-      background: none;
-      border: none;
-      color: var(--text-gray);
-      cursor: pointer;
-    }
-    .modal-close .material-icons {
-      font-size: 22px;
-    }
-    .modal-close:hover {
-      color: var(--primary-light);
-    }
-    .form-group {
-      margin-bottom: 1rem;
-    }
-    .form-group label {
-      display: block;
-      font-size: 0.75rem;
-      margin-bottom: 0.3rem;
-      color: var(--text-gray);
-    }
+    .modal-close { background: none; border: none; color: var(--text-gray); cursor: pointer; }
+    .modal-close .material-icons { font-size: 22px; }
+    .modal-close:hover { color: var(--primary-light); }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; font-size: 0.75rem; margin-bottom: 0.3rem; color: var(--text-gray); }
     .form-control {
-      width: 100%;
-      background: rgba(255, 255, 255, 0.05);
+      width: 100%; background: rgba(255, 255, 255, 0.05);
       border: 1.5px solid rgba(99, 102, 241, 0.3);
-      border-radius: var(--radius-sm);
-      padding: 0.7rem;
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      color: var(--text-white);
+      border-radius: var(--radius-sm); padding: 0.7rem;
+      font-family: var(--font-body); font-size: 0.85rem; color: var(--text-white);
     }
-    .form-control:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
-    select.form-control {
-      cursor: pointer;
-    }
-    .row-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.8rem;
-    }
-    .color-preview {
-      width: 100%;
-      height: 45px;
-      border-radius: var(--radius-sm);
+    .form-control:focus { outline: none; border-color: var(--primary); }
+    select.form-control { cursor: pointer; }
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+    .color-preview-modal {
+      width: 100%; height: 45px; border-radius: var(--radius-sm);
       border: 1.5px solid rgba(99, 102, 241, 0.3);
-      margin-top: 0.5rem;
-      transition: background 0.3s;
+      margin-top: 0.5rem; transition: background 0.3s;
     }
     .alert {
       background: rgba(239, 68, 68, 0.15);
       border-left: 3px solid #ef4444;
       border-radius: var(--radius-sm);
-      padding: 0.6rem 1rem;
-      font-size: 0.8rem;
-      color: #fca5a5;
-      display: none;
-      margin-bottom: 1rem;
+      padding: 0.6rem 1rem; font-size: 0.8rem; color: #fca5a5;
+      display: none; margin-bottom: 1rem;
     }
-    .alert.show {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .modal-footer {
-      display: flex;
-      gap: 0.8rem;
-      justify-content: flex-end;
-      margin-top: 1.5rem;
-    }
+    .alert.show { display: flex; align-items: center; gap: 0.5rem; }
+    .modal-footer { display: flex; gap: 0.8rem; justify-content: flex-end; margin-top: 1.5rem; }
     .btn-cancel {
-      background: transparent;
-      border: 1.5px solid rgba(99, 102, 241, 0.5);
-      border-radius: var(--radius-sm);
-      padding: 0.6rem 1.2rem;
-      font-size: 0.8rem;
-      color: var(--text-gray);
-      cursor: pointer;
+      background: transparent; border: 1.5px solid rgba(99, 102, 241, 0.5);
+      border-radius: var(--radius-sm); padding: 0.6rem 1.2rem;
+      font-size: 0.8rem; color: var(--text-gray); cursor: pointer;
     }
-    .btn-cancel:hover {
-      border-color: var(--primary);
-      color: var(--primary-light);
-    }
+    .btn-cancel:hover { border-color: var(--primary); color: var(--primary-light); }
     .btn-save {
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      border: none;
-      border-radius: var(--radius-sm);
-      padding: 0.6rem 1.5rem;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: white;
-      cursor: pointer;
+      border: none; border-radius: var(--radius-sm);
+      padding: 0.6rem 1.5rem; font-size: 0.8rem; font-weight: 600;
+      color: white; cursor: pointer;
     }
-    .btn-save:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
-    }
+    .btn-save:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4); }
     .spinner {
-      display: inline-block;
-      width: 14px;
-      height: 14px;
-      border: 2px solid rgba(255,255,255,0.3);
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin 0.6s linear infinite;
-      margin-right: 0.4rem;
+      display: inline-block; width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.3); border-top-color: white;
+      border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 0.4rem;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Responsive */
     @media (max-width: 768px) {
       .sidebar { display: none; }
       .main { margin-left: 0; }
@@ -600,7 +361,6 @@
 <aside class="sidebar">
   <div class="sidebar-brand">
     <img src="../images/logo.png" alt="PeinturePro TN" class="logo-image">
-
   </div>
   <nav class="sidebar-menu">
     <div class="menu-label">Principal</div>
@@ -612,13 +372,6 @@
     </a>
     <a class="menu-item" href="/admin/utilisateurs.html">
       <span class="material-icons">people</span> Utilisateurs
-    </a>
-    <div class="menu-label">Production</div>
-    <a class="menu-item" href="/admin/matieres-premieres.html">
-      <span class="material-icons">science</span> Matières premières
-    </a>
-    <a class="menu-item" href="/admin/lots-production.html">
-      <span class="material-icons">factory</span> Lots production
     </a>
     <div class="menu-label">Analytique</div>
     <a class="menu-item" href="/admin/analytics.html">
@@ -721,8 +474,16 @@
                  style="width: 42px; height: 38px; padding: 2px; border: 1.5px solid rgba(99,102,241,0.3); border-radius: 6px; cursor: pointer; background: transparent;">
           <input type="text" class="form-control" id="fCouleur" placeholder="#FFFFFF" oninput="syncColorPicker()">
         </div>
-        <div class="color-preview" id="colorPreview" style="background: #FFFFFF"></div>
+        <div class="color-preview-modal" id="colorPreview" style="background: #FFFFFF"></div>
       </div>
+    </div>
+    <div class="form-group">
+      <label>URL de l'image (optionnel)</label>
+      <input type="text" class="form-control" id="fImage" placeholder="https://exemple.com/image.jpg">
+    </div>
+    <div class="form-group">
+      <label>Description (optionnel)</label>
+      <textarea class="form-control" id="fDescription" rows="2" placeholder="Courte description du produit..." style="resize: vertical;"></textarea>
     </div>
     <div class="row-2">
       <div class="form-group">
@@ -762,17 +523,36 @@
     document.getElementById('userAvatar').textContent = user.nom.charAt(0).toUpperCase();
   }
 
+  // ========== PRODUITS PRESTIGE PEINTURE (statiques) ==========
+  const prestigeProducts = [
+    { id: 'pp-001', nom: 'Prestige Velours Intérieur', type: 'interieure', marque: 'prestige', finition: 'Velours', couleur_code: '#F5F0E8', rendement_m2_L: 12, stock_litres: 850, stock_minimum: 100, prix_litre: 18.500, image: 'https://prestigepeinture.com/blog/wp-content/uploads/2021/03/prestige-catalog-page53-600x600.jpg', description: 'Peinture décorative veloutée à l\'eau, opacité parfaite, lavabilité renforcée.' },
+    { id: 'pp-002', nom: 'Prestige Satiné Luxe', type: 'interieure', marque: 'prestige', finition: 'Satiné', couleur_code: '#EAE4D8', rendement_m2_L: 11, stock_litres: 620, stock_minimum: 80, prix_litre: 21.800, image: 'https://prestigepeinture.com/blog/wp-content/uploads/2021/03/prestige-catalog-page73-600x600.jpg', description: 'Finition satinée brillante, haute résistance aux taches.' },
+    { id: 'pp-003', nom: 'Prestige Effet Béton', type: 'interieure', marque: 'prestige', finition: 'Effet béton', couleur_code: '#B8B0A5', rendement_m2_L: 8, stock_litres: 390, stock_minimum: 50, prix_litre: 27.500, image: 'https://prestigepeinture.com/blog/wp-content/uploads/2021/03/prestige-catalog-page135-600x600.jpg', description: 'Revêtement décoratif effet béton ciré, rendu authentique industriel.' },
+    { id: 'pp-004', nom: 'Prestige Stuc Minéral', type: 'interieure', marque: 'prestige', finition: 'Stuc', couleur_code: '#D4C5A9', rendement_m2_L: 6, stock_litres: 280, stock_minimum: 40, prix_litre: 34.200, image: 'https://prestigepeinture.com/blog/wp-content/uploads/2021/03/prestige-catalog-page93-600x600.jpg', description: 'Enduit stuc à base de minéraux naturels, finition à l\'ancienne.' },
+    { id: 'pp-005', nom: 'Prestige Effet Soie', type: 'interieure', marque: 'prestige', finition: 'Effet soie', couleur_code: '#F2E8D5', rendement_m2_L: 10, stock_litres: 450, stock_minimum: 60, prix_litre: 29.900, image: 'https://prestigepeinture.com/blog/wp-content/uploads/2021/03/prestige-catalog-page19-600x600.jpg', description: 'Peinture décorative nacré avec reflets soyeux changeants selon la lumière.' },
+    { id: 'pp-006', nom: 'Prestige Façade Elite', type: 'exterieure', marque: 'prestige', finition: 'Mat', couleur_code: '#E8E0D0', rendement_m2_L: 10, stock_litres: 1200, stock_minimum: 150, prix_litre: 22.500, image: 'https://prestigepeinture.com/blog/wp-content/uploads/2021/03/prestige-catalog-page117-600x600.jpg', description: 'Peinture façade haute protection UV. Anti-algues, anti-champignons. Garantie 10 ans.' },
+    { id: 'pp-007', nom: 'Prestige Silicone Façade', type: 'exterieure', marque: 'prestige', finition: 'Silicone mat', couleur_code: '#D6CFC3', rendement_m2_L: 9, stock_litres: 750, stock_minimum: 100, prix_litre: 31.000, image: 'https://prestigepeinture.com/blog/wp-content/uploads/2017/12/cat01620.jpg', description: 'Peinture façade à base silicone, hydrofuge naturelle et respirante.' },
+    { id: 'pp-008', nom: 'Prestige Décor Extérieur', type: 'exterieure', marque: 'prestige', finition: 'Grainé', couleur_code: '#C8B9A2', rendement_m2_L: 7, stock_litres: 580, stock_minimum: 80, prix_litre: 26.700, image: 'https://prestigepeinture.com/blog/wp-content/uploads/2017/12/cat016100.jpg', description: 'Revêtement extérieur grainé haute épaisseur, couvre les fissures superficielles.' },
+    { id: 'pp-009', nom: 'Prestige Hydrofuge Toiture', type: 'impermeabilisante', marque: 'prestige', finition: 'Élastomérique', couleur_code: '#8B7355', rendement_m2_L: 5, stock_litres: 920, stock_minimum: 100, prix_litre: 38.900, image: 'https://prestigepeinture.com/blog/wp-content/uploads/2017/12/cat016121.jpg', description: 'Membrane imperméabilisante élastomérique pour toitures terrasses et tuiles.' },
+    { id: 'pp-010', nom: 'Prestige Anti-Humidité', type: 'impermeabilisante', marque: 'prestige', finition: 'Mat', couleur_code: '#A0C4FF', rendement_m2_L: 8, stock_litres: 410, stock_minimum: 50, prix_litre: 33.500, image: 'https://prestigepeinture.com/blog/wp-content/uploads/2017/12/cat016106.jpg', description: 'Traitement anti-humidité et anti-remontées capillaires pour murs enterrés.' },
+    { id: 'pp-011', nom: 'Prestige Piscine & Terrasse', type: 'impermeabilisante', marque: 'prestige', finition: 'Brillant', couleur_code: '#00B4D8', rendement_m2_L: 6, stock_litres: 310, stock_minimum: 40, prix_litre: 42.000, image: 'https://prestigepeinture.com/blog/wp-content/uploads/2021/03/prestige-catalog-page41-600x600.jpg', description: 'Résine imperméabilisante colorée pour bassins, piscines et terrasses.' },
+    { id: 'pp-012', nom: 'Prestige Multi-Couleurs', type: 'exterieure', marque: 'prestige', finition: 'Multi-textures', couleur_code: '#D4956A', rendement_m2_L: 4, stock_litres: 240, stock_minimum: 30, prix_litre: 48.500, image: 'https://prestigepeinture.com/blog/wp-content/uploads/2017/12/cat016101.jpg', description: 'Peinture décorative multi-couleurs à effet granité naturel.' }
+  ];
+
   let allProducts = [];
+  let apiProductsOnly = [];
   let editingId = null;
 
   async function loadProducts() {
     try {
       const res = await api.get('/produits');
-      allProducts = await res.json();
+      apiProductsOnly = await res.json();
+      allProducts = [...apiProductsOnly, ...prestigeProducts];
       document.getElementById('prodCount').textContent = `${allProducts.length} produit(s)`;
       renderProducts(allProducts);
     } catch (err) {
-      renderProducts([]);
+      allProducts = [...prestigeProducts];
+      renderProducts(allProducts);
     }
   }
 
@@ -783,19 +563,32 @@
       return;
     }
     const typeLabel = { interieure: 'Intérieure', exterieure: 'Extérieure', impermeabilisante: 'Imperméabilisante' };
+
     grid.innerHTML = products.map(p => {
       const stockOk = parseFloat(p.stock_litres) > parseFloat(p.stock_minimum);
+      const isPrestige = p.marque === 'prestige';
+      const hasImage = p.image && p.image.trim() !== '';
+
+      const bgStyle = hasImage
+        ? `background-image: url('${p.image}'); background-color: ${p.couleur_code || '#ccc'};`
+        : `background: ${p.couleur_code || '#ccc'};`;
+
       return `
-        <div class="product-card">
-          <div class="color-bar" style="background: ${p.couleur_code || '#CCC'}">
+        <div class="product-card ${isPrestige ? 'prestige' : ''}">
+          <div class="color-preview" style="${bgStyle}">
+            <div class="color-preview-overlay"></div>
+            ${isPrestige ? '<span class="brand-badge">⭐ Prestige</span>' : ''}
             <span class="color-hex">${p.couleur_code || 'N/A'}</span>
             <span class="stock-badge ${stockOk ? 'stock-ok' : 'stock-low'}">
-              ${stockOk ? '✓ OK' : '⚠ Bas'}
+              ${stockOk ? '✓ En stock' : '⚠ Stock bas'}
             </span>
           </div>
           <div class="card-body">
-            <div class="card-type">${typeLabel[p.type] || p.type}</div>
+            <div class="card-type ${isPrestige ? 'prestige-type' : ''}">
+              ${isPrestige ? '✨ ' : ''}${typeLabel[p.type] || p.type}${isPrestige ? ' — Prestige Peinture' : ''}
+            </div>
             <div class="card-name">${escapeHtml(p.nom)}</div>
+            ${p.description ? `<div class="card-description">${escapeHtml(p.description)}</div>` : ''}
             <div class="card-meta">
               <span class="meta-tag"><span class="material-icons">palette</span> ${p.finition || 'N/A'}</span>
               <span class="meta-tag"><span class="material-icons">straighten</span> ${p.rendement_m2_L} m²/L</span>
@@ -804,12 +597,14 @@
             <div class="card-footer">
               <div class="card-price">${parseFloat(p.prix_litre).toFixed(3)}<small> DT/L</small></div>
               <div class="card-actions">
-                <button class="btn-icon" onclick="editProduct(${p.id})" title="Modifier">
-                  <span class="material-icons">edit</span>
-                </button>
-                <button class="btn-icon danger" onclick="deleteProduct(${p.id})" title="Supprimer">
-                  <span class="material-icons">delete</span>
-                </button>
+                ${!isPrestige ? `
+                  <button class="btn-icon" onclick="editProduct(${p.id})" title="Modifier">
+                    <span class="material-icons">edit</span>
+                  </button>
+                  <button class="btn-icon danger" onclick="deleteProduct(${p.id})" title="Supprimer">
+                    <span class="material-icons">delete</span>
+                  </button>
+                ` : `<span class="readonly-label">Lecture seule</span>`}
               </div>
             </div>
           </div>
@@ -827,6 +622,10 @@
   }
 
   function openModal(id = null) {
+    if (id && typeof id === 'string' && id.startsWith('pp-')) {
+      alert('Les produits Prestige Peinture ne sont pas modifiables dans cette interface.');
+      return;
+    }
     editingId = id;
     document.getElementById('modalAlert').classList.remove('show');
     if (!id) {
@@ -836,32 +635,34 @@
       document.getElementById('fFinition').value = '';
       document.getElementById('fCouleur').value = '#FFFFFF';
       document.getElementById('fCouleurPicker').value = '#FFFFFF';
+      document.getElementById('fImage').value = '';
+      document.getElementById('fDescription').value = '';
       document.getElementById('fPrix').value = '';
       document.getElementById('fRendement').value = '10';
       document.getElementById('fStock').value = '0';
       document.getElementById('fStockMin').value = '50';
       document.getElementById('colorPreview').style.background = '#FFFFFF';
+    } else {
+      const p = apiProductsOnly.find(x => x.id === id);
+      if (!p) return;
+      document.getElementById('modalTitle').textContent = 'Modifier le produit';
+      document.getElementById('fNom').value = p.nom;
+      document.getElementById('fType').value = p.type;
+      document.getElementById('fFinition').value = p.finition || '';
+      document.getElementById('fCouleur').value = p.couleur_code || '';
+      document.getElementById('fCouleurPicker').value = p.couleur_code || '#FFFFFF';
+      document.getElementById('fImage').value = p.image || '';
+      document.getElementById('fDescription').value = p.description || '';
+      document.getElementById('fPrix').value = p.prix_litre;
+      document.getElementById('fRendement').value = p.rendement_m2_L;
+      document.getElementById('fStock').value = p.stock_litres;
+      document.getElementById('fStockMin').value = p.stock_minimum;
+      document.getElementById('colorPreview').style.background = p.couleur_code || '#CCC';
     }
     document.getElementById('modalOverlay').classList.add('open');
   }
 
-  function editProduct(id) {
-    const p = allProducts.find(x => x.id === id);
-    if (!p) return;
-    editingId = id;
-    document.getElementById('modalTitle').textContent = 'Modifier le produit';
-    document.getElementById('fNom').value = p.nom;
-    document.getElementById('fType').value = p.type;
-    document.getElementById('fFinition').value = p.finition || '';
-    document.getElementById('fCouleur').value = p.couleur_code || '';
-    document.getElementById('fCouleurPicker').value = p.couleur_code || '#FFFFFF';
-    document.getElementById('fPrix').value = p.prix_litre;
-    document.getElementById('fRendement').value = p.rendement_m2_L;
-    document.getElementById('fStock').value = p.stock_litres;
-    document.getElementById('fStockMin').value = p.stock_minimum;
-    document.getElementById('colorPreview').style.background = p.couleur_code || '#CCC';
-    document.getElementById('modalOverlay').classList.add('open');
-  }
+  function editProduct(id) { openModal(id); }
 
   function updateColorPreview() {
     const val = document.getElementById('fCouleurPicker').value;
@@ -882,6 +683,8 @@
     const type = document.getElementById('fType').value;
     const finition = document.getElementById('fFinition').value;
     const couleur = document.getElementById('fCouleur').value.trim();
+    const image = document.getElementById('fImage').value.trim();
+    const description = document.getElementById('fDescription').value.trim();
     const prix = parseFloat(document.getElementById('fPrix').value);
     const rendement = parseFloat(document.getElementById('fRendement').value) || 10;
     const stock = parseFloat(document.getElementById('fStock').value) || 0;
@@ -898,6 +701,7 @@
 
     const body = {
       nom, type, finition, couleur_code: couleur,
+      image, description,
       prix_litre: prix, rendement_m2_L: rendement,
       stock_litres: stock, stock_minimum: stockMin
     };
@@ -943,12 +747,7 @@
   }
   function escapeHtml(str) {
     if (!str) return '';
-    return str.replace(/[&<>]/g, function(m) {
-      if (m === '&') return '&amp;';
-      if (m === '<') return '&lt;';
-      if (m === '>') return '&gt;';
-      return m;
-    });
+    return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
   }
   function logout() {
     localStorage.removeItem('token');

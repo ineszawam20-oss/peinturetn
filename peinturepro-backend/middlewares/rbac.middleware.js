@@ -1,15 +1,20 @@
 function requireRole(...roles) {
+  const flatRoles = roles.flat();
   return (req, res, next) => {
+    console.log('=== DEBUG RBAC ===');
+    console.log('req.user :', req.user);
+    console.log('rôles requis :', flatRoles);
     if (!req.user) {
+      console.log('Pas de req.user');
       return res.status(401).json({ message: 'Non authentifié.' });
     }
-
-    if (!roles.includes(req.user.role)) {
+    console.log('req.user.role :', req.user.role);
+    if (!flatRoles.includes(req.user.role)) {
+      console.log(`Rôle ${req.user.role} non autorisé`);
       return res.status(403).json({
-        message: `Accès interdit. Rôle requis : ${roles.join(' ou ')}.`
+        message: `Accès interdit. Rôle requis : ${flatRoles.join(' ou ')}.`
       });
     }
-
     next();
   };
 }

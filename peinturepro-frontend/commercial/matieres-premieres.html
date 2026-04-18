@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PeinturePro TN — Lots de Production</title>
+  <title>PeinturePro TN — Matières Premières</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
@@ -199,59 +199,44 @@
       font-size: 0.8rem;
       color: var(--text-gray);
     }
-
     .content {
       padding: 2rem;
     }
 
-    /* ===== STATS ===== */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-    .stat-card {
-      background: var(--card-bg);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(99, 102, 241, 0.3);
+    /* ===== ALERTES ===== */
+    .alerts-bar {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.4);
       border-radius: var(--radius-md);
-      padding: 1.25rem;
-      display: flex;
-      align-items: center;
-      gap: 0.85rem;
-      transition: all 0.3s ease;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      display: none;
     }
-    .stat-card:hover {
-      transform: translateY(-3px);
-      border-color: var(--primary);
-      box-shadow: var(--shadow-glow);
+    .alerts-bar.show {
+      display: block;
     }
-    .stat-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    .stat-icon .material-icons {
-      font-size: 28px;
-    }
-    .stat-icon.orange { background: rgba(245, 158, 11, 0.15); color: var(--accent); }
-    .stat-icon.green  { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; }
-    .stat-icon.red    { background: rgba(239, 68, 68, 0.15); color: #fca5a5; }
-    .stat-value {
-      font-family: var(--font-display);
-      font-size: 1.6rem;
+    .alerts-bar-title {
+      font-weight: 600;
       color: var(--accent);
+      margin-bottom: 0.5rem;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
     }
-    .stat-label {
-      font-size: 0.7rem;
-      color: var(--text-gray);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
+    .alert-pills {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .alert-pill {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: 30px;
+      padding: 0.25rem 0.85rem;
+      font-size: 0.75rem;
+      color: var(--accent);
+      font-weight: 500;
     }
 
     /* ===== TOOLBAR ===== */
@@ -261,11 +246,6 @@
       justify-content: space-between;
       margin-bottom: 1.5rem;
       gap: 1rem;
-      flex-wrap: wrap;
-    }
-    .toolbar-left {
-      display: flex;
-      gap: 0.75rem;
       flex-wrap: wrap;
     }
     .search-box {
@@ -293,20 +273,6 @@
     .search-box input::placeholder {
       color: var(--text-gray);
     }
-    .filter-select {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1.5px solid rgba(99, 102, 241, 0.3);
-      border-radius: var(--radius-sm);
-      padding: 0.5rem 0.9rem;
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      color: var(--text-white);
-      cursor: pointer;
-      outline: none;
-    }
-    .filter-select option {
-      background: var(--bg-surface);
-    }
     .btn-add {
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       border: none;
@@ -329,80 +295,127 @@
       box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
     }
 
-    /* ===== TABLE ===== */
-    .table-card {
+    /* ===== GRID MATIÈRES ===== */
+    .mp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.25rem;
+    }
+    .mp-card {
       background: var(--card-bg);
       backdrop-filter: blur(10px);
       border: 1px solid rgba(99, 102, 241, 0.3);
       border-radius: var(--radius-md);
-      overflow: hidden;
+      padding: 1.4rem;
       transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
-    .table-card:hover {
+    .mp-card:hover {
+      transform: translateY(-4px);
       border-color: var(--primary);
       box-shadow: var(--shadow-glow);
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
+    .mp-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--primary);
     }
-    thead {
-      background: rgba(0, 0, 0, 0.2);
+    .mp-card.alert-card::before {
+      background: var(--accent);
     }
-    th {
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-gray);
-      padding: 0.85rem 1.25rem;
-      text-align: left;
-      border-bottom: 1px solid rgba(99, 102, 241, 0.3);
-    }
-    td {
-      padding: 0.9rem 1.25rem;
-      font-size: 0.85rem;
-      color: var(--text-white);
-      border-bottom: 1px solid rgba(99, 102, 241, 0.15);
-      vertical-align: middle;
-    }
-    tr:last-child td {
-      border-bottom: none;
-    }
-    tr:hover td {
-      background: rgba(99, 102, 241, 0.05);
-    }
-
-    .lot-num {
-      font-family: monospace;
-      font-size: 0.8rem;
-      background: rgba(99, 102, 241, 0.2);
-      color: var(--primary-light);
-      padding: 0.2rem 0.6rem;
-      border-radius: 6px;
-      font-weight: 600;
-    }
-    .produit-cell {
+    .mp-header {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
+      justify-content: space-between;
+      margin-bottom: 1rem;
     }
-    .prod-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      flex-shrink: 0;
+    .mp-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(99, 102, 241, 0.15);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .exp-badge {
+    .mp-icon .material-icons {
+      font-size: 28px;
+      color: var(--primary-light);
+    }
+    .mp-alert-badge {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent);
       font-size: 0.7rem;
       font-weight: 600;
       padding: 0.2rem 0.6rem;
       border-radius: 30px;
+      border: 1px solid rgba(245, 158, 11, 0.4);
     }
-    .exp-ok      { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; }
-    .exp-soon    { background: rgba(245, 158, 11, 0.15); color: var(--accent); }
-    .exp-expired { background: rgba(239, 68, 68, 0.15); color: #fca5a5; }
+    .mp-name {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      color: var(--text-white);
+      margin-bottom: 0.3rem;
+    }
+    .mp-unite {
+      font-size: 0.75rem;
+      color: var(--text-gray);
+      margin-bottom: 1rem;
+    }
+    .stock-bar-wrap {
+      margin-bottom: 1rem;
+    }
+    .stock-bar-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      margin-bottom: 0.35rem;
+    }
+    .stock-bar-label {
+      color: var(--text-gray);
+    }
+    .stock-bar-value {
+      font-weight: 600;
+      color: var(--text-white);
+    }
+    .stock-bar-bg {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .stock-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+    .stock-bar-fill.ok    { background: var(--success); }
+    .stock-bar-fill.low   { background: var(--accent); }
+    .stock-bar-fill.empty { background: #ef4444; }
 
+    .mp-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 0.8rem;
+      border-top: 1px solid rgba(99, 102, 241, 0.3);
+    }
+    .mp-min {
+      font-size: 0.7rem;
+      color: var(--text-gray);
+    }
+    .mp-min strong {
+      color: var(--text-white);
+    }
+    .mp-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
     .btn-icon {
       width: 32px;
       height: 32px;
@@ -420,14 +433,25 @@
       font-size: 16px;
     }
     .btn-icon:hover {
+      border-color: var(--primary);
+      color: var(--primary-light);
+      background: rgba(99, 102, 241, 0.1);
+    }
+    .btn-icon.danger:hover {
       border-color: #ef4444;
       color: #fca5a5;
       background: rgba(239, 68, 68, 0.1);
     }
-    .empty-row td {
+    .empty-state {
       text-align: center;
-      color: var(--text-gray);
       padding: 3rem;
+      color: var(--text-gray);
+      grid-column: 1/-1;
+    }
+    .empty-state .material-icons {
+      font-size: 48px;
+      margin-bottom: 0.5rem;
+      opacity: 0.5;
     }
 
     /* ===== MODAL ===== */
@@ -483,17 +507,6 @@
     }
     .modal-close:hover {
       color: var(--primary-light);
-    }
-    .num-preview {
-      background: rgba(99, 102, 241, 0.1);
-      border: 1px solid rgba(99, 102, 241, 0.3);
-      border-radius: var(--radius-sm);
-      padding: 0.65rem 1rem;
-      font-size: 0.85rem;
-      color: var(--primary-light);
-      font-family: monospace;
-      font-weight: 600;
-      margin-bottom: 1rem;
     }
     .form-group {
       margin-bottom: 1rem;
@@ -590,9 +603,7 @@
     @media (max-width: 768px) {
       .sidebar { display: none; }
       .main { margin-left: 0; }
-      .stats-row { grid-template-columns: 1fr; }
       .toolbar { flex-direction: column; align-items: stretch; }
-      .toolbar-left { flex-direction: column; }
       .search-box input { width: 100%; }
       .topbar { padding: 1rem; }
       .content { padding: 1rem; }
@@ -610,26 +621,19 @@
   </div>
   </div>
   <nav class="sidebar-menu">
-    <div class="menu-label">Principal</div>
-    <a class="menu-item" href="/admin/dashboard.html">
+    <div class="menu-label">Commercial</div>
+    <a class="menu-item active" href="/commercial/dashboard.html">
       <span class="material-icons">dashboard</span> Dashboard
     </a>
-    <a class="menu-item" href="/admin/produits.html">
-      <span class="material-icons">palette</span> Produits
-    </a>
-    <a class="menu-item" href="/admin/utilisateurs.html">
-      <span class="material-icons">people</span> Utilisateurs
+    <a class="menu-item" href="/commercial/devis.html">
+      <span class="material-icons">description</span> Devis
     </a>
     <div class="menu-label">Production</div>
-    <a class="menu-item" href="/admin/matieres-premieres.html">
+    <a class="menu-item active" href="/commercial/matieres-premieres.html">
       <span class="material-icons">science</span> Matières premières
     </a>
-    <a class="menu-item active" href="/admin/lots-production.html">
+    <a class="menu-item" href="/commercial/lots-production.html">
       <span class="material-icons">factory</span> Lots production
-    </a>
-    <div class="menu-label">Analytique</div>
-    <a class="menu-item" href="/admin/analytics.html">
-      <span class="material-icons">analytics</span> Analytics
     </a>
   </nav>
   <div class="sidebar-footer">
@@ -650,71 +654,37 @@
 <div class="main">
   <div class="topbar">
     <div class="topbar-title">
-      <span class="material-icons">factory</span> Lots de production
+      <span class="material-icons">science</span> Matières premières
     </div>
-    <div class="topbar-right" id="lotCount"></div>
+    <div class="topbar-right" id="mpCount"></div>
   </div>
 
   <div class="content">
-    <!-- Stats -->
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-icon orange"><span class="material-icons">inventory_2</span></div>
-        <div>
-          <div class="stat-value" id="statTotal">0</div>
-          <div class="stat-label">Lots totaux</div>
-        </div>
+    <!-- Alertes stock bas -->
+    <div class="alerts-bar" id="alertsBar">
+      <div class="alerts-bar-title">
+        <span class="material-icons">warning</span> Stock bas détecté
       </div>
-      <div class="stat-card">
-        <div class="stat-icon green"><span class="material-icons">check_circle</span></div>
-        <div>
-          <div class="stat-value" id="statValides">0</div>
-          <div class="stat-label">Lots valides</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon red"><span class="material-icons">warning</span></div>
-        <div>
-          <div class="stat-value" id="statExpires">0</div>
-          <div class="stat-label">Expirés / bientôt</div>
-        </div>
-      </div>
+      <div class="alert-pills" id="alertPills"></div>
     </div>
 
     <!-- Toolbar -->
     <div class="toolbar">
-      <div class="toolbar-left">
-        <div class="search-box">
-          <span class="material-icons">search</span>
-          <input type="text" id="searchInput" placeholder="N° lot ou produit..." oninput="filterLots()">
-        </div>
-        <select class="filter-select" id="produitFilter" onchange="filterLots()">
-          <option value="">Tous les produits</option>
-        </select>
+      <div class="search-box">
+        <span class="material-icons">search</span>
+        <input type="text" id="searchInput" placeholder="Rechercher..." oninput="filterMP()">
       </div>
       <button class="btn-add" onclick="openModal()">
-        <span class="material-icons">add</span> Nouveau lot
+        <span class="material-icons">add</span> Ajouter une matière
       </button>
     </div>
 
-    <!-- Table -->
-    <div class="table-card">
-      <table>
-        <thead>
-          <tr>
-            <th>N° Lot</th>
-            <th>Produit</th>
-            <th>Quantité</th>
-            <th>Date production</th>
-            <th>Date expiration</th>
-            <th>Statut</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="lotsTable">
-          <tr class="empty-row"><td colspan="7">Chargement...</td></tr>
-        </tbody>
-      </table>
+    <!-- Grid -->
+    <div class="mp-grid" id="mpGrid">
+      <div class="empty-state">
+        <span class="material-icons">hourglass_empty</span>
+        <p>Chargement...</p>
+      </div>
     </div>
   </div>
 </div>
@@ -723,7 +693,7 @@
 <div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
   <div class="modal">
     <div class="modal-header">
-      <span class="modal-title">Nouveau lot de production</span>
+      <span class="modal-title" id="modalTitle">Nouvelle matière</span>
       <button class="modal-close" onclick="closeModal()">
         <span class="material-icons">close</span>
       </button>
@@ -732,28 +702,33 @@
       <span class="material-icons" style="font-size: 16px;">error_outline</span>
       <span id="modalAlertMsg"></span>
     </div>
-    <div class="num-preview" id="numPreview">
-      N° : PEINT-<span id="datePart">AAAAMMJJ</span>-001
-    </div>
     <div class="form-group">
-      <label>Produit *</label>
-      <select class="form-control" id="fProduit">
-        <option value="">Sélectionner un produit...</option>
-      </select>
+      <label>Nom de la matière *</label>
+      <input type="text" class="form-control" id="fNom" placeholder="Ex: Pigment blanc titane">
     </div>
     <div class="row-2">
       <div class="form-group">
-        <label>Quantité (litres) *</label>
-        <input type="number" class="form-control" id="fQuantite" placeholder="0" min="1" step="0.1">
+        <label>Unité *</label>
+        <select class="form-control" id="fUnite">
+          <option value="kg">kg</option>
+          <option value="L">Litre (L)</option>
+          <option value="g">g</option>
+          <option value="ml">ml</option>
+          <option value="unité">unité</option>
+        </select>
       </div>
       <div class="form-group">
-        <label>Date d'expiration</label>
-        <input type="date" class="form-control" id="fExpiration">
+        <label>Stock actuel *</label>
+        <input type="number" class="form-control" id="fStock" placeholder="0" min="0" step="0.01">
       </div>
+    </div>
+    <div class="form-group">
+      <label>Stock minimum (alerte)</label>
+      <input type="number" class="form-control" id="fStockMin" placeholder="10" min="0" step="0.01">
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeModal()">Annuler</button>
-      <button class="btn-save" id="saveBtn" onclick="saveLot()">Créer le lot</button>
+      <button class="btn-save" id="saveBtn" onclick="saveMP()">Enregistrer</button>
     </div>
   </div>
 </div>
@@ -761,7 +736,7 @@
 <script src="/js/api.js"></script>
 <script src="/js/auth.js"></script>
 <script>
-  requireAuth(['admin']);
+  requireAuth(['commercial']);
 
   const user = Auth.getUser();
   if (user) {
@@ -769,188 +744,187 @@
     document.getElementById('userAvatar').textContent = user.nom.charAt(0).toUpperCase();
   }
 
-  let allLots = [];
-  let allProduits = [];
+  let allMP = [];
+  let editingId = null;
 
-  // Prévisualisation du numéro de lot
-  const today = new Date();
-  const datePart = today.toISOString().slice(0, 10).replace(/-/g, '');
-  document.getElementById('datePart').textContent = datePart;
-
-  // Date min expiration = dans 1 mois
-  const minExp = new Date();
-  minExp.setMonth(minExp.getMonth() + 1);
-  document.getElementById('fExpiration').min = minExp.toISOString().split('T')[0];
-  document.getElementById('fExpiration').value = minExp.toISOString().split('T')[0];
-
-  async function loadAll() {
-    await Promise.all([loadProduits(), loadLots()]);
+  // Fonction pour obtenir l'icône Material en fonction du nom
+  function getIcon(nom) {
+    const n = nom.toLowerCase();
+    if (n.includes('pigment'))  return 'palette';
+    if (n.includes('résine') || n.includes('resine')) return 'opacity';
+    if (n.includes('solvant'))  return 'water_drop';
+    if (n.includes('eau'))      return 'water_drop';
+    if (n.includes('sel') || n.includes('poudre'))   return 'grain';
+    return 'science';
   }
 
-  async function loadProduits() {
+  async function loadMP() {
     try {
-      const res = await api.get('/produits');
-      allProduits = await res.json();
-      const fProduit = document.getElementById('fProduit');
-      const filterSelect = document.getElementById('produitFilter');
-      fProduit.innerHTML = '<option value="">Sélectionner un produit...</option>';
-      filterSelect.innerHTML = '<option value="">Tous les produits</option>';
-      allProduits.forEach(p => {
-        fProduit.innerHTML += `<option value="${p.id}">${p.nom}</option>`;
-        filterSelect.innerHTML += `<option value="${p.id}">${p.nom}</option>`;
-      });
-    } catch (err) { console.error(err); }
-  }
-
-  async function loadLots() {
-    try {
-      const res = await api.get('/lots');
-      allLots = await res.json();
-      document.getElementById('lotCount').textContent = `${allLots.length} lot(s)`;
-      updateStats(allLots);
-      renderLots(allLots);
+      const res = await api.get('/matieres-premieres');
+      allMP = await res.json();
+      document.getElementById('mpCount').textContent = `${allMP.length} matière(s)`;
+      renderMP(allMP);
+      checkAlerts(allMP);
     } catch (err) {
-      document.getElementById('lotsTable').innerHTML = '<tr class="empty-row"><td colspan="7">❌ Erreur de chargement</td></tr>';
+      document.getElementById('mpGrid').innerHTML = '<div class="empty-state"><span class="material-icons">error_outline</span><p>❌ Erreur de chargement</p></div>';
     }
   }
 
-  function updateStats(lots) {
-    const now = new Date();
-    const soon = new Date();
-    soon.setDate(soon.getDate() + 30);
-    const expires = lots.filter(l => {
-      if (!l.date_expiration) return false;
-      const d = new Date(l.date_expiration);
-      return d < soon;
-    });
-    document.getElementById('statTotal').textContent = lots.length;
-    document.getElementById('statValides').textContent = lots.length - expires.length;
-    document.getElementById('statExpires').textContent = expires.length;
-  }
-
-  function getExpStatus(dateStr) {
-    if (!dateStr) return { cls: 'exp-ok', label: 'N/A' };
-    const d = new Date(dateStr);
-    const now = new Date();
-    const soon = new Date();
-    soon.setDate(soon.getDate() + 30);
-    if (d < now) return { cls: 'exp-expired', label: '❌ Expiré' };
-    if (d < soon) return { cls: 'exp-soon', label: '⚠️ Bientôt' };
-    return { cls: 'exp-ok', label: '✓ Valide' };
-  }
-
-  function renderLots(lots) {
-    const tbody = document.getElementById('lotsTable');
-    if (!lots.length) {
-      tbody.innerHTML = '<tr class="empty-row"><td colspan="7">Aucun lot trouvé.</td></tr>';
+  function renderMP(items) {
+    const grid = document.getElementById('mpGrid');
+    if (!items.length) {
+      grid.innerHTML = '<div class="empty-state"><span class="material-icons">inventory_2</span><p>Aucune matière trouvée.</p></div>';
       return;
     }
-    tbody.innerHTML = lots.map(l => {
-      const prod = allProduits.find(p => p.id === l.produit_id);
-      const exp = getExpStatus(l.date_expiration);
-      const datePr = new Date(l.created_at).toLocaleDateString('fr-TN', { day: '2-digit', month: 'short', year: 'numeric' });
-      const dateEx = l.date_expiration
-        ? new Date(l.date_expiration).toLocaleDateString('fr-TN', { day: '2-digit', month: 'short', year: 'numeric' })
-        : '—';
+    grid.innerHTML = items.map(m => {
+      const stock = parseFloat(m.stock_actuel);
+      const min = parseFloat(m.stock_minimum);
+      const pct = min > 0 ? Math.min((stock / (min * 2)) * 100, 100) : 100;
+      const cls = stock <= 0 ? 'empty' : stock <= min ? 'low' : 'ok';
+      const isAlert = stock <= min;
+      const icon = getIcon(m.nom);
       return `
-        <tr>
-          <td><span class="lot-num">${l.numero_lot}</span></td>
-          <td>
-            <div class="produit-cell">
-              <div class="prod-dot" style="background:${prod?.couleur_code || '#CCC'}"></div>
-              ${prod?.nom || '—'}
+        <div class="mp-card ${isAlert ? 'alert-card' : ''}">
+          <div class="mp-header">
+            <div class="mp-icon"><span class="material-icons">${icon}</span></div>
+            ${isAlert ? '<span class="mp-alert-badge">⚠️ Stock bas</span>' : ''}
+          </div>
+          <div class="mp-name">${escapeHtml(m.nom)}</div>
+          <div class="mp-unite">Unité : ${m.unite}</div>
+          <div class="stock-bar-wrap">
+            <div class="stock-bar-header">
+              <span class="stock-bar-label">Stock actuel</span>
+              <span class="stock-bar-value">${stock} ${m.unite}</span>
             </div>
-          </td>
-          <td><strong>${parseFloat(l.quantite_litres).toFixed(1)}</strong> L</td>
-          <td style="font-size:0.8rem">${datePr}</td>
-          <td style="font-size:0.8rem">${dateEx}</td>
-          <td><span class="exp-badge ${exp.cls}">${exp.label}</span></td>
-          <td>
-            <button class="btn-icon" onclick="deleteLot(${l.id})" title="Supprimer">
-              <span class="material-icons">delete</span>
-            </button>
-          </td>
-        </tr>`;
+            <div class="stock-bar-bg">
+              <div class="stock-bar-fill ${cls}" style="width:${pct}%"></div>
+            </div>
+          </div>
+          <div class="mp-footer">
+            <div class="mp-min">Min : <strong>${min} ${m.unite}</strong></div>
+            <div class="mp-actions">
+              <button class="btn-icon" onclick="editMP(${m.id})" title="Modifier">
+                <span class="material-icons">edit</span>
+              </button>
+              <button class="btn-icon danger" onclick="deleteMP(${m.id})" title="Supprimer">
+                <span class="material-icons">delete</span>
+              </button>
+            </div>
+          </div>
+        </div>`;
     }).join('');
   }
 
-  function filterLots() {
-    const search = document.getElementById('searchInput').value.toLowerCase();
-    const produit = document.getElementById('produitFilter').value;
-    let filtered = allLots;
-    if (produit) filtered = filtered.filter(l => String(l.produit_id) === produit);
-    if (search) {
-      filtered = filtered.filter(l =>
-        l.numero_lot.toLowerCase().includes(search) ||
-        (allProduits.find(p => p.id === l.produit_id)?.nom || '').toLowerCase().includes(search)
-      );
+  function checkAlerts(items) {
+    const low = items.filter(m => parseFloat(m.stock_actuel) <= parseFloat(m.stock_minimum));
+    if (low.length) {
+      document.getElementById('alertsBar').classList.add('show');
+      document.getElementById('alertPills').innerHTML = low.map(m =>
+        `<span class="alert-pill">⚠️ ${escapeHtml(m.nom)} (${m.stock_actuel} ${m.unite})</span>`
+      ).join('');
+    } else {
+      document.getElementById('alertsBar').classList.remove('show');
     }
-    renderLots(filtered);
   }
 
-  function openModal() {
+  function filterMP() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    renderMP(search ? allMP.filter(m => m.nom.toLowerCase().includes(search)) : allMP);
+  }
+
+  function openModal(id = null) {
+    editingId = id;
     document.getElementById('modalAlert').classList.remove('show');
-    document.getElementById('fProduit').value = '';
-    document.getElementById('fQuantite').value = '';
+    if (!id) {
+      document.getElementById('modalTitle').textContent = 'Nouvelle matière';
+      document.getElementById('fNom').value = '';
+      document.getElementById('fUnite').value = 'kg';
+      document.getElementById('fStock').value = '';
+      document.getElementById('fStockMin').value = '10';
+    }
     document.getElementById('modalOverlay').classList.add('open');
   }
 
-  function closeModal() {
-    document.getElementById('modalOverlay').classList.remove('open');
+  function editMP(id) {
+    const m = allMP.find(x => x.id === id);
+    if (!m) return;
+    editingId = id;
+    document.getElementById('modalTitle').textContent = 'Modifier la matière';
+    document.getElementById('fNom').value = m.nom;
+    document.getElementById('fUnite').value = m.unite;
+    document.getElementById('fStock').value = m.stock_actuel;
+    document.getElementById('fStockMin').value = m.stock_minimum;
+    document.getElementById('modalOverlay').classList.add('open');
   }
 
-  function closeModalOutside(e) {
-    if (e.target === document.getElementById('modalOverlay')) closeModal();
-  }
-
-  function showAlert(msg) {
-    document.getElementById('modalAlertMsg').textContent = msg;
-    document.getElementById('modalAlert').classList.add('show');
-  }
-
-  async function saveLot() {
-    const produit_id = document.getElementById('fProduit').value;
-    const quantite_litres = parseFloat(document.getElementById('fQuantite').value);
-    const date_expiration = document.getElementById('fExpiration').value;
+  async function saveMP() {
+    const nom = document.getElementById('fNom').value.trim();
+    const unite = document.getElementById('fUnite').value;
+    const stock = parseFloat(document.getElementById('fStock').value) || 0;
+    const stockMin = parseFloat(document.getElementById('fStockMin').value) || 10;
     const btn = document.getElementById('saveBtn');
 
-    if (!produit_id || !quantite_litres) {
-      showAlert('Produit et quantité sont obligatoires.');
+    if (!nom) {
+      showAlert('Le nom est obligatoire.');
       return;
     }
 
-    btn.innerHTML = '<span class="spinner"></span> Création...';
+    btn.innerHTML = '<span class="spinner"></span> Enregistrement...';
     btn.disabled = true;
 
     try {
-      const res = await api.post('/lots', { produit_id, quantite_litres, date_expiration });
+      const endpoint = editingId ? `/matieres-premieres/${editingId}` : '/matieres-premieres';
+      const method = editingId ? 'PUT' : 'POST';
+      const res = await api.fetch(endpoint, {
+        method,
+        body: JSON.stringify({ nom, unite, stock_actuel: stock, stock_minimum: stockMin })
+      });
       if (res && res.ok) {
-        const data = await res.json();
         closeModal();
-        await loadLots();
-        alert(`✅ Lot créé : ${data.numero_lot}`);
+        await loadMP();
       } else {
         const d = await res.json();
-        showAlert(d.message || 'Erreur lors de la création.');
+        showAlert(d.message || 'Erreur lors de l\'enregistrement.');
       }
     } catch (err) {
       showAlert('Erreur serveur.');
     } finally {
-      btn.innerHTML = 'Créer le lot';
+      btn.innerHTML = 'Enregistrer';
       btn.disabled = false;
     }
   }
 
-  async function deleteLot(id) {
-    if (!confirm('Supprimer ce lot ?')) return;
+  async function deleteMP(id) {
+    if (!confirm('Supprimer cette matière ?')) return;
     try {
-      await api.delete(`/lots/${id}`);
-      await loadLots();
+      const res = await api.delete(`/matieres-premieres/${id}`);
+      if (res && res.ok) await loadMP();
+      else alert('Erreur lors de la suppression.');
     } catch (err) {
-      alert('Erreur lors de la suppression.');
+      alert('Erreur serveur.');
     }
   }
 
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    editingId = null;
+  }
+  function closeModalOutside(e) {
+    if (e.target === document.getElementById('modalOverlay')) closeModal();
+  }
+  function showAlert(msg) {
+    document.getElementById('modalAlertMsg').textContent = msg;
+    document.getElementById('modalAlert').classList.add('show');
+  }
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
   function logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
@@ -958,7 +932,7 @@
     window.location.href = '/login-admin.html';
   }
 
-  loadAll();
+  loadMP();
 </script>
 </body>
 </html>

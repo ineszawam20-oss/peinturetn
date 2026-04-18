@@ -58,4 +58,17 @@ async function remove(req, res, next) {
   } catch (err) { next(err); }
 }
 
-module.exports = { getAll, getById, toggleActif, changeRole, resetPassword, remove };
+// ✅ NOUVELLE FONCTION
+async function getClients(req, res, next) {
+  try {
+    const [rows] = await pool.query(
+      `SELECT id, nom, email, telephone 
+       FROM utilisateurs 
+       WHERE role = 'client' AND actif = 1 
+       ORDER BY nom`
+    );
+    res.json(rows);
+  } catch (err) { next(err); }
+}
+
+module.exports = { getAll, getById, toggleActif, changeRole, resetPassword, remove, getClients };
