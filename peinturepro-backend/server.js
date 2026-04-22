@@ -29,7 +29,7 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false
 }));
 app.use(cors({
-  origin:      process.env.NODE_ENV === 'production' ? 'https://peinturepro.tn' : '*',
+  origin: '*',
   credentials: true
 }));
 
