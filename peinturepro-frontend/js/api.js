@@ -3,7 +3,7 @@
 // Gestion automatique JWT + Refresh Token
 // ============================================
 
-const API_URL = 'http://localhost:3001/api';
+const API_URL = window.location.origin + '/api';
 
 // ===== Helpers Token =====
 const Auth = {
