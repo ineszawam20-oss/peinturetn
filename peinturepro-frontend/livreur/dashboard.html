@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
-    /* ===== THÈME MODERNE SOMBRE ===== */
+    /* ===== THÈME MODERNE SOMBRE (identique à l'original) ===== */
     :root {
       --bg-dark: #0a0a1a;
       --bg-surface: #0f0f1f;
@@ -561,15 +561,16 @@
       .content { padding: 1rem; }
     }
   </style>
+<link rel="icon" href="data:,">
 </head>
 <body>
 
 <!-- Sidebar -->
 <aside class="sidebar">
   <div class="sidebar-brand">
-  <div class="nav-brand">
-    <img src="../images/logo.png" alt="PeinturePro TN" class="logo-image">
-   
+    <div class="nav-brand">
+      <img src="../images/logo.png" alt="PeinturePro TN" class="logo-image">
+    </div>
   </div>
   <nav class="sidebar-menu">
     <div class="menu-label">Livraisons</div>
@@ -686,6 +687,11 @@
             <span class="detail-label">Client</span>
             <span class="detail-value" id="detailClient">—</span>
           </div>
+          <!-- AJOUT : numéro du client -->
+          <div class="detail-row">
+            <span class="detail-label">Numéro client</span>
+            <span class="detail-value" id="detailTelephone">—</span>
+          </div>
           <div class="detail-row">
             <span class="detail-label">Montant commande</span>
             <span class="detail-value" id="detailMontant">—</span>
@@ -716,10 +722,11 @@
   // Initialisation de la carte (centrée sur Tunis)
   function initMap() {
     map = L.map('map').setView([36.8065, 10.1815], 7);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
-      maxZoom: 19
-    }).addTo(map);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap',
+  referrerPolicy: 'strict-origin-when-cross-origin',
+  maxZoom: 19
+}).addTo(map);
   }
 
   function clearMarkers() {
@@ -851,7 +858,7 @@
     `).join('');
   }
 
-  function selectLivraison(id) {
+ function selectLivraison(id) {
     selectedLivId = id;
     const liv = allLivraisons.find(l => l.id === id);
     if (!liv) return;
@@ -859,19 +866,22 @@
     document.querySelectorAll('.liv-item').forEach(el => el.classList.remove('selected'));
     const el = document.getElementById(`liv-${id}`);
     if (el) {
-      el.classList.add('selected');
-      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        el.classList.add('selected');
+        el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
+    // Mise à jour des détails
     document.getElementById('detailAdresse').textContent = liv.chantier_adresse || '—';
     document.getElementById('detailVille').textContent = liv.ville || '—';
     document.getElementById('detailClient').textContent = liv.client_nom || '—';
+    // AJOUT : téléphone du client
+    document.getElementById('detailTelephone').textContent = liv.client_telephone || liv.telephone || '—';
     document.getElementById('detailMontant').textContent = liv.montant_total ? parseFloat(liv.montant_total).toFixed(3) + ' DT' : '—';
     document.getElementById('livDetail').classList.add('show');
     document.getElementById('mapInfo').textContent = liv.chantier_adresse || 'Livraison #' + id;
 
     zoomToLivraison(id);
-  }
+}
 
   function zoomToLivraison(id) {
     const liv = allLivraisons.find(l => l.id === id);

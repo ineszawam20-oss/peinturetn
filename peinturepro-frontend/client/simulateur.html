@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
-    /* ===== THÈME MODERNE ===== */
+    /* ===== THÈME MODERNE (identique) ===== */
     :root {
       --bg-dark: #0a0a1a;
       --bg-surface: #0f0f1f;
@@ -310,11 +310,10 @@
     }
     input[type="range"] {
       width: 100%;
-      height: 6px;
       -webkit-appearance: none;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 3px;
-      outline: none;
+      background: rgba(255,255,255,0.1);
+      height: 4px;
+      border-radius: 2px;
     }
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
@@ -339,7 +338,7 @@
     }
     .form-control {
       width: 100%;
-      background: rgba(255, 255, 255, 0.05);
+      background: #0a0a1a;
       border: 1.5px solid rgba(99, 102, 241, 0.3);
       border-radius: var(--radius-sm);
       padding: 0.7rem 1rem;
@@ -548,6 +547,7 @@
       }
     }
   </style>
+<link rel="icon" href="data:,">
 </head>
 <body>
 
@@ -566,7 +566,6 @@
 <nav class="navbar">
   <div class="nav-brand">
     <img src="../images/logo.png" alt="PeinturePro TN" class="logo-image">
-   
   </div>
   <div class="nav-links">
     <a href="catalogue.html" class="nav-link">
@@ -737,7 +736,7 @@
 <script src="../js/api.js"></script>
 <script src="../js/auth.js"></script>
 <script>
-requireAuth(['client']);
+  requireAuth(['client']);
   displayUserInfo();
 
   let products        = [];
@@ -745,29 +744,13 @@ requireAuth(['client']);
   let surfaceFactor   = 1;
   let currentSurface  = 50;
 
-  // ========== PRODUITS PRESTIGE PEINTURE ==========
-  const prestigeProducts = [
-    { id: 'pp-001', nom: 'Prestige Velours Intérieur', type: 'interieure', marque: 'prestige', finition: 'Velours', couleur_code: '#F5F0E8', rendement_m2_L: 12, stock_litres: 850, stock_minimum: 100, prix_litre: 18.500 },
-    { id: 'pp-002', nom: 'Prestige Satiné Luxe', type: 'interieure', marque: 'prestige', finition: 'Satiné', couleur_code: '#EAE4D8', rendement_m2_L: 11, stock_litres: 620, stock_minimum: 80, prix_litre: 21.800 },
-    { id: 'pp-003', nom: 'Prestige Effet Béton', type: 'interieure', marque: 'prestige', finition: 'Effet béton', couleur_code: '#B8B0A5', rendement_m2_L: 8, stock_litres: 390, stock_minimum: 50, prix_litre: 27.500 },
-    { id: 'pp-004', nom: 'Prestige Stuc Minéral', type: 'interieure', marque: 'prestige', finition: 'Stuc', couleur_code: '#D4C5A9', rendement_m2_L: 6, stock_litres: 280, stock_minimum: 40, prix_litre: 34.200 },
-    { id: 'pp-005', nom: 'Prestige Effet Soie', type: 'interieure', marque: 'prestige', finition: 'Effet soie', couleur_code: '#F2E8D5', rendement_m2_L: 10, stock_litres: 450, stock_minimum: 60, prix_litre: 29.900 },
-    { id: 'pp-006', nom: 'Prestige Façade Elite', type: 'exterieure', marque: 'prestige', finition: 'Mat', couleur_code: '#E8E0D0', rendement_m2_L: 10, stock_litres: 1200, stock_minimum: 150, prix_litre: 22.500 },
-    { id: 'pp-007', nom: 'Prestige Silicone Façade', type: 'exterieure', marque: 'prestige', finition: 'Silicone mat', couleur_code: '#D6CFC3', rendement_m2_L: 9, stock_litres: 750, stock_minimum: 100, prix_litre: 31.000 },
-    { id: 'pp-008', nom: 'Prestige Décor Extérieur', type: 'exterieure', marque: 'prestige', finition: 'Grainé', couleur_code: '#C8B9A2', rendement_m2_L: 7, stock_litres: 580, stock_minimum: 80, prix_litre: 26.700 },
-    { id: 'pp-009', nom: 'Prestige Hydrofuge Toiture', type: 'impermeabilisante', marque: 'prestige', finition: 'Élastomérique', couleur_code: '#8B7355', rendement_m2_L: 5, stock_litres: 920, stock_minimum: 100, prix_litre: 38.900 },
-    { id: 'pp-010', nom: 'Prestige Anti-Humidité', type: 'impermeabilisante', marque: 'prestige', finition: 'Mat', couleur_code: '#A0C4FF', rendement_m2_L: 8, stock_litres: 410, stock_minimum: 50, prix_litre: 33.500 },
-    { id: 'pp-011', nom: 'Prestige Piscine & Terrasse', type: 'impermeabilisante', marque: 'prestige', finition: 'Brillant', couleur_code: '#00B4D8', rendement_m2_L: 6, stock_litres: 310, stock_minimum: 40, prix_litre: 42.000 },
-    { id: 'pp-012', nom: 'Prestige Multi-Couleurs', type: 'exterieure', marque: 'prestige', finition: 'Multi-textures', couleur_code: '#D4956A', rendement_m2_L: 4, stock_litres: 240, stock_minimum: 30, prix_litre: 48.500 }
-  ];
-
   async function loadProducts() {
     try {
       const res = await api.get('/produits');
-      const apiProducts = await res.json();
-      products = [...apiProducts, ...prestigeProducts];
+      products = await res.json();
       renderProductSelector();
 
+      // Vérifier si un produit a été sélectionné depuis le catalogue
       const saved = localStorage.getItem('selectedProduct');
       if (saved) {
         const p = JSON.parse(saved);
@@ -776,8 +759,8 @@ requireAuth(['client']);
         localStorage.removeItem('selectedProduct');
       }
     } catch (err) {
-      products = [...prestigeProducts];
-      renderProductSelector();
+      console.error(err);
+      document.getElementById('productSelector').innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:1rem; color:var(--accent);">❌ Erreur de chargement des produits</div>';
     }
   }
 
@@ -788,7 +771,7 @@ requireAuth(['client']);
       <div class="product-option" onclick="selectProduct('${p.id}')" id="opt-${p.id}">
         <div class="product-swatch" style="background:${p.couleur_code || '#CCC'}"></div>
         <div class="product-info">
-          <div class="product-opt-name">${escapeHtml(p.nom)}${p.marque === 'prestige' ? ' ⭐' : ''}</div>
+          <div class="product-opt-name">${escapeHtml(p.nom)}</div>
           <div class="product-opt-price">${parseFloat(p.prix_litre).toFixed(3)} DT/L</div>
         </div>
       </div>
@@ -911,5 +894,6 @@ requireAuth(['client']);
 
   loadProducts();
 </script>
+<script src="../js/chatbot.js"></script>
 </body>
 </html>

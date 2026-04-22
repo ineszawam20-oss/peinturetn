@@ -4,7 +4,8 @@ async function getAll(req, res, next) {
   try {
     let query = `SELECT l.*, c.adresse AS chantier_adresse, c.ville,
                  c.latitude AS chantier_latitude, c.longitude AS chantier_longitude,
-                 co.montant_total, u.nom AS client_nom
+                 co.montant_total, u.nom AS client_nom,
+                 u.telephone AS client_telephone   -- ← AJOUT ICI
                  FROM livraisons l
                  LEFT JOIN chantiers c  ON l.chantier_id  = c.id
                  LEFT JOIN commandes co ON l.commande_id  = co.id
@@ -36,6 +37,7 @@ async function getById(req, res, next) {
     res.json(rows[0]);
   } catch (err) { next(err); }
 }
+
 async function updateStatut(req, res, next) {
   try {
     const { statut, notes } = req.body;
@@ -43,8 +45,6 @@ async function updateStatut(req, res, next) {
     if (!validStatuts.includes(statut))
       return res.status(400).json({ message: 'Statut invalide.' });
 
-    // On assigne le livreur_id seulement quand il prend en charge (en_cours)
-    // Si l'admin change le statut, on ne réassigne pas
     let updateQuery;
     let params;
 

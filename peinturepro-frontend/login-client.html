@@ -215,9 +215,9 @@
       color: var(--text-gray);
       pointer-events: none;
     }
-    .form-control {
-      width: 100%;
-      background: rgba(255, 255, 255, 0.05);
+.form-control {
+    width: 100%;
+    background: #0a0a1a;
       border: 1.5px solid rgba(99, 102, 241, 0.3);
       border-radius: var(--radius-sm);
       padding: 0.85rem 1rem 0.85rem 2.8rem;
@@ -434,6 +434,7 @@
       .row-2 { grid-template-columns: 1fr; gap: 0; }
     }
   </style>
+<link rel="icon" href="data:,">
 </head>
 <body>
 
@@ -564,7 +565,7 @@
 </div>
 
 <script>
-  const API_URL = 'http://localhost:3001/api';
+  const API_URL = window.location.origin + '/api';
 
   function switchTab(tab) {
     document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
@@ -742,5 +743,6 @@
     if (activePanel === 'panel-register') handleRegister();
   });
 </script>
+<script src="js/chatbot.js"></script>
 </body>
 </html>

@@ -504,9 +504,9 @@
       margin-bottom: 0.3rem;
       color: var(--text-gray);
     }
-    .form-control {
-      width: 100%;
-      background: rgba(255, 255, 255, 0.05);
+.form-control {
+    width: 100%;
+    background: #0a0a1a;
       border: 1.5px solid rgba(99, 102, 241, 0.3);
       border-radius: var(--radius-sm);
       padding: 0.7rem;
@@ -598,6 +598,7 @@
       .content { padding: 1rem; }
     }
   </style>
+<link rel="icon" href="data:,">
 </head>
 <body>
 
@@ -770,7 +771,6 @@
   const datePart = today.toISOString().slice(0, 10).replace(/-/g, '');
   document.getElementById('datePart').textContent = datePart;
 
-  // Date min expiration = dans 1 mois
   const minExp = new Date();
   minExp.setMonth(minExp.getMonth() + 1);
   document.getElementById('fExpiration').min = minExp.toISOString().split('T')[0];
@@ -784,13 +784,17 @@
     try {
       const res = await api.get('/produits');
       allProduits = await res.json();
-      const fProduit = document.getElementById('fProduit');
+      // Filtre : tous les produits (réels)
       const filterSelect = document.getElementById('produitFilter');
-      fProduit.innerHTML = '<option value="">Sélectionner un produit...</option>';
       filterSelect.innerHTML = '<option value="">Tous les produits</option>';
       allProduits.forEach(p => {
-        fProduit.innerHTML += `<option value="${p.id}">${p.nom}</option>`;
         filterSelect.innerHTML += `<option value="${p.id}">${p.nom}</option>`;
+      });
+      // Select de création : tous les produits
+      const fProduit = document.getElementById('fProduit');
+      fProduit.innerHTML = '<option value="">Sélectionner un produit...</option>';
+      allProduits.forEach(p => {
+        fProduit.innerHTML += `<option value="${p.id}">${p.nom}</option>`;
       });
     } catch (err) { console.error(err); }
   }
@@ -811,11 +815,7 @@
     const now = new Date();
     const soon = new Date();
     soon.setDate(soon.getDate() + 30);
-    const expires = lots.filter(l => {
-      if (!l.date_expiration) return false;
-      const d = new Date(l.date_expiration);
-      return d < soon;
-    });
+    const expires = lots.filter(l => l.date_expiration && new Date(l.date_expiration) < soon);
     document.getElementById('statTotal').textContent = lots.length;
     document.getElementById('statValides').textContent = lots.length - expires.length;
     document.getElementById('statExpires').textContent = expires.length;
@@ -842,28 +842,18 @@
       const prod = allProduits.find(p => p.id === l.produit_id);
       const exp = getExpStatus(l.date_expiration);
       const datePr = new Date(l.created_at).toLocaleDateString('fr-TN', { day: '2-digit', month: 'short', year: 'numeric' });
-      const dateEx = l.date_expiration
-        ? new Date(l.date_expiration).toLocaleDateString('fr-TN', { day: '2-digit', month: 'short', year: 'numeric' })
-        : '—';
+      const dateEx = l.date_expiration ? new Date(l.date_expiration).toLocaleDateString('fr-TN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
       return `
         <tr>
           <td><span class="lot-num">${l.numero_lot}</span></td>
-          <td>
-            <div class="produit-cell">
-              <div class="prod-dot" style="background:${prod?.couleur_code || '#CCC'}"></div>
-              ${prod?.nom || '—'}
-            </div>
-          </td>
+          <td><div class="produit-cell"><div class="prod-dot" style="background:${prod?.couleur_code || '#CCC'}"></div>${prod?.nom || '—'}</div></td>
           <td><strong>${parseFloat(l.quantite_litres).toFixed(1)}</strong> L</td>
           <td style="font-size:0.8rem">${datePr}</td>
           <td style="font-size:0.8rem">${dateEx}</td>
           <td><span class="exp-badge ${exp.cls}">${exp.label}</span></td>
-          <td>
-            <button class="btn-icon" onclick="deleteLot(${l.id})" title="Supprimer">
-              <span class="material-icons">delete</span>
-            </button>
-          </td>
-        </tr>`;
+          <td><button class="btn-icon" onclick="deleteLot(${l.id})" title="Supprimer"><span class="material-icons">delete</span></button></td>
+        </tr>
+      `;
     }).join('');
   }
 
@@ -888,33 +878,17 @@
     document.getElementById('modalOverlay').classList.add('open');
   }
 
-  function closeModal() {
-    document.getElementById('modalOverlay').classList.remove('open');
-  }
-
-  function closeModalOutside(e) {
-    if (e.target === document.getElementById('modalOverlay')) closeModal();
-  }
-
-  function showAlert(msg) {
-    document.getElementById('modalAlertMsg').textContent = msg;
-    document.getElementById('modalAlert').classList.add('show');
-  }
+  function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+  function closeModalOutside(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
+  function showAlert(msg) { document.getElementById('modalAlertMsg').textContent = msg; document.getElementById('modalAlert').classList.add('show'); }
 
   async function saveLot() {
     const produit_id = document.getElementById('fProduit').value;
     const quantite_litres = parseFloat(document.getElementById('fQuantite').value);
     const date_expiration = document.getElementById('fExpiration').value;
     const btn = document.getElementById('saveBtn');
-
-    if (!produit_id || !quantite_litres) {
-      showAlert('Produit et quantité sont obligatoires.');
-      return;
-    }
-
-    btn.innerHTML = '<span class="spinner"></span> Création...';
-    btn.disabled = true;
-
+    if (!produit_id || !quantite_litres) { showAlert('Produit et quantité sont obligatoires.'); return; }
+    btn.innerHTML = '<span class="spinner"></span> Création...'; btn.disabled = true;
     try {
       const res = await api.post('/lots', { produit_id, quantite_litres, date_expiration });
       if (res && res.ok) {
@@ -922,36 +896,23 @@
         closeModal();
         await loadLots();
         alert(`✅ Lot créé : ${data.numero_lot}`);
-      } else {
-        const d = await res.json();
-        showAlert(d.message || 'Erreur lors de la création.');
-      }
-    } catch (err) {
-      showAlert('Erreur serveur.');
-    } finally {
-      btn.innerHTML = 'Créer le lot';
-      btn.disabled = false;
-    }
+      } else { const d = await res.json(); showAlert(d.message || 'Erreur lors de la création.'); }
+    } catch (err) { showAlert('Erreur serveur.'); }
+    finally { btn.innerHTML = 'Créer le lot'; btn.disabled = false; }
   }
 
   async function deleteLot(id) {
     if (!confirm('Supprimer ce lot ?')) return;
-    try {
-      await api.delete(`/lots/${id}`);
-      await loadLots();
-    } catch (err) {
-      alert('Erreur lors de la suppression.');
-    }
+    try { await api.delete(`/lots/${id}`); await loadLots(); } catch (err) { alert('Erreur lors de la suppression.'); }
   }
 
   function logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('user');
+    localStorage.removeItem('token'); localStorage.removeItem('refreshToken'); localStorage.removeItem('user');
     window.location.href = '/login-admin.html';
   }
 
   loadAll();
 </script>
+<script src="../js/chatbot.js"></script>
 </body>
 </html>

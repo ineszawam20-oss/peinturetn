@@ -171,6 +171,7 @@
       .catalogue-section { padding: 1rem; }
     }
   </style>
+<link rel="icon" href="data:,">
 </head>
 <body>
 
@@ -196,6 +197,7 @@
       Panier
       <span class="cart-count" id="cartCount">0</span>
     </a>
+    <a href="/client/avis.html"  class="btn-cart">avis !</a>
     <button class="btn-logout" onclick="logout()">Déconnexion</button>
   </div>
 </nav>
@@ -219,7 +221,6 @@
   <button class="filter-btn" onclick="filterBy('interieure', this)">Intérieure</button>
   <button class="filter-btn" onclick="filterBy('exterieure', this)">Extérieure</button>
   <button class="filter-btn" onclick="filterBy('impermeabilisante', this)">Imperméabilisante</button>
-  <button class="filter-btn filter-prestige" onclick="filterBy('prestige', this)">⭐ Prestige Peinture</button>
   <input type="text" class="search-input" placeholder="🔍 Rechercher une peinture..." oninput="searchProducts(this.value)">
 </div>
 
@@ -240,108 +241,6 @@
   requireAuth(['client']);
   displayUserInfo('#userName');
 
-  // =============================================
-  //  PRODUITS PRESTIGE PEINTURE (données statiques)
-  // =============================================
- const prestigeProducts = [
-  {
-    id: 'pp-001',
-    nom: 'Prestige Velours Intérieur',
-    type: 'interieure', marque: 'prestige', finition: 'Velours',
-    couleur_code: '#F5F0E8', rendement_m2_L: 12, stock_litres: 850, stock_minimum: 100, prix_litre: 18.500,
-    image: 'https://prestigepeinture.com/blog/wp-content/uploads/2021/03/prestige-catalog-page53-600x600.jpg',
-    description: 'Peinture décorative veloutée à l\'eau, opacité parfaite, lavabilité renforcée.'
-  },
-  {
-    id: 'pp-002',
-    nom: 'Prestige Satiné Luxe',
-    type: 'interieure', marque: 'prestige', finition: 'Satiné',
-    couleur_code: '#EAE4D8', rendement_m2_L: 11, stock_litres: 620, stock_minimum: 80, prix_litre: 21.800,
-    image: 'https://prestigepeinture.com/blog/wp-content/uploads/2021/03/prestige-catalog-page73-600x600.jpg',
-    description: 'Finition satinée brillante, haute résistance aux taches.'
-  },
-  {
-    id: 'pp-003',
-    nom: 'Prestige Effet Béton',
-    type: 'interieure', marque: 'prestige', finition: 'Effet béton',
-    couleur_code: '#B8B0A5', rendement_m2_L: 8, stock_litres: 390, stock_minimum: 50, prix_litre: 27.500,
-    image: 'https://prestigepeinture.com/blog/wp-content/uploads/2021/03/prestige-catalog-page135-600x600.jpg',
-    description: 'Revêtement décoratif effet béton ciré, rendu authentique industriel.'
-  },
-  {
-    id: 'pp-004',
-    nom: 'Prestige Stuc Minéral',
-    type: 'interieure', marque: 'prestige', finition: 'Stuc',
-    couleur_code: '#D4C5A9', rendement_m2_L: 6, stock_litres: 280, stock_minimum: 40, prix_litre: 34.200,
-    image: 'https://prestigepeinture.com/blog/wp-content/uploads/2021/03/prestige-catalog-page93-600x600.jpg',
-    description: 'Enduit stuc à base de minéraux naturels, finition à l\'ancienne.'
-  },
-  {
-    id: 'pp-005',
-    nom: 'Prestige Effet Soie',
-    type: 'interieure', marque: 'prestige', finition: 'Effet soie',
-    couleur_code: '#F2E8D5', rendement_m2_L: 10, stock_litres: 450, stock_minimum: 60, prix_litre: 29.900,
-    image: 'https://prestigepeinture.com/blog/wp-content/uploads/2021/03/prestige-catalog-page19-600x600.jpg',
-    description: 'Peinture décorative nacré avec reflets soyeux changeants selon la lumière.'
-  },
-  {
-    id: 'pp-006',
-    nom: 'Prestige Façade Elite',
-    type: 'exterieure', marque: 'prestige', finition: 'Mat',
-    couleur_code: '#E8E0D0', rendement_m2_L: 10, stock_litres: 1200, stock_minimum: 150, prix_litre: 22.500,
-    image: 'https://prestigepeinture.com/blog/wp-content/uploads/2021/03/prestige-catalog-page117-600x600.jpg',
-    description: 'Peinture façade haute protection UV. Anti-algues, anti-champignons. Garantie 10 ans.'
-  },
-  {
-    id: 'pp-007',
-    nom: 'Prestige Silicone Façade',
-    type: 'exterieure', marque: 'prestige', finition: 'Silicone mat',
-    couleur_code: '#D6CFC3', rendement_m2_L: 9, stock_litres: 750, stock_minimum: 100, prix_litre: 31.000,
-    image: 'https://prestigepeinture.com/blog/wp-content/uploads/2017/12/cat01620.jpg',
-    description: 'Peinture façade à base silicone, hydrofuge naturelle et respirante.'
-  },
-  {
-    id: 'pp-008',
-    nom: 'Prestige Décor Extérieur',
-    type: 'exterieure', marque: 'prestige', finition: 'Grainé',
-    couleur_code: '#C8B9A2', rendement_m2_L: 7, stock_litres: 580, stock_minimum: 80, prix_litre: 26.700,
-    image: 'https://prestigepeinture.com/blog/wp-content/uploads/2017/12/cat016100.jpg',
-    description: 'Revêtement extérieur grainé haute épaisseur, couvre les fissures superficielles.'
-  },
-  {
-    id: 'pp-009',
-    nom: 'Prestige Hydrofuge Toiture',
-    type: 'impermeabilisante', marque: 'prestige', finition: 'Élastomérique',
-    couleur_code: '#8B7355', rendement_m2_L: 5, stock_litres: 920, stock_minimum: 100, prix_litre: 38.900,
-    image: 'https://prestigepeinture.com/blog/wp-content/uploads/2017/12/cat016121.jpg',
-    description: 'Membrane imperméabilisante élastomérique pour toitures terrasses et tuiles.'
-  },
-  {
-    id: 'pp-010',
-    nom: 'Prestige Anti-Humidité',
-    type: 'impermeabilisante', marque: 'prestige', finition: 'Mat',
-    couleur_code: '#A0C4FF', rendement_m2_L: 8, stock_litres: 410, stock_minimum: 50, prix_litre: 33.500,
-    image: 'https://prestigepeinture.com/blog/wp-content/uploads/2017/12/cat016106.jpg',
-    description: 'Traitement anti-humidité et anti-remontées capillaires pour murs enterrés.'
-  },
-  {
-    id: 'pp-011',
-    nom: 'Prestige Piscine & Terrasse',
-    type: 'impermeabilisante', marque: 'prestige', finition: 'Brillant',
-    couleur_code: '#00B4D8', rendement_m2_L: 6, stock_litres: 310, stock_minimum: 40, prix_litre: 42.000,
-    image: 'https://prestigepeinture.com/blog/wp-content/uploads/2021/03/prestige-catalog-page41-600x600.jpg',
-    description: 'Résine imperméabilisante colorée pour bassins, piscines et terrasses.'
-  },
-  {
-    id: 'pp-012',
-    nom: 'Prestige Multi-Couleurs',
-    type: 'exterieure', marque: 'prestige', finition: 'Multi-textures',
-    couleur_code: '#D4956A', rendement_m2_L: 4, stock_litres: 240, stock_minimum: 30, prix_litre: 48.500,
-    image: 'https://prestigepeinture.com/blog/wp-content/uploads/2017/12/cat016101.jpg',
-    description: 'Peinture décorative multi-couleurs à effet granité naturel.'
-  }
-];
-
   let allProducts = [];
   let currentFilter = 'tous';
   let searchTerm = '';
@@ -350,20 +249,18 @@
   async function loadProducts() {
     try {
       const res = await api.get('/produits');
-      const data = await res.json();
-      // Fusionner les produits API avec les produits Prestige Peinture
-      allProducts = [
-        ...data.map(p => ({ ...p, marque: 'local' })),
-        ...prestigeProducts
-      ];
+      allProducts = await res.json();
       renderProducts(allProducts);
       document.getElementById('loadingState').style.display = 'none';
     } catch (err) {
-      // Si l'API échoue, afficher quand même les produits Prestige
-      allProducts = prestigeProducts;
-      renderProducts(allProducts);
-      document.getElementById('loadingState').style.display = 'none';
+      console.error(err);
+      document.getElementById('loadingState').innerHTML = '<div class="empty-state" style="display:block;">Erreur de chargement des produits.</div>';
     }
+  }
+
+  // Fonction utilitaire pour détecter si un produit est de la gamme Prestige (basé sur le nom)
+  function isPrestige(product) {
+    return product.nom && product.nom.toLowerCase().startsWith('prestige');
   }
 
   function renderProducts(products) {
@@ -381,61 +278,36 @@
 
     grid.innerHTML = products.map(p => {
       const stockOk = parseFloat(p.stock_litres) > parseFloat(p.stock_minimum);
-      const isPrestige = p.marque === 'prestige';
-
-      if (isPrestige) {
-        // Carte Prestige Peinture avec image de catalogue
-        return `
-          <div class="product-card prestige" onclick="openModal('${p.id}')">
-            <div class="color-preview" style="background-image:url('${p.image}'); background-color:${p.couleur_code};">
-              <div class="color-preview-overlay"></div>
-              <span class="brand-badge">Prestige</span>
-              <span class="color-hex">${p.couleur_code}</span>
-              <span class="stock-badge ${stockOk ? 'stock-ok' : 'stock-low'}">
-                ${stockOk ? '✓ En stock' : '⚠ Stock bas'}
-              </span>
+      const prestige = isPrestige(p);
+      // Si l'image existe, on l'affiche en background, sinon on utilise la couleur
+      const bgStyle = p.image && p.image.trim() !== ''
+        ? `background-image: url('${p.image}'); background-color: ${p.couleur_code || '#ccc'};`
+        : `background: ${p.couleur_code || '#ccc'};`;
+      return `
+        <div class="product-card ${prestige ? 'prestige' : ''}" onclick="openModal(${p.id})">
+          <div class="color-preview" style="${bgStyle}">
+            <div class="color-preview-overlay"></div>
+            ${prestige ? '<span class="brand-badge">Prestige</span>' : ''}
+            <span class="color-hex">${p.couleur_code || 'N/A'}</span>
+            <span class="stock-badge ${stockOk ? 'stock-ok' : 'stock-low'}">
+              ${stockOk ? '✓ En stock' : '⚠ Stock bas'}
+            </span>
+          </div>
+          <div class="card-body">
+            <div class="card-type ${prestige ? 'prestige-type' : ''}">${typeLabel[p.type] || p.type}${prestige ? ' — Prestige Peinture' : ''}</div>
+            <div class="card-name">${escapeHtml(p.nom)}</div>
+            <div class="card-meta">
+              <span class="meta-tag"><span class="material-icons">palette</span> ${p.finition || 'N/A'}</span>
+              <span class="meta-tag"><span class="material-icons">straighten</span> ${p.rendement_m2_L} m²/L</span>
+              <span class="meta-tag"><span class="material-icons">inventory_2</span> ${p.stock_litres} L</span>
             </div>
-            <div class="card-body">
-              <div class="card-type prestige-type">✨ ${typeLabel[p.type] || p.type} — Prestige Peinture</div>
-              <div class="card-name">${p.nom}</div>
-              <div class="card-meta">
-                <span class="meta-tag"><span class="material-icons">palette</span> ${p.finition}</span>
-                <span class="meta-tag"><span class="material-icons">straighten</span> ${p.rendement_m2_L} m²/L</span>
-                <span class="meta-tag"><span class="material-icons">inventory_2</span> ${p.stock_litres} L</span>
-              </div>
-              <div class="card-footer">
-                <div class="card-price">${parseFloat(p.prix_litre).toFixed(3)}<small> DT/L</small></div>
-                <button class="btn-add prestige-btn" onclick="event.stopPropagation(); openModal('${p.id}')">+ Simuler</button>
-              </div>
+            <div class="card-footer">
+              <div class="card-price">${parseFloat(p.prix_litre).toFixed(3)}<small> DT/L</small></div>
+              <button class="btn-add ${prestige ? 'prestige-btn' : ''}" onclick="event.stopPropagation(); openModal(${p.id})">+ Simuler</button>
             </div>
           </div>
-        `;
-      } else {
-        // Carte produit local classique
-        return `
-          <div class="product-card" onclick="openModal(${p.id})">
-            <div class="color-preview" style="background:${p.couleur_code || '#CCC'}">
-              <span class="color-hex">${p.couleur_code || 'N/A'}</span>
-              <span class="stock-badge ${stockOk ? 'stock-ok' : 'stock-low'}">
-                ${stockOk ? '✓ En stock' : '⚠ Stock bas'}
-              </span>
-            </div>
-            <div class="card-body">
-              <div class="card-type">${typeLabel[p.type] || p.type}</div>
-              <div class="card-name">${p.nom}</div>
-              <div class="card-meta">
-                <span class="meta-tag"><span class="material-icons">palette</span> ${p.finition || 'N/A'}</span>
-                <span class="meta-tag"><span class="material-icons">straighten</span> ${p.rendement_m2_L} m²/L</span>
-                <span class="meta-tag"><span class="material-icons">inventory_2</span> ${p.stock_litres} L</span>
-              </div>
-              <div class="card-footer">
-                <div class="card-price">${parseFloat(p.prix_litre).toFixed(3)}<small> DT/L</small></div>
-                <button class="btn-add" onclick="event.stopPropagation(); openModal(${p.id})">+ Simuler</button>
-              </div>
-            </div>
-          </div>
-        `;
-      }
+        </div>
+      `;
     }).join('');
   }
 
@@ -453,9 +325,7 @@
 
   function applyFilters() {
     let filtered = allProducts;
-    if (currentFilter === 'prestige') {
-      filtered = filtered.filter(p => p.marque === 'prestige');
-    } else if (currentFilter !== 'tous') {
+    if (currentFilter !== 'tous') {
       filtered = filtered.filter(p => p.type === currentFilter);
     }
     if (searchTerm) {
@@ -469,7 +339,7 @@
   }
 
   function openModal(productId) {
-    const product = allProducts.find(p => String(p.id) === String(productId));
+    const product = allProducts.find(p => p.id === productId);
     if (!product) return;
     localStorage.setItem('selectedProduct', JSON.stringify(product));
     window.location.href = 'simulateur.html';
@@ -479,12 +349,9 @@
     document.getElementById('cartCount').textContent = cart.length;
   }
 
-  function showToast(msg) {
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.innerHTML = msg;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
   }
 
   function logout() {
@@ -497,5 +364,6 @@
   updateCartCount();
   loadProducts();
 </script>
+<script src="../js/chatbot.js"></script>
 </body>
 </html>

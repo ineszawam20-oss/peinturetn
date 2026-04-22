@@ -509,9 +509,9 @@
       margin-bottom: 0.3rem;
       color: var(--text-gray);
     }
-    .form-control {
-      width: 100%;
-      background: rgba(255, 255, 255, 0.05);
+.form-control {
+    width: 100%;
+    background: #0a0a1a;
       border: 1.5px solid rgba(99, 102, 241, 0.3);
       border-radius: var(--radius-sm);
       padding: 0.7rem;
@@ -616,6 +616,7 @@
       .content { padding: 1rem; }
     }
   </style>
+<link rel="icon" href="data:,">
 </head>
 <body>
 
@@ -796,46 +797,30 @@
     brouillon: 'Brouillon', envoye: 'Envoyé',
     accepte: 'Accepté', refuse: 'Refusé', expire: 'Expiré'
   };
-  // Ajouter en haut du <script>, avant loadAll()
-const prestigeProducts = [
-  { id: 'pp-001', nom: 'Prestige Velours Intérieur',  prix_litre: 22.500, rendement_m2_L: 8 },
-  { id: 'pp-002', nom: 'Prestige Satiné Luxe',        prix_litre: 25.000, rendement_m2_L: 8 },
-  { id: 'pp-003', nom: 'Prestige Effet Béton',        prix_litre: 28.000, rendement_m2_L: 7 },
-  { id: 'pp-004', nom: 'Prestige Stuc Minéral',       prix_litre: 30.000, rendement_m2_L: 6 },
-  { id: 'pp-005', nom: 'Prestige Effet Soie',         prix_litre: 27.000, rendement_m2_L: 8 },
-  { id: 'pp-006', nom: 'Prestige Façade Elite',       prix_litre: 20.000, rendement_m2_L: 9 },
-  { id: 'pp-007', nom: 'Prestige Silicone Façade',    prix_litre: 24.000, rendement_m2_L: 8 },
-  { id: 'pp-008', nom: 'Prestige Décor Extérieur',    prix_litre: 21.000, rendement_m2_L: 8 },
-  { id: 'pp-009', nom: 'Prestige Hydrofuge Toiture',  prix_litre: 19.000, rendement_m2_L: 7 },
-  { id: 'pp-010', nom: 'Prestige Anti-Humidité',      prix_litre: 23.000, rendement_m2_L: 8 },
-  { id: 'pp-011', nom: 'Prestige Piscine & Terrasse', prix_litre: 26.000, rendement_m2_L: 7 },
-  { id: 'pp-012', nom: 'Prestige Multi-Couleurs',     prix_litre: 29.000, rendement_m2_L: 6 }
-];
 
-async function loadAll() {
-  console.log('TOKEN:', Auth.getToken());
-  console.log('ROLE:', Auth.getRole());
-  try {
-    const [devRes, prodRes] = await Promise.all([
-      api.get('/devis'),
-      api.get('/produits')
-    ]);
-    allDevis    = await devRes.json();
-    allProduits = await prodRes.json();
-
-    // ✅ ICI — remplace l'ancien bloc
+  async function loadAll() {
+    console.log('TOKEN:', Auth.getToken());
+    console.log('ROLE:', Auth.getRole());
     try {
-      const usrRes = await api.get('/utilisateurs/clients'); // ← changement ici
-      if (usrRes.ok) {
-        allClients = await usrRes.json();
-      }
-    } catch { allClients = []; }
+      const [devRes, prodRes] = await Promise.all([
+        api.get('/devis'),
+        api.get('/produits')
+      ]);
+      allDevis = await devRes.json();
+      allProduits = await prodRes.json();
 
-    updateStats();
-    renderDevis(allDevis);
-    fillSelects();
-  } catch (err) { console.error(err); }
-}
+      try {
+        const usrRes = await api.get('/utilisateurs/clients');
+        if (usrRes.ok) {
+          allClients = await usrRes.json();
+        }
+      } catch { allClients = []; }
+
+      updateStats();
+      renderDevis(allDevis);
+      fillSelects();
+    } catch (err) { console.error(err); }
+  }
 
   function updateStats() {
     document.getElementById('sTotal').textContent = allDevis.length;
@@ -940,14 +925,10 @@ async function loadAll() {
     const produitSelect = document.getElementById('dProduit');
     clientSelect.innerHTML = '<option value="">Sélectionner un client...</option>' +
       allClients.map(c => `<option value="${c.id}">${c.nom}</option>`).join('');
-
-    const allProduitsDevis = [
-      ...allProduits,
-      ...prestigeProducts
-    ];
-  produitSelect.innerHTML = '<option value="">Sélectionner un produit...</option>' +
-    allProduitsDevis.map(p => `<option value="${p.id}" data-prix="${p.prix_litre}" data-rend="${p.rendement_m2_L}">${p.nom}${p.marque === 'prestige' ? ' ⭐' : ''} — ${parseFloat(p.prix_litre).toFixed(3)} DT/L</option>`).join('');
-    }
+    // ✅ Utiliser uniquement allProduits (plus de mock)
+    produitSelect.innerHTML = '<option value="">Sélectionner un produit...</option>' +
+      allProduits.map(p => `<option value="${p.id}" data-prix="${p.prix_litre}" data-rend="${p.rendement_m2_L}">${p.nom} — ${parseFloat(p.prix_litre).toFixed(3)} DT/L</option>`).join('');
+  }
 
   function calcDevis() {
     const surface = parseFloat(document.getElementById('dSurface').value) || 0;
@@ -1019,12 +1000,8 @@ async function loadAll() {
     document.getElementById('calcResult').classList.remove('show');
     document.getElementById('modalOverlay').classList.add('open');
   }
-  function closeModal() {
-    document.getElementById('modalOverlay').classList.remove('open');
-  }
-  function closeModalOutside(e) {
-    if (e.target === document.getElementById('modalOverlay')) closeModal();
-  }
+  function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+  function closeModalOutside(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
 
   function logout() {
     localStorage.removeItem('token');
@@ -1035,5 +1012,6 @@ async function loadAll() {
 
   loadAll();
 </script>
+<script src="../js/chatbot.js"></script>
 </body>
 </html>
