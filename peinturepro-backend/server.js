@@ -84,18 +84,25 @@ app.use(cors({
 // ===== Rate limiting =====
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max:      100,
-  message:  { message: 'Trop de requêtes, réessayez dans 15 minutes.' }
+  max: 300,
+  message: { message: 'Trop de requêtes, réessayez dans 15 minutes.' }
 });
+
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max:      10,
-  message:  { message: 'Trop de tentatives de connexion.' }
+  max: 10,
+  message: { message: 'Trop de tentatives de connexion.' }
 });
-app.use('/api/', limiter);
+
+// 1. D'abord : rate limit strict sur auth (pas de token ici de toute façon)
 app.use('/api/auth/login',           authLimiter);
 app.use('/api/auth/forgot-password', authLimiter);
 
+// 2. Ensuite : rate limit général, skipé si authentifié
+app.use('/api/', (req, res, next) => {
+  if (req.headers.authorization) return next();
+  return limiter(req, res, next);
+});
 // ===== Parsing =====
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
