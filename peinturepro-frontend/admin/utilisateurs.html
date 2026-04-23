@@ -753,16 +753,38 @@
     livreur: 'avatar-livreur', client: 'avatar-client'
   };
 
-  async function loadUsers() {
-    try {
-      const res = await api.get('/utilisateurs');
-      allUsers = await res.json();
-      updateStats(allUsers);
-      renderUsers(allUsers);
-    } catch (err) {
-      console.error('Erreur chargement utilisateurs', err);
+async function loadUsers() {
+  try {
+    const res = await api.get('/utilisateurs');
+
+    // 1. Vérifier le statut HTTP
+    if (!res.ok) {
+      if (res.status === 429) {
+        document.getElementById('usersTable').innerHTML =
+          '<tr class="empty-row"><td colspan="7">⏳ Trop de requêtes. Réessayez dans quelques instants.</td></tr>';
+        return;
+      }
+      throw new Error(`HTTP ${res.status}`);
     }
+
+    const data = await res.json();
+
+    // 2. Vérifier que c'est bien un tableau
+    if (!Array.isArray(data)) {
+      console.error('Réponse inattendue:', data);
+      throw new Error(data.message || 'Réponse invalide du serveur');
+    }
+
+    allUsers = data;
+    updateStats(allUsers);
+    renderUsers(allUsers);
+
+  } catch (err) {
+    console.error('Erreur chargement utilisateurs', err);
+    document.getElementById('usersTable').innerHTML =
+      `<tr class="empty-row"><td colspan="7">❌ ${err.message}</td></tr>`;
   }
+}
 
   function updateStats(users) {
     document.getElementById('statAdmin').textContent  = users.filter(u => u.role === 'admin').length;
