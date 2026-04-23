@@ -548,7 +548,7 @@
     try {
       const res = await api.get('/produits');
       apiProductsOnly = await res.json();
-      allProducts = [...apiProductsOnly, ...prestigeProducts];
+      allProducts = [...apiProductsOnly];
       document.getElementById('prodCount').textContent = `${allProducts.length} produit(s)`;
       renderProducts(allProducts);
     } catch (err) {
@@ -567,7 +567,7 @@
 
     grid.innerHTML = products.map(p => {
       const stockOk = parseFloat(p.stock_litres) > parseFloat(p.stock_minimum);
-      const isPrestige = p.marque === 'prestige';
+      const isPrestige = p.nom && p.nom.toLowerCase().startsWith('prestige');
       const hasImage = p.image && p.image.trim() !== '';
 
       const bgStyle = hasImage
